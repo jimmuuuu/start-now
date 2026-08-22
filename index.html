@@ -7,11 +7,34 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>START/NOW Fitness</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="app.css?v=original-20260821" />
-  <link rel="stylesheet" href="builder.css?v=workout-builder-1" />
-  <link rel="stylesheet" href="progress.css?v=progress-dashboard-1" />
-  <link rel="stylesheet" href="beginner-plan.css?v=beginner-plan-2" />
+
+  <script>
+    (() => {
+      const version = "start-now-days-picker-v3";
+      if (localStorage.getItem("sn_runtime_version") === version) return;
+      window.addEventListener("load", async () => {
+        try {
+          if ("serviceWorker" in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map(registration => registration.unregister()));
+          }
+          if ("caches" in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map(key => caches.delete(key)));
+          }
+          localStorage.setItem("sn_runtime_version", version);
+        } catch (error) {
+          console.warn("START/NOW cache reset skipped", error);
+        }
+      }, { once: true });
+    })();
+  </script>
+
+  <link rel="manifest" href="manifest.webmanifest?v=days-picker-v3" />
+  <link rel="stylesheet" href="app.css?v=days-picker-v3" />
+  <link rel="stylesheet" href="builder.css?v=days-picker-v3" />
+  <link rel="stylesheet" href="progress.css?v=days-picker-v3" />
+  <link rel="stylesheet" href="beginner-plan.css?v=days-picker-v3" />
 </head>
 <body>
   <div class="app-shell">
@@ -35,9 +58,9 @@
 
   <div class="toast" id="toast" role="status"></div>
 
-  <script src="app.js?v=workout-builder-1"></script>
-  <script src="exercise-library-extra.js?v=exercise-library-250"></script>
-  <script src="progress.js?v=progress-dashboard-1"></script>
-  <script src="beginner-plan.js?v=beginner-plan-2"></script>
+  <script src="app.js?v=days-picker-v3"></script>
+  <script src="exercise-library-extra.js?v=days-picker-v3"></script>
+  <script src="progress.js?v=days-picker-v3"></script>
+  <script src="beginner-plan.js?v=days-picker-v3"></script>
 </body>
 </html>
