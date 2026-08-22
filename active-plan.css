@@ -12,7 +12,7 @@
   letter-spacing:.09em;
 }
 .active-main-plan{border-color:#f0dedd}
-.rest-plan-card{border-color:#dce9c2;background:linear-gradient(145deg,var(--surface),#fbfff3)}
+.rest-plan-card{border-color:#f0dedd;background:var(--surface)}
 .active-plan-schedule-btn{width:100%;min-height:52px;font-size:16px}
 .active-plan-banner{
   display:grid;
@@ -33,4 +33,5 @@
 .active-plan-banner strong{display:block;font-size:13px;margin-bottom:2px}
 .active-plan-banner small{display:block;color:var(--muted);font-size:11px;line-height:1.35}
 .dark .current-plan-pill{background:#243018;color:#b9df65}
-.dark .rest-plan-card,.dark .active-plan-banner{background:#171d14;border-color:#34422a}
+.dark .rest-plan-card{background:var(--surface);border-color:#2e3033}
+.dark .active-plan-banner{background:#171d14;border-color:#34422a}
