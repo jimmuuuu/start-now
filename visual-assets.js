@@ -103,4 +103,12 @@
   } else {
     patchCurrentScreen();
   }
+
+  // Load the drag-and-drop enhancement with its own cache-busting version.
+  if (!document.getElementById("snScheduleDragEnhancer")) {
+    const script = document.createElement("script");
+    script.id = "snScheduleDragEnhancer";
+    script.src = "schedule-drag-enhancer.js?v=drag-days-v11";
+    document.head.appendChild(script);
+  }
 })();
