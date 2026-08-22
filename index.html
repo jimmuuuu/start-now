@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FAFAF7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>START/NOW Fitness</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <main id="app"></main>
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item active" data-page="home">
+        <span class="nav-icon">⌂</span><span>Home</span>
+      </button>
+      <button class="nav-item" data-page="workouts">
+        <span class="nav-icon">🏋</span><span>Workouts</span>
+      </button>
+      <button class="nav-fab" id="quickStart" aria-label="Quick start">+</button>
+      <button class="nav-item" data-page="progress">
+        <span class="nav-icon">▥</span><span>Progress</span>
+      </button>
+      <button class="nav-item" data-page="profile">
+        <span class="nav-icon">◎</span><span>Profile</span>
+      </button>
+    </nav>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
