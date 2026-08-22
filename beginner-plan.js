@@ -2,19 +2,15 @@
 // Loaded after the main app so it can use the existing workout library and saved-workout system.
 (() => {
   const originalRenderWorkouts = renderWorkouts;
+  const ALL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
   const starterState = {
     step: 0,
     goal: "confidence",
-    days: 3,
+    selectedDays: ["Monday", "Wednesday", "Friday"],
     equipment: "full-gym",
     session: 45,
     generated: []
-  };
-
-  const dayPresets = {
-    2: ["Monday", "Thursday"],
-    3: ["Monday", "Wednesday", "Friday"],
-    4: ["Monday", "Tuesday", "Thursday", "Saturday"]
   };
 
   const goalLabels = {
@@ -58,7 +54,15 @@
   };
 
   function gymExercise(name, fallbackName, muscle, reps = 10, sets = 2) {
-    const fallback = { id: `starter-${fallbackName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, name: fallbackName, muscle, sets, reps, weight: 0, cue: "Use a light weight and move through a comfortable range with control." };
+    const fallback = {
+      id: `starter-${fallbackName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      name: fallbackName,
+      muscle,
+      sets,
+      reps,
+      weight: 0,
+      cue: "Use a light weight and move through a comfortable range with control."
+    };
     return libraryExercise(name, fallback, { sets, reps });
   }
 
@@ -81,7 +85,8 @@
   }
 
   function planTemplates() {
-    const days = dayPresets[starterState.days];
+    const days = [...starterState.selectedDays];
+    const count = days.length;
     const isHome = starterState.equipment === "home";
     const m = machinePool();
 
@@ -92,11 +97,11 @@
       const lower = [BW.squat, BW.lunge, BW.bridge, BW.calf, BW.deadbug];
       const upper = [BW.pushup, BW.row, BW.shoulder, BW.birddog, BW.plank];
 
-      if (starterState.days === 2) return [
+      if (count === 2) return [
         { name: "Beginner Full Body A", day: days[0], exercises: fullA },
         { name: "Beginner Full Body B", day: days[1], exercises: fullB }
       ];
-      if (starterState.days === 3) return [
+      if (count === 3) return [
         { name: "Beginner Full Body A", day: days[0], exercises: fullA },
         { name: "Beginner Full Body B", day: days[1], exercises: fullB },
         { name: "Beginner Full Body C", day: days[2], exercises: fullC }
@@ -117,11 +122,11 @@
     const upperB = [m.pulldown, m.chest, m.row, m.lateral, m.biceps, m.triceps];
     const lowerB = [m.legpress, m.legcurl, m.abduction, m.legext, m.calf, m.core];
 
-    if (starterState.days === 2) return [
+    if (count === 2) return [
       { name: "Beginner Full Body A", day: days[0], exercises: fullA },
       { name: "Beginner Full Body B", day: days[1], exercises: fullB }
     ];
-    if (starterState.days === 3) return [
+    if (count === 3) return [
       { name: "Beginner Full Body A", day: days[0], exercises: fullA },
       { name: "Beginner Full Body B", day: days[1], exercises: fullB },
       { name: "Beginner Full Body C", day: days[2], exercises: fullC }
@@ -161,7 +166,7 @@
           <p>Answer 4 easy questions and START/NOW will make your first weekly routine for you.</p>
         </div>
       </div>
-      <div class="beginner-points"><span>✓ Beginner exercises</span><span>✓ Sets & reps included</span><span>✓ Weekly schedule included</span></div>
+      <div class="beginner-points"><span>✓ Beginner exercises</span><span>✓ Sets & reps included</span><span>✓ You choose the days</span></div>
       <button class="primary" id="openBeginnerSetup">Make my beginner plan →</button>
     `;
     heading.insertAdjacentElement("afterend", card);
@@ -176,7 +181,7 @@
   function resetStarter() {
     starterState.step = 0;
     starterState.goal = "confidence";
-    starterState.days = 3;
+    starterState.selectedDays = ["Monday", "Wednesday", "Friday"];
     starterState.equipment = "full-gym";
     starterState.session = 45;
     starterState.generated = [];
@@ -209,6 +214,11 @@
     return `<button type="button" class="beginner-option ${String(value) === String(current) ? "selected" : ""}" data-${group}="${value}"><span class="beginner-option-check">${String(value) === String(current) ? "✓" : ""}</span><span><strong>${title}</strong><small>${copy}</small></span></button>`;
   }
 
+  function dayButton(day) {
+    const selected = starterState.selectedDays.includes(day);
+    return `<button type="button" class="beginner-day ${selected ? "selected" : ""}" data-training-day="${day}" aria-pressed="${selected}"><span class="beginner-day-short">${day.slice(0, 3)}</span><span class="beginner-day-check">${selected ? "✓" : ""}</span></button>`;
+  }
+
   function shell(title, subtitle, body, nextLabel = "Continue") {
     return `
       <div class="beginner-modal-top">
@@ -223,6 +233,7 @@
         ${starterState.step > 0 ? `<button type="button" class="secondary beginner-back" id="beginnerBack">Back</button>` : ""}
         <button type="button" class="primary beginner-next" id="beginnerNext">${nextLabel}</button>
       </div>
+      <p class="beginner-step-error" id="beginnerStepError" role="alert"></p>
     `;
   }
 
@@ -243,13 +254,9 @@
       );
     } else if (starterState.step === 1) {
       el.innerHTML = shell(
-        "How many days sounds realistic?",
-        "For a first routine, fewer consistent days are better than choosing too much and quitting.",
-        [
-          optionButton(2, starterState.days, "2 days a week", "Easiest schedule to stick with.", "days"),
-          optionButton(3, starterState.days, "3 days a week", "Recommended for most beginners.", "days"),
-          optionButton(4, starterState.days, "4 days a week", "More training days with shorter focused sessions.", "days")
-        ].join("")
+        "Which days can you work out?",
+        "Pick the exact days that fit your week. For a first routine, choose 2–4 days.",
+        `<div class="beginner-day-grid">${ALL_DAYS.map(dayButton).join("")}</div><div class="beginner-day-helper"><strong>${starterState.selectedDays.length} selected</strong><span>${starterState.selectedDays.join(" • ")}</span></div>`
       );
     } else if (starterState.step === 2) {
       el.innerHTML = shell(
@@ -286,11 +293,43 @@
       starterState.step--;
       renderWizardStep();
     });
-    document.querySelectorAll("[data-goal]").forEach(btn => btn.addEventListener("click", () => { starterState.goal = btn.dataset.goal; renderWizardStep(); }));
-    document.querySelectorAll("[data-days]").forEach(btn => btn.addEventListener("click", () => { starterState.days = Number(btn.dataset.days); renderWizardStep(); }));
-    document.querySelectorAll("[data-equipment]").forEach(btn => btn.addEventListener("click", () => { starterState.equipment = btn.dataset.equipment; renderWizardStep(); }));
-    document.querySelectorAll("[data-session]").forEach(btn => btn.addEventListener("click", () => { starterState.session = Number(btn.dataset.session); renderWizardStep(); }));
+
+    document.querySelectorAll("[data-goal]").forEach(btn => btn.addEventListener("click", () => {
+      starterState.goal = btn.dataset.goal;
+      renderWizardStep();
+    }));
+
+    document.querySelectorAll("[data-training-day]").forEach(btn => btn.addEventListener("click", () => {
+      const day = btn.dataset.trainingDay;
+      const exists = starterState.selectedDays.includes(day);
+      if (exists) {
+        starterState.selectedDays = starterState.selectedDays.filter(item => item !== day);
+      } else if (starterState.selectedDays.length < 4) {
+        starterState.selectedDays = ALL_DAYS.filter(item => item === day || starterState.selectedDays.includes(item));
+      } else {
+        const error = document.getElementById("beginnerStepError");
+        if (error) error.textContent = "For your first routine, choose up to 4 workout days.";
+        return;
+      }
+      renderWizardStep();
+    }));
+
+    document.querySelectorAll("[data-equipment]").forEach(btn => btn.addEventListener("click", () => {
+      starterState.equipment = btn.dataset.equipment;
+      renderWizardStep();
+    }));
+
+    document.querySelectorAll("[data-session]").forEach(btn => btn.addEventListener("click", () => {
+      starterState.session = Number(btn.dataset.session);
+      renderWizardStep();
+    }));
+
     document.getElementById("beginnerNext")?.addEventListener("click", () => {
+      if (starterState.step === 1 && (starterState.selectedDays.length < 2 || starterState.selectedDays.length > 4)) {
+        const error = document.getElementById("beginnerStepError");
+        if (error) error.textContent = "Choose at least 2 days and no more than 4 days.";
+        return;
+      }
       starterState.step++;
       if (starterState.step === 4) buildPlan();
       renderWizardStep();
@@ -308,10 +347,10 @@
       </div>
       <div class="beginner-kicker">YOUR FIRST ROUTINE</div>
       <h1 id="beginnerWizardTitle">Your plan is ready.</h1>
-      <p class="beginner-subtitle">No guessing. We picked beginner-friendly exercises, sets, reps, and spaced-out training days for you.</p>
+      <p class="beginner-subtitle">No guessing. We picked beginner-friendly exercises, sets, and reps for the exact days you chose.</p>
 
       <div class="beginner-summary-pills">
-        <span>${starterState.days} days/week</span><span>${starterState.session} min</span><span>${equipmentLabels[starterState.equipment]}</span>
+        <span>${starterState.selectedDays.length} days/week</span><span>${starterState.session} min</span><span>${equipmentLabels[starterState.equipment]}</span>
       </div>
 
       <div class="beginner-review-list">
@@ -327,8 +366,8 @@
       </div>
 
       <div class="beginner-reassurance">
-        <strong>Start lighter than you think.</strong>
-        <p>Your first goal is learning the movements and building the habit. You can increase weight later when the reps feel comfortable and controlled.</p>
+        <strong>Start with manageable weight.</strong>
+        <p>Your first goal is learning the movements and building a routine you can repeat. Increase weight gradually when the reps feel comfortable and controlled.</p>
       </div>
 
       <div class="beginner-plan-meta">${goalLabels[starterState.goal]} • ${totalExercises} exercise slots across the week</div>
@@ -338,7 +377,10 @@
       </div>
     `;
     document.getElementById("closeBeginnerWizard").addEventListener("click", closeWizard);
-    document.getElementById("beginnerBack").addEventListener("click", () => { starterState.step = 3; renderWizardStep(); });
+    document.getElementById("beginnerBack").addEventListener("click", () => {
+      starterState.step = 3;
+      renderWizardStep();
+    });
     document.getElementById("saveBeginnerPlan").addEventListener("click", saveGeneratedPlan);
   }
 
