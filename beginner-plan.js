@@ -1,0 +1,371 @@
+// Beginner-friendly "Build it for me" workout setup.
+// Loaded after the main app so it can use the existing workout library and saved-workout system.
+(() => {
+  const originalRenderWorkouts = renderWorkouts;
+  const starterState = {
+    step: 0,
+    goal: "confidence",
+    days: 3,
+    equipment: "full-gym",
+    session: 45,
+    generated: []
+  };
+
+  const dayPresets = {
+    2: ["Monday", "Thursday"],
+    3: ["Monday", "Wednesday", "Friday"],
+    4: ["Monday", "Tuesday", "Thursday", "Saturday"]
+  };
+
+  const goalLabels = {
+    confidence: "Learn the gym & feel confident",
+    strength: "Get stronger",
+    muscle: "Build muscle",
+    fitness: "General fitness"
+  };
+
+  const equipmentLabels = {
+    "full-gym": "Full gym",
+    machines: "Mostly machines",
+    home: "Home / bodyweight"
+  };
+
+  function cloneExercise(ex, overrides = {}) {
+    return { ...ex, ...overrides };
+  }
+
+  function libraryExercise(name, fallback, overrides = {}) {
+    const exact = exerciseLibrary.find(ex => ex.name.toLowerCase() === name.toLowerCase());
+    const partial = exerciseLibrary.find(ex => ex.name.toLowerCase().includes(name.toLowerCase()));
+    return cloneExercise(exact || partial || fallback, overrides);
+  }
+
+  function bodyweight(id, name, muscle, reps, cue) {
+    return { id, name, muscle, sets: 2, reps, weight: 0, cue };
+  }
+
+  const BW = {
+    squat: bodyweight("starter-bodyweight-squat", "Bodyweight Squat", "Quads", 10, "Move slowly, keep your feet planted, and use a comfortable depth."),
+    pushup: bodyweight("starter-incline-pushup", "Incline Push-Up", "Chest", 8, "Use a bench or sturdy raised surface and keep your body in one line."),
+    bridge: bodyweight("starter-glute-bridge", "Glute Bridge", "Glutes", 12, "Press through your feet and squeeze your glutes at the top."),
+    row: bodyweight("starter-backpack-row", "Supported Backpack Row", "Back", 10, "Keep the load light and pull toward your ribs with control."),
+    lunge: bodyweight("starter-reverse-lunge", "Supported Reverse Lunge", "Quads", 8, "Hold onto something stable if needed and step back under control."),
+    deadbug: bodyweight("starter-dead-bug", "Dead Bug", "Core", 8, "Keep your lower back gently pressed down and move slowly."),
+    birddog: bodyweight("starter-bird-dog", "Bird Dog", "Core", 8, "Reach long without twisting your hips."),
+    calf: bodyweight("starter-calf-raise", "Bodyweight Calf Raise", "Calves", 12, "Pause at the top and lower slowly."),
+    shoulder: bodyweight("starter-wall-shoulder-tap", "Wall Shoulder Tap", "Shoulders", 10, "Stay tall and move one hand at a time without rushing."),
+    plank: bodyweight("starter-elevated-plank", "Elevated Plank", "Core", 20, "Use a raised surface and hold a comfortable, steady position.")
+  };
+
+  function gymExercise(name, fallbackName, muscle, reps = 10, sets = 2) {
+    const fallback = { id: `starter-${fallbackName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, name: fallbackName, muscle, sets, reps, weight: 0, cue: "Use a light weight and move through a comfortable range with control." };
+    return libraryExercise(name, fallback, { sets, reps });
+  }
+
+  function machinePool() {
+    return {
+      chest: gymExercise("Chest Press", "Chest Press", "Chest", 10),
+      row: gymExercise("Seated Row", "Seated Row", "Back", 10),
+      pulldown: gymExercise("Lat Pulldown", "Lat Pulldown", "Back", 10),
+      legpress: gymExercise("Leg Press", "Leg Press", "Legs", 10),
+      legcurl: gymExercise("Leg Curl", "Leg Curl", "Hamstrings", 12),
+      legext: gymExercise("Leg Extension", "Leg Extension", "Quads", 12),
+      shoulder: gymExercise("Shoulder Press", "Shoulder Press", "Shoulders", 10),
+      lateral: gymExercise("Lateral Raise", "Lateral Raise", "Shoulders", 12),
+      biceps: gymExercise("Biceps Curl", "Biceps Curl", "Biceps", 12),
+      triceps: gymExercise("Triceps Pushdown", "Triceps Pushdown", "Triceps", 12),
+      calf: gymExercise("Calf Raise", "Calf Raise", "Calves", 12),
+      abduction: gymExercise("Hip Abduction", "Hip Abduction", "Glutes", 12),
+      core: gymExercise("Cable Crunch", "Cable Crunch", "Core", 12)
+    };
+  }
+
+  function planTemplates() {
+    const days = dayPresets[starterState.days];
+    const isHome = starterState.equipment === "home";
+    const m = machinePool();
+
+    if (isHome) {
+      const fullA = [BW.squat, BW.pushup, BW.row, BW.bridge, BW.deadbug];
+      const fullB = [BW.lunge, BW.shoulder, BW.row, BW.calf, BW.birddog];
+      const fullC = [BW.squat, BW.pushup, BW.bridge, BW.row, BW.plank];
+      const lower = [BW.squat, BW.lunge, BW.bridge, BW.calf, BW.deadbug];
+      const upper = [BW.pushup, BW.row, BW.shoulder, BW.birddog, BW.plank];
+
+      if (starterState.days === 2) return [
+        { name: "Beginner Full Body A", day: days[0], exercises: fullA },
+        { name: "Beginner Full Body B", day: days[1], exercises: fullB }
+      ];
+      if (starterState.days === 3) return [
+        { name: "Beginner Full Body A", day: days[0], exercises: fullA },
+        { name: "Beginner Full Body B", day: days[1], exercises: fullB },
+        { name: "Beginner Full Body C", day: days[2], exercises: fullC }
+      ];
+      return [
+        { name: "Beginner Upper A", day: days[0], exercises: upper },
+        { name: "Beginner Lower A", day: days[1], exercises: lower },
+        { name: "Beginner Upper B", day: days[2], exercises: [BW.row, BW.pushup, BW.shoulder, BW.birddog, BW.plank] },
+        { name: "Beginner Lower B", day: days[3], exercises: [BW.lunge, BW.squat, BW.bridge, BW.calf, BW.deadbug] }
+      ];
+    }
+
+    const fullA = [m.legpress, m.chest, m.row, m.legcurl, m.core];
+    const fullB = [m.legpress, m.pulldown, m.shoulder, m.abduction, m.biceps];
+    const fullC = [m.legext, m.chest, m.row, m.legcurl, m.triceps, m.calf];
+    const upperA = [m.chest, m.row, m.shoulder, m.pulldown, m.biceps, m.triceps];
+    const lowerA = [m.legpress, m.legcurl, m.legext, m.abduction, m.calf, m.core];
+    const upperB = [m.pulldown, m.chest, m.row, m.lateral, m.biceps, m.triceps];
+    const lowerB = [m.legpress, m.legcurl, m.abduction, m.legext, m.calf, m.core];
+
+    if (starterState.days === 2) return [
+      { name: "Beginner Full Body A", day: days[0], exercises: fullA },
+      { name: "Beginner Full Body B", day: days[1], exercises: fullB }
+    ];
+    if (starterState.days === 3) return [
+      { name: "Beginner Full Body A", day: days[0], exercises: fullA },
+      { name: "Beginner Full Body B", day: days[1], exercises: fullB },
+      { name: "Beginner Full Body C", day: days[2], exercises: fullC }
+    ];
+    return [
+      { name: "Beginner Upper A", day: days[0], exercises: upperA },
+      { name: "Beginner Lower A", day: days[1], exercises: lowerA },
+      { name: "Beginner Upper B", day: days[2], exercises: upperB },
+      { name: "Beginner Lower B", day: days[3], exercises: lowerB }
+    ];
+  }
+
+  function applySessionLength(exercises) {
+    const maxExercises = starterState.session <= 30 ? 4 : starterState.session <= 45 ? 5 : 6;
+    return exercises.slice(0, maxExercises).map(ex => ({ ...ex, sets: 2 }));
+  }
+
+  function buildPlan() {
+    starterState.generated = planTemplates().map(item => ({
+      ...item,
+      exercises: applySessionLength(item.exercises)
+    }));
+  }
+
+  function injectBeginnerCard() {
+    const heading = document.querySelector(".workouts-heading-row");
+    if (!heading || document.getElementById("beginnerPlanCard")) return;
+    const card = document.createElement("section");
+    card.id = "beginnerPlanCard";
+    card.className = "card beginner-plan-card";
+    card.innerHTML = `
+      <div class="beginner-badge">NEW TO THE GYM?</div>
+      <div class="beginner-plan-copy">
+        <div class="beginner-plan-icon">✦</div>
+        <div>
+          <h2>Build it for me</h2>
+          <p>Answer 4 easy questions and START/NOW will make your first weekly routine for you.</p>
+        </div>
+      </div>
+      <div class="beginner-points"><span>✓ Beginner exercises</span><span>✓ Sets & reps included</span><span>✓ Weekly schedule included</span></div>
+      <button class="primary" id="openBeginnerSetup">Make my beginner plan →</button>
+    `;
+    heading.insertAdjacentElement("afterend", card);
+    document.getElementById("openBeginnerSetup").addEventListener("click", openWizard);
+  }
+
+  renderWorkouts = function () {
+    originalRenderWorkouts();
+    injectBeginnerCard();
+  };
+
+  function resetStarter() {
+    starterState.step = 0;
+    starterState.goal = "confidence";
+    starterState.days = 3;
+    starterState.equipment = "full-gym";
+    starterState.session = 45;
+    starterState.generated = [];
+  }
+
+  function openWizard() {
+    resetStarter();
+    document.body.classList.add("beginner-modal-open");
+    const overlay = document.createElement("div");
+    overlay.className = "beginner-modal-overlay";
+    overlay.id = "beginnerWizard";
+    overlay.innerHTML = `<div class="beginner-modal" role="dialog" aria-modal="true" aria-labelledby="beginnerWizardTitle"></div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay) closeWizard();
+    });
+    renderWizardStep();
+  }
+
+  function closeWizard() {
+    document.getElementById("beginnerWizard")?.remove();
+    document.body.classList.remove("beginner-modal-open");
+  }
+
+  function modal() {
+    return document.querySelector("#beginnerWizard .beginner-modal");
+  }
+
+  function optionButton(value, current, title, copy, group) {
+    return `<button type="button" class="beginner-option ${String(value) === String(current) ? "selected" : ""}" data-${group}="${value}"><span class="beginner-option-check">${String(value) === String(current) ? "✓" : ""}</span><span><strong>${title}</strong><small>${copy}</small></span></button>`;
+  }
+
+  function shell(title, subtitle, body, nextLabel = "Continue") {
+    return `
+      <div class="beginner-modal-top">
+        <button type="button" class="beginner-close" id="closeBeginnerWizard" aria-label="Close">×</button>
+        <div class="beginner-step-dots">${[0,1,2,3].map(i => `<span class="${i <= starterState.step ? "active" : ""}"></span>`).join("")}</div>
+      </div>
+      <div class="beginner-kicker">BEGINNER SETUP</div>
+      <h1 id="beginnerWizardTitle">${title}</h1>
+      <p class="beginner-subtitle">${subtitle}</p>
+      <div class="beginner-options">${body}</div>
+      <div class="beginner-modal-actions">
+        ${starterState.step > 0 ? `<button type="button" class="secondary beginner-back" id="beginnerBack">Back</button>` : ""}
+        <button type="button" class="primary beginner-next" id="beginnerNext">${nextLabel}</button>
+      </div>
+    `;
+  }
+
+  function renderWizardStep() {
+    const el = modal();
+    if (!el) return;
+
+    if (starterState.step === 0) {
+      el.innerHTML = shell(
+        "What do you want help with?",
+        "You do not need to know workout terms. Pick the answer that sounds most like you.",
+        [
+          optionButton("confidence", starterState.goal, "Learn the gym", "I mainly want a simple plan so I know what to do.", "goal"),
+          optionButton("strength", starterState.goal, "Get stronger", "Build basic strength with easy-to-learn exercises.", "goal"),
+          optionButton("muscle", starterState.goal, "Build muscle", "Use a balanced routine that gradually gets harder.", "goal"),
+          optionButton("fitness", starterState.goal, "General fitness", "Feel better, move more, and build a consistent habit.", "goal")
+        ].join("")
+      );
+    } else if (starterState.step === 1) {
+      el.innerHTML = shell(
+        "How many days sounds realistic?",
+        "For a first routine, fewer consistent days are better than choosing too much and quitting.",
+        [
+          optionButton(2, starterState.days, "2 days a week", "Easiest schedule to stick with.", "days"),
+          optionButton(3, starterState.days, "3 days a week", "Recommended for most beginners.", "days"),
+          optionButton(4, starterState.days, "4 days a week", "More training days with shorter focused sessions.", "days")
+        ].join("")
+      );
+    } else if (starterState.step === 2) {
+      el.innerHTML = shell(
+        "Where will you train?",
+        "We will choose exercises that match what you actually have access to.",
+        [
+          optionButton("full-gym", starterState.equipment, "Full gym", "Machines, cables, dumbbells, and other gym equipment.", "equipment"),
+          optionButton("machines", starterState.equipment, "Mostly machines", "Keep things simple with beginner-friendly machines.", "equipment"),
+          optionButton("home", starterState.equipment, "Home / bodyweight", "No gym required.", "equipment")
+        ].join("")
+      );
+    } else if (starterState.step === 3) {
+      el.innerHTML = shell(
+        "How long should workouts feel?",
+        "Pick a time you can realistically make room for.",
+        [
+          optionButton(30, starterState.session, "About 30 minutes", "Short and simple — around 4 exercises.", "session"),
+          optionButton(45, starterState.session, "About 45 minutes", "Balanced — around 5 exercises.", "session"),
+          optionButton(60, starterState.session, "About 60 minutes", "A little more time — around 6 exercises.", "session")
+        ].join(""),
+        "Build my plan →"
+      );
+    } else {
+      renderPlanReview();
+      return;
+    }
+
+    bindWizardControls();
+  }
+
+  function bindWizardControls() {
+    document.getElementById("closeBeginnerWizard")?.addEventListener("click", closeWizard);
+    document.getElementById("beginnerBack")?.addEventListener("click", () => {
+      starterState.step--;
+      renderWizardStep();
+    });
+    document.querySelectorAll("[data-goal]").forEach(btn => btn.addEventListener("click", () => { starterState.goal = btn.dataset.goal; renderWizardStep(); }));
+    document.querySelectorAll("[data-days]").forEach(btn => btn.addEventListener("click", () => { starterState.days = Number(btn.dataset.days); renderWizardStep(); }));
+    document.querySelectorAll("[data-equipment]").forEach(btn => btn.addEventListener("click", () => { starterState.equipment = btn.dataset.equipment; renderWizardStep(); }));
+    document.querySelectorAll("[data-session]").forEach(btn => btn.addEventListener("click", () => { starterState.session = Number(btn.dataset.session); renderWizardStep(); }));
+    document.getElementById("beginnerNext")?.addEventListener("click", () => {
+      starterState.step++;
+      if (starterState.step === 4) buildPlan();
+      renderWizardStep();
+    });
+  }
+
+  function renderPlanReview() {
+    const el = modal();
+    if (!el) return;
+    const totalExercises = starterState.generated.reduce((sum, workout) => sum + workout.exercises.length, 0);
+    el.innerHTML = `
+      <div class="beginner-modal-top">
+        <button type="button" class="beginner-close" id="closeBeginnerWizard" aria-label="Close">×</button>
+        <div class="beginner-ready-check">✓</div>
+      </div>
+      <div class="beginner-kicker">YOUR FIRST ROUTINE</div>
+      <h1 id="beginnerWizardTitle">Your plan is ready.</h1>
+      <p class="beginner-subtitle">No guessing. We picked beginner-friendly exercises, sets, reps, and spaced-out training days for you.</p>
+
+      <div class="beginner-summary-pills">
+        <span>${starterState.days} days/week</span><span>${starterState.session} min</span><span>${equipmentLabels[starterState.equipment]}</span>
+      </div>
+
+      <div class="beginner-review-list">
+        ${starterState.generated.map((workout, index) => `
+          <div class="beginner-review-workout">
+            <div class="beginner-review-number">${index + 1}</div>
+            <div class="beginner-review-copy">
+              <strong>${workout.name}</strong>
+              <span>${workout.day} • ${workout.exercises.length} exercises • 2 sets each</span>
+              <small>${workout.exercises.map(ex => ex.name).join(" • ")}</small>
+            </div>
+          </div>`).join("")}
+      </div>
+
+      <div class="beginner-reassurance">
+        <strong>Start lighter than you think.</strong>
+        <p>Your first goal is learning the movements and building the habit. You can increase weight later when the reps feel comfortable and controlled.</p>
+      </div>
+
+      <div class="beginner-plan-meta">${goalLabels[starterState.goal]} • ${totalExercises} exercise slots across the week</div>
+      <div class="beginner-modal-actions review-actions">
+        <button type="button" class="secondary beginner-back" id="beginnerBack">Change answers</button>
+        <button type="button" class="primary beginner-next" id="saveBeginnerPlan">Use this plan</button>
+      </div>
+    `;
+    document.getElementById("closeBeginnerWizard").addEventListener("click", closeWizard);
+    document.getElementById("beginnerBack").addEventListener("click", () => { starterState.step = 3; renderWizardStep(); });
+    document.getElementById("saveBeginnerPlan").addEventListener("click", saveGeneratedPlan);
+  }
+
+  function saveGeneratedPlan() {
+    const generatedDays = new Set(starterState.generated.map(w => w.day));
+
+    // Keep existing workouts, but free up any days the new beginner plan will use.
+    state.customWorkouts = state.customWorkouts.map(workout => ({
+      ...workout,
+      days: (workout.days || []).filter(day => !generatedDays.has(day))
+    }));
+
+    const stamp = Date.now();
+    const newWorkouts = starterState.generated.map((workout, index) => ({
+      id: `starter-plan-${stamp}-${index}`,
+      name: workout.name,
+      builtIn: false,
+      beginnerGenerated: true,
+      days: [workout.day],
+      exercises: workout.exercises.map(ex => ({ ...ex }))
+    }));
+
+    state.customWorkouts.push(...newWorkouts);
+    saveCustomWorkouts();
+    closeWizard();
+    state.page = "workouts";
+    render();
+    showToast("Beginner plan added to your week");
+  }
+})();
