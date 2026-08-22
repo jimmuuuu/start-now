@@ -88,6 +88,52 @@
 .beginner-modal-actions:has(.beginner-back){grid-template-columns:.8fr 1.3fr}
 .beginner-back,.beginner-next{min-height:50px}
 
+.beginner-day-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:9px;
+}
+.beginner-day{
+  min-height:72px;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:var(--surface);
+  color:var(--text);
+  padding:10px 8px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-weight:800;
+  transition:.15s ease;
+}
+.beginner-day.selected{
+  border-color:var(--coral);
+  background:#fff5f4;
+  box-shadow:0 0 0 2px rgba(255,90,95,.08);
+}
+.beginner-day-short{font-size:14px;letter-spacing:.01em}
+.beginner-day-check{
+  width:24px;height:24px;border-radius:8px;
+  display:grid;place-items:center;
+  border:1px solid var(--line);
+  color:#fff;
+  font-size:13px;
+  font-weight:900;
+}
+.beginner-day.selected .beginner-day-check{background:var(--coral);border-color:var(--coral)}
+.beginner-day-helper{
+  margin-top:2px;
+  padding:12px 13px;
+  border-radius:15px;
+  background:#f7f7f4;
+  border:1px solid var(--line);
+}
+.beginner-day-helper strong{display:block;font-size:12px;margin-bottom:4px}
+.beginner-day-helper span{display:block;color:var(--muted);font-size:11px;line-height:1.4}
+.beginner-step-error{min-height:18px;margin:8px 2px 0;color:var(--coral);font-size:12px;font-weight:700;text-align:center}
+
 .beginner-ready-check{
   width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
   background:var(--lime);color:#223000;font-weight:900;font-size:20px
@@ -111,9 +157,10 @@
 
 .dark .beginner-plan-card{background:linear-gradient(145deg,#17191b,#1c1717);border-color:#443033}
 .dark .beginner-badge{background:#2b2021}
-.dark .beginner-points span,.dark .beginner-summary-pills span{background:#202326;color:#c9cbd0}
-.dark .beginner-option.selected{background:#2b2021}
+.dark .beginner-points span,.dark .beginner-summary-pills span,.dark .beginner-day-helper{background:#202326;color:#c9cbd0}
+.dark .beginner-option.selected,.dark .beginner-day.selected{background:#2b2021}
 .dark .beginner-option-check{background:#17191b}
+.dark .beginner-day-check{background:#17191b}
 .dark .beginner-review-copy small{color:#a8abb0}
 .dark .beginner-reassurance{background:#171e29;border-color:#27354a}
 .dark .beginner-reassurance p{color:#aeb7c5}
@@ -129,4 +176,5 @@
   .beginner-modal h1{font-size:28px}
   .beginner-modal-actions:has(.beginner-back){grid-template-columns:1fr}
   .beginner-points{display:grid;grid-template-columns:1fr 1fr}
+  .beginner-day-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
