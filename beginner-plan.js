@@ -84,70 +84,77 @@
     };
   }
 
-  function planTemplates() {
-    const days = [...starterState.selectedDays];
-    const count = days.length;
+  function buildTemplates() {
     const isHome = starterState.equipment === "home";
     const m = machinePool();
 
     if (isHome) {
-      const fullA = [BW.squat, BW.pushup, BW.row, BW.bridge, BW.deadbug];
-      const fullB = [BW.lunge, BW.shoulder, BW.row, BW.calf, BW.birddog];
-      const fullC = [BW.squat, BW.pushup, BW.bridge, BW.row, BW.plank];
-      const lower = [BW.squat, BW.lunge, BW.bridge, BW.calf, BW.deadbug];
-      const upper = [BW.pushup, BW.row, BW.shoulder, BW.birddog, BW.plank];
-
-      if (count === 2) return [
-        { name: "Beginner Full Body A", day: days[0], exercises: fullA },
-        { name: "Beginner Full Body B", day: days[1], exercises: fullB }
-      ];
-      if (count === 3) return [
-        { name: "Beginner Full Body A", day: days[0], exercises: fullA },
-        { name: "Beginner Full Body B", day: days[1], exercises: fullB },
-        { name: "Beginner Full Body C", day: days[2], exercises: fullC }
-      ];
       return [
-        { name: "Beginner Upper A", day: days[0], exercises: upper },
-        { name: "Beginner Lower A", day: days[1], exercises: lower },
-        { name: "Beginner Upper B", day: days[2], exercises: [BW.row, BW.pushup, BW.shoulder, BW.birddog, BW.plank] },
-        { name: "Beginner Lower B", day: days[3], exercises: [BW.lunge, BW.squat, BW.bridge, BW.calf, BW.deadbug] }
+        { name: "Beginner Full Body A", exercises: [BW.squat, BW.pushup, BW.row, BW.bridge, BW.deadbug] },
+        { name: "Beginner Full Body B", exercises: [BW.lunge, BW.shoulder, BW.row, BW.calf, BW.birddog] },
+        { name: "Beginner Full Body C", exercises: [BW.squat, BW.pushup, BW.bridge, BW.row, BW.plank] },
+        { name: "Beginner Upper", exercises: [BW.pushup, BW.row, BW.shoulder, BW.birddog, BW.plank] },
+        { name: "Beginner Lower", exercises: [BW.squat, BW.lunge, BW.bridge, BW.calf, BW.deadbug] },
+        { name: "Beginner Technique Day", light: true, exercises: [BW.squat, BW.row, BW.bridge, BW.deadbug] },
+        { name: "Beginner Easy Full Body", light: true, exercises: [BW.pushup, BW.lunge, BW.birddog, BW.calf] }
       ];
     }
 
-    const fullA = [m.legpress, m.chest, m.row, m.legcurl, m.core];
-    const fullB = [m.legpress, m.pulldown, m.shoulder, m.abduction, m.biceps];
-    const fullC = [m.legext, m.chest, m.row, m.legcurl, m.triceps, m.calf];
-    const upperA = [m.chest, m.row, m.shoulder, m.pulldown, m.biceps, m.triceps];
-    const lowerA = [m.legpress, m.legcurl, m.legext, m.abduction, m.calf, m.core];
-    const upperB = [m.pulldown, m.chest, m.row, m.lateral, m.biceps, m.triceps];
-    const lowerB = [m.legpress, m.legcurl, m.abduction, m.legext, m.calf, m.core];
-
-    if (count === 2) return [
-      { name: "Beginner Full Body A", day: days[0], exercises: fullA },
-      { name: "Beginner Full Body B", day: days[1], exercises: fullB }
-    ];
-    if (count === 3) return [
-      { name: "Beginner Full Body A", day: days[0], exercises: fullA },
-      { name: "Beginner Full Body B", day: days[1], exercises: fullB },
-      { name: "Beginner Full Body C", day: days[2], exercises: fullC }
-    ];
     return [
-      { name: "Beginner Upper A", day: days[0], exercises: upperA },
-      { name: "Beginner Lower A", day: days[1], exercises: lowerA },
-      { name: "Beginner Upper B", day: days[2], exercises: upperB },
-      { name: "Beginner Lower B", day: days[3], exercises: lowerB }
+      { name: "Beginner Full Body A", exercises: [m.legpress, m.chest, m.row, m.legcurl, m.core] },
+      { name: "Beginner Full Body B", exercises: [m.legpress, m.pulldown, m.shoulder, m.abduction, m.biceps] },
+      { name: "Beginner Full Body C", exercises: [m.legext, m.chest, m.row, m.legcurl, m.triceps, m.calf] },
+      { name: "Beginner Upper", exercises: [m.chest, m.row, m.shoulder, m.pulldown, m.biceps, m.triceps] },
+      { name: "Beginner Lower", exercises: [m.legpress, m.legcurl, m.legext, m.abduction, m.calf, m.core] },
+      { name: "Beginner Technique Day", light: true, exercises: [m.chest, m.row, m.legpress, m.core] },
+      { name: "Beginner Easy Full Body", light: true, exercises: [m.pulldown, m.legcurl, m.shoulder, m.calf] }
     ];
   }
 
-  function applySessionLength(exercises) {
+  function planTemplates() {
+    const days = [...starterState.selectedDays];
+    const count = days.length;
+    const t = buildTemplates();
+
+    if (count === 1) return [{ ...t[0], day: days[0] }];
+    if (count === 2) return [
+      { ...t[0], day: days[0] },
+      { ...t[1], day: days[1] }
+    ];
+    if (count === 3) return [
+      { ...t[0], day: days[0] },
+      { ...t[1], day: days[1] },
+      { ...t[2], day: days[2] }
+    ];
+    if (count === 4) return [
+      { ...t[3], name: "Beginner Upper A", day: days[0] },
+      { ...t[4], name: "Beginner Lower A", day: days[1] },
+      { ...t[3], name: "Beginner Upper B", day: days[2] },
+      { ...t[4], name: "Beginner Lower B", day: days[3] }
+    ];
+
+    const expanded = [
+      { ...t[3], name: "Beginner Upper A" },
+      { ...t[4], name: "Beginner Lower A" },
+      { ...t[5] },
+      { ...t[3], name: "Beginner Upper B" },
+      { ...t[4], name: "Beginner Lower B" },
+      { ...t[6] },
+      { ...t[5], name: "Beginner Recovery + Technique" }
+    ];
+
+    return days.map((day, index) => ({ ...expanded[index], day }));
+  }
+
+  function applySessionLength(exercises, light = false) {
     const maxExercises = starterState.session <= 30 ? 4 : starterState.session <= 45 ? 5 : 6;
-    return exercises.slice(0, maxExercises).map(ex => ({ ...ex, sets: 2 }));
+    return exercises.slice(0, maxExercises).map(ex => ({ ...ex, sets: light ? 1 : 2 }));
   }
 
   function buildPlan() {
     starterState.generated = planTemplates().map(item => ({
       ...item,
-      exercises: applySessionLength(item.exercises)
+      exercises: applySessionLength(item.exercises, Boolean(item.light))
     }));
   }
 
@@ -255,8 +262,8 @@
     } else if (starterState.step === 1) {
       el.innerHTML = shell(
         "Which days can you work out?",
-        "Pick the exact days that fit your week. For a first routine, choose 2–4 days.",
-        `<div class="beginner-day-grid">${ALL_DAYS.map(dayButton).join("")}</div><div class="beginner-day-helper"><strong>${starterState.selectedDays.length} selected</strong><span>${starterState.selectedDays.join(" • ")}</span></div>`
+        "Pick any days that fit your week — from 1 day up to all 7. If you choose 5–7 days, some sessions will automatically be lighter.",
+        `<div class="beginner-day-grid">${ALL_DAYS.map(dayButton).join("")}</div><div class="beginner-day-helper"><strong>${starterState.selectedDays.length} selected</strong><span>${starterState.selectedDays.join(" • ") || "Choose at least one day"}</span></div>`
       );
     } else if (starterState.step === 2) {
       el.innerHTML = shell(
@@ -301,15 +308,10 @@
 
     document.querySelectorAll("[data-training-day]").forEach(btn => btn.addEventListener("click", () => {
       const day = btn.dataset.trainingDay;
-      const exists = starterState.selectedDays.includes(day);
-      if (exists) {
+      if (starterState.selectedDays.includes(day)) {
         starterState.selectedDays = starterState.selectedDays.filter(item => item !== day);
-      } else if (starterState.selectedDays.length < 4) {
-        starterState.selectedDays = ALL_DAYS.filter(item => item === day || starterState.selectedDays.includes(item));
       } else {
-        const error = document.getElementById("beginnerStepError");
-        if (error) error.textContent = "For your first routine, choose up to 4 workout days.";
-        return;
+        starterState.selectedDays = ALL_DAYS.filter(item => item === day || starterState.selectedDays.includes(item));
       }
       renderWizardStep();
     }));
@@ -325,9 +327,9 @@
     }));
 
     document.getElementById("beginnerNext")?.addEventListener("click", () => {
-      if (starterState.step === 1 && (starterState.selectedDays.length < 2 || starterState.selectedDays.length > 4)) {
+      if (starterState.step === 1 && starterState.selectedDays.length < 1) {
         const error = document.getElementById("beginnerStepError");
-        if (error) error.textContent = "Choose at least 2 days and no more than 4 days.";
+        if (error) error.textContent = "Choose at least one workout day.";
         return;
       }
       starterState.step++;
@@ -353,13 +355,15 @@
         <span>${starterState.selectedDays.length} days/week</span><span>${starterState.session} min</span><span>${equipmentLabels[starterState.equipment]}</span>
       </div>
 
+      ${starterState.selectedDays.length >= 5 ? `<div class="beginner-reassurance"><strong>More days does not mean every day has to be hard.</strong><p>Because you selected ${starterState.selectedDays.length} days, START/NOW made some sessions lighter so the beginner plan stays manageable.</p></div>` : ""}
+
       <div class="beginner-review-list">
         ${starterState.generated.map((workout, index) => `
           <div class="beginner-review-workout">
             <div class="beginner-review-number">${index + 1}</div>
             <div class="beginner-review-copy">
               <strong>${workout.name}</strong>
-              <span>${workout.day} • ${workout.exercises.length} exercises • 2 sets each</span>
+              <span>${workout.day} • ${workout.exercises.length} exercises • ${workout.light ? "1 easy set each" : "2 sets each"}</span>
               <small>${workout.exercises.map(ex => ex.name).join(" • ")}</small>
             </div>
           </div>`).join("")}
@@ -387,7 +391,6 @@
   function saveGeneratedPlan() {
     const generatedDays = new Set(starterState.generated.map(w => w.day));
 
-    // Keep existing workouts, but free up any days the new beginner plan will use.
     state.customWorkouts = state.customWorkouts.map(workout => ({
       ...workout,
       days: (workout.days || []).filter(day => !generatedDays.has(day))
