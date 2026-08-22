@@ -1,5 +1,5 @@
-const CACHE="start-now-exercise-library-250-v1";
-const ASSETS=["./","index.html","app.css","builder.css","app.js","exercise-library-extra.js","manifest.webmanifest"];
+const CACHE="start-now-progress-dashboard-v1";
+const ASSETS=["./","index.html","app.css","builder.css","progress.css","app.js","exercise-library-extra.js","progress.js","manifest.webmanifest"];
 
 self.addEventListener("install", event => {
   self.skipWaiting();
