@@ -1,0 +1,132 @@
+.beginner-plan-card{
+  margin:16px 0 18px;
+  padding:18px;
+  background:linear-gradient(145deg,#fff,#fff8f7);
+  border-color:#ffd9d8;
+}
+.beginner-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff0ef;
+  color:var(--coral);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.beginner-plan-copy{
+  display:grid;
+  grid-template-columns:48px 1fr;
+  gap:12px;
+  align-items:center;
+  margin:14px 0 12px;
+}
+.beginner-plan-icon{
+  width:48px;height:48px;border-radius:16px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--coral),var(--coral-2));
+  color:#fff;font-size:22px;font-weight:900;
+  box-shadow:0 10px 20px rgba(255,90,95,.2);
+}
+.beginner-plan-copy h2{margin:0 0 5px;font-size:22px;letter-spacing:-.6px}
+.beginner-plan-copy p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.beginner-points{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px}
+.beginner-points span{font-size:11px;font-weight:800;color:#555;background:#f7f7f4;border:1px solid var(--line);padding:7px 9px;border-radius:999px}
+
+.beginner-modal-open{overflow:hidden}
+.beginner-modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(15,15,15,.46);
+  backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  padding:18px;
+}
+.beginner-modal{
+  width:min(520px,100%);
+  max-height:88vh;
+  overflow:auto;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:28px 28px 22px 22px;
+  box-shadow:0 24px 70px rgba(0,0,0,.22);
+  padding:18px;
+}
+.beginner-modal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.beginner-close{
+  width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:24px;line-height:1
+}
+.beginner-step-dots{display:flex;gap:6px}
+.beginner-step-dots span{width:22px;height:5px;border-radius:99px;background:var(--line)}
+.beginner-step-dots span.active{background:var(--coral)}
+.beginner-kicker{font-size:11px;color:var(--coral);font-weight:900;letter-spacing:.1em;margin-top:4px}
+.beginner-modal h1{font-size:31px;line-height:1.05;letter-spacing:-1.2px;margin:8px 0 8px}
+.beginner-subtitle{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.beginner-options{display:grid;gap:10px;margin:18px 0}
+.beginner-option{
+  width:100%;min-height:72px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:var(--surface);
+  color:var(--text);
+  padding:13px;
+  display:grid;
+  grid-template-columns:34px 1fr;
+  gap:10px;
+  align-items:center;
+  text-align:left;
+}
+.beginner-option.selected{border-color:var(--coral);background:#fff5f4;box-shadow:0 0 0 2px rgba(255,90,95,.08)}
+.beginner-option-check{
+  width:30px;height:30px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;font-weight:900;color:white;background:#fff
+}
+.beginner-option.selected .beginner-option-check{background:var(--coral);border-color:var(--coral)}
+.beginner-option strong{display:block;font-size:15px;margin-bottom:3px}
+.beginner-option small{display:block;color:var(--muted);font-size:12px;line-height:1.35}
+.beginner-modal-actions{display:grid;grid-template-columns:1fr;gap:9px;margin-top:8px}
+.beginner-modal-actions:has(.beginner-back){grid-template-columns:.8fr 1.3fr}
+.beginner-back,.beginner-next{min-height:50px}
+
+.beginner-ready-check{
+  width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
+  background:var(--lime);color:#223000;font-weight:900;font-size:20px
+}
+.beginner-summary-pills{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
+.beginner-summary-pills span{padding:8px 10px;border-radius:999px;background:#f5f5f2;border:1px solid var(--line);font-size:11px;font-weight:800}
+.beginner-review-list{display:grid;gap:10px}
+.beginner-review-workout{
+  display:grid;grid-template-columns:34px 1fr;gap:10px;padding:13px;border:1px solid var(--line);border-radius:17px;background:var(--surface)
+}
+.beginner-review-number{width:32px;height:32px;border-radius:10px;background:#eef4ff;color:var(--blue);display:grid;place-items:center;font-weight:900}
+.beginner-review-copy{min-width:0}
+.beginner-review-copy strong{display:block;font-size:14px;margin-bottom:3px}
+.beginner-review-copy span{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}
+.beginner-review-copy small{display:block;color:#666;line-height:1.4;font-size:11px}
+.beginner-reassurance{margin:14px 0;padding:14px;border-radius:17px;background:#f3f8ff;border:1px solid #e1ebff}
+.beginner-reassurance strong{color:var(--blue);font-size:13px}
+.beginner-reassurance p{margin:5px 0 0;color:#5f6470;font-size:12px;line-height:1.45}
+.beginner-plan-meta{font-size:11px;color:var(--muted);text-align:center;margin:4px 0 10px}
+.review-actions{margin-top:12px}
+
+.dark .beginner-plan-card{background:linear-gradient(145deg,#17191b,#1c1717);border-color:#443033}
+.dark .beginner-badge{background:#2b2021}
+.dark .beginner-points span,.dark .beginner-summary-pills span{background:#202326;color:#c9cbd0}
+.dark .beginner-option.selected{background:#2b2021}
+.dark .beginner-option-check{background:#17191b}
+.dark .beginner-review-copy small{color:#a8abb0}
+.dark .beginner-reassurance{background:#171e29;border-color:#27354a}
+.dark .beginner-reassurance p{color:#aeb7c5}
+
+@media (min-width:560px){
+  .beginner-modal-overlay{align-items:center}
+  .beginner-modal{border-radius:28px}
+}
+
+@media (max-width:390px){
+  .beginner-modal-overlay{padding:8px}
+  .beginner-modal{padding:16px;border-radius:24px 24px 18px 18px}
+  .beginner-modal h1{font-size:28px}
+  .beginner-modal-actions:has(.beginner-back){grid-template-columns:1fr}
+  .beginner-points{display:grid;grid-template-columns:1fr 1fr}
+}
