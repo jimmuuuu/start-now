@@ -1,5 +1,5 @@
-const CACHE="start-now-original-v2";
-const ASSETS=["./","index.html","app.css","app.js","manifest.webmanifest"];
+const CACHE="start-now-workout-builder-v1";
+const ASSETS=["./","index.html","app.css","builder.css","app.js","manifest.webmanifest"];
 
 self.addEventListener("install", event => {
   self.skipWaiting();
