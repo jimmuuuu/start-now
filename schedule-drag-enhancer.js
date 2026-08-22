@@ -42,7 +42,7 @@
     const target = document.querySelector(`.sn-schedule-row[data-day="${CSS.escape(targetDay)}"]`);
     if (!target) return;
 
-    // Reuse the existing editor logic instead of keeping a second schedule state.
+    // Reuse the existing editor logic so drag/drop and tap-to-change stay in sync.
     target.click();
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -66,7 +66,7 @@
       const tip = document.createElement("div");
       tip.id = "snDragTip";
       tip.className = "sn-drag-tip";
-      tip.innerHTML = `<strong>Drag to rearrange:</strong> grab the handle on a workout and drop it onto another day. You can still tap Change if you prefer.`;
+      tip.innerHTML = `<strong>Drag to rearrange:</strong> grab the handle on a workout and drop it onto any other day, including a rest day. You can still tap Change if you prefer.`;
       subtitle.insertAdjacentElement("afterend", tip);
     }
 
@@ -74,28 +74,10 @@
       if (row.dataset.dragEnhanced === "true") return;
       row.dataset.dragEnhanced = "true";
 
-      if (!isWorkoutRow(row)) return;
-
       const day = row.dataset.day;
       const name = workoutName(row);
-      row.draggable = true;
-      row.setAttribute("aria-label", `${name} on ${day}. Drag to another day or tap to change.`);
 
-      const oldAction = row.querySelector(".sn-change");
-      if (oldAction) {
-        oldAction.innerHTML = `<span class="sn-drag-handle" role="button" tabindex="0" aria-label="Drag ${name}"><span class="sn-drag-word">Drag</span><span class="sn-drag-grip">⋮⋮</span></span>`;
-      }
-      const handle = row.querySelector(".sn-drag-handle");
-
-      row.addEventListener("dragstart", event => {
-        drag = { sourceDay: day, sourceName: name };
-        row.classList.add("sn-dragging");
-        if (event.dataTransfer) {
-          event.dataTransfer.effectAllowed = "move";
-          event.dataTransfer.setData("text/plain", name);
-        }
-      });
-
+      // Every day is a valid drop target, including rest days.
       row.addEventListener("dragover", event => {
         if (!drag || drag.sourceDay === row.dataset.day) return;
         event.preventDefault();
@@ -112,6 +94,27 @@
         drag = null;
         clearHighlights();
         applyMove(current.sourceName, current.sourceDay, row.dataset.day);
+      });
+
+      // Rest days can receive drops, but only actual workouts can be dragged.
+      if (!isWorkoutRow(row)) return;
+
+      row.draggable = true;
+      row.setAttribute("aria-label", `${name} on ${day}. Drag to another day or tap to change.`);
+
+      const oldAction = row.querySelector(".sn-change");
+      if (oldAction) {
+        oldAction.innerHTML = `<span class="sn-drag-handle" role="button" tabindex="0" aria-label="Drag ${name}"><span class="sn-drag-word">Drag</span><span class="sn-drag-grip">⋮⋮</span></span>`;
+      }
+      const handle = row.querySelector(".sn-drag-handle");
+
+      row.addEventListener("dragstart", event => {
+        drag = { sourceDay: day, sourceName: name };
+        row.classList.add("sn-dragging");
+        if (event.dataTransfer) {
+          event.dataTransfer.effectAllowed = "move";
+          event.dataTransfer.setData("text/plain", name);
+        }
       });
 
       row.addEventListener("dragend", () => {
