@@ -10,7 +10,7 @@
 
   <script>
     (() => {
-      const version = "start-now-personal-arnold-v21";
+      const version = "start-now-persistence-v22";
       if (localStorage.getItem("sn_runtime_version") === version) return;
       window.addEventListener("load", async () => {
         try {
@@ -30,107 +30,12 @@
     })();
   </script>
 
-  <script>
-    // Personal-only Arnold split installer.
-    // It runs before app.js reads localStorage, so the schedule is guaranteed to be present
-    // when the app state is created. It only runs from the private setup URL.
-    (() => {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("personal") !== "arnold-v21") return;
-
-      const exercise = (id, name, muscle, sets, reps, cue) => ({
-        id: `arnold-${id}`,
-        name,
-        muscle,
-        sets,
-        reps,
-        weight: 0,
-        cue
-      });
-
-      const E = {
-        bench: exercise("barbell-bench-press", "Barbell Bench Press", "Chest", 3, 8, "Keep your shoulder blades set and use a controlled bar path."),
-        inclineBar: exercise("incline-barbell-bench-press", "Incline Barbell Bench Press", "Chest", 3, 8, "Use a moderate incline and lower the bar under control."),
-        inclineDb: exercise("incline-dumbbell-bench-press", "Incline Dumbbell Bench Press", "Chest", 3, 10, "Keep the dumbbells controlled and avoid bouncing at the bottom."),
-        dbBench: exercise("dumbbell-bench-press", "Dumbbell Bench Press", "Chest", 3, 10, "Press smoothly and keep your upper back stable."),
-        fly: exercise("dumbbell-fly", "Dumbbell Fly", "Chest", 2, 12, "Use a comfortable range and keep a slight bend in your elbows."),
-        pullover: exercise("dumbbell-pullover", "Dumbbell Pullover", "Back", 2, 12, "Move slowly and keep the range comfortable for your shoulders."),
-        pullup: exercise("lat-pulldown", "Lat Pulldown", "Back", 3, 10, "Pull your elbows down and keep your chest tall."),
-        row: exercise("barbell-row", "Barbell Row", "Back", 3, 10, "Brace your torso and pull toward your lower ribs."),
-        tbar: exercise("t-bar-row", "T-Bar Row", "Back", 3, 10, "Keep your torso stable and pull with your back."),
-
-        arnoldPress: exercise("arnold-press", "Arnold Press", "Shoulders", 3, 10, "Rotate smoothly and use a weight you can control."),
-        overhead: exercise("barbell-overhead-press", "Barbell Overhead Press", "Shoulders", 3, 8, "Keep your ribs down and press in a controlled path."),
-        lateral: exercise("lateral-raise", "Lateral Raise", "Shoulders", 3, 12, "Raise without swinging and stop around shoulder height."),
-        frontRaise: exercise("dumbbell-front-raise", "Dumbbell Front Raise", "Shoulders", 2, 12, "Lift under control without leaning back."),
-        rearDelt: exercise("reverse-fly", "Reverse Fly", "Rear Delts", 2, 12, "Move slowly and squeeze your upper back."),
-        barCurl: exercise("barbell-curl", "Barbell Curl", "Biceps", 3, 10, "Keep your elbows steady and avoid swinging."),
-        inclineCurl: exercise("incline-dumbbell-curl", "Incline Dumbbell Curl", "Biceps", 2, 12, "Use a full controlled curl without moving your upper arm."),
-        preacher: exercise("preacher-curl", "Preacher Curl", "Biceps", 3, 10, "Control the lowering portion and avoid locking out hard."),
-        hammer: exercise("hammer-curl", "Hammer Curl", "Biceps", 2, 12, "Keep your wrists neutral and elbows close to your sides."),
-        overheadTri: exercise("overhead-triceps-extension", "Overhead Triceps Extension", "Triceps", 3, 10, "Keep your elbows controlled and use a comfortable range."),
-        skull: exercise("skull-crusher", "Skull Crusher", "Triceps", 3, 10, "Lower slowly and keep your upper arms steady."),
-        pushdown: exercise("triceps-pushdown", "Triceps Pushdown", "Triceps", 2, 12, "Keep your elbows pinned and finish each rep smoothly."),
-
-        squat: exercise("barbell-back-squat", "Barbell Back Squat", "Quads", 3, 8, "Use a comfortable depth and keep your feet planted."),
-        frontSquat: exercise("front-squat", "Front Squat", "Quads", 3, 8, "Stay tall and use a load you can control throughout the rep."),
-        hack: exercise("hack-squat", "Hack Squat", "Quads", 3, 10, "Keep your back supported and control the bottom position."),
-        legPress: exercise("leg-press", "Leg Press", "Legs", 3, 10, "Keep your back against the pad and control the depth."),
-        rdl: exercise("romanian-deadlift", "Romanian Deadlift", "Hamstrings", 3, 10, "Hinge at the hips and keep the weight close to your legs."),
-        legCurl: exercise("leg-curl", "Leg Curl", "Hamstrings", 3, 12, "Keep your hips stable and curl under control."),
-        legExt: exercise("leg-extension", "Leg Extension", "Quads", 2, 12, "Lift smoothly and avoid snapping your knees straight."),
-        lunge: exercise("walking-lunge", "Walking Lunge", "Quads", 2, 10, "Use controlled steps and keep your balance."),
-        calf: exercise("standing-calf-raise", "Standing Calf Raise", "Calves", 3, 15, "Pause at the top and lower through a comfortable range."),
-        seatedCalf: exercise("seated-calf-raise", "Seated Calf Raise", "Calves", 3, 15, "Pause at the top and lower slowly."),
-      };
-
-      const split = [
-        { name: "Chest & Back A", day: "Monday", exercises: [E.bench, E.inclineBar, E.pullup, E.row, E.fly, E.pullover] },
-        { name: "Shoulders & Arms A", day: "Tuesday", exercises: [E.arnoldPress, E.lateral, E.rearDelt, E.barCurl, E.inclineCurl, E.overheadTri, E.pushdown] },
-        { name: "Legs A", day: "Wednesday", exercises: [E.squat, E.legPress, E.rdl, E.legCurl, E.legExt, E.calf] },
-        { name: "Chest & Back B", day: "Thursday", exercises: [E.inclineDb, E.dbBench, E.pullup, E.tbar, E.fly, E.pullover] },
-        { name: "Shoulders & Arms B", day: "Friday", exercises: [E.overhead, E.frontRaise, E.lateral, E.rearDelt, E.preacher, E.hammer, E.skull, E.pushdown] },
-        { name: "Legs B", day: "Saturday", exercises: [E.frontSquat, E.hack, E.rdl, E.legCurl, E.lunge, E.seatedCalf] }
-      ];
-
-      let existing = [];
-      try {
-        const parsed = JSON.parse(localStorage.getItem("sn_custom_workouts") || "[]");
-        existing = Array.isArray(parsed) ? parsed : [];
-      } catch {
-        existing = [];
-      }
-
-      const kept = existing
-        .filter(workout => !workout?.personalArnold)
-        .map(workout => ({ ...workout, days: [] }));
-
-      const stamp = Date.now();
-      const arnoldWorkouts = split.map((workout, index) => ({
-        id: `starter-plan-${stamp}-${index}`,
-        name: workout.name,
-        builtIn: false,
-        beginnerGenerated: true,
-        personalArnold: true,
-        personalPlan: true,
-        days: [workout.day],
-        exercises: workout.exercises.map(item => ({ ...item }))
-      }));
-
-      localStorage.setItem("sn_custom_workouts", JSON.stringify([...kept, ...arnoldWorkouts]));
-      localStorage.setItem("sn_personal_plan", "arnold-v21");
-      localStorage.setItem("sn_personal_arnold_v21", "applied");
-      localStorage.removeItem("sn_personal_arnold_v19");
-      localStorage.removeItem("sn_personal_arnold_v20");
-    })();
-  </script>
-
-  <link rel="manifest" href="manifest.webmanifest?v=personal-arnold-v21" />
-  <link rel="stylesheet" href="app.css?v=personal-arnold-v21" />
-  <link rel="stylesheet" href="builder.css?v=personal-arnold-v21" />
-  <link rel="stylesheet" href="progress.css?v=personal-arnold-v21" />
-  <link rel="stylesheet" href="beginner-plan.css?v=personal-arnold-v21" />
-  <link rel="stylesheet" href="active-plan.css?v=personal-arnold-v21" />
+  <link rel="manifest" href="manifest.webmanifest?v=persistence-v22" />
+  <link rel="stylesheet" href="app.css?v=persistence-v22" />
+  <link rel="stylesheet" href="builder.css?v=persistence-v22" />
+  <link rel="stylesheet" href="progress.css?v=persistence-v22" />
+  <link rel="stylesheet" href="beginner-plan.css?v=persistence-v22" />
+  <link rel="stylesheet" href="active-plan.css?v=persistence-v22" />
 </head>
 <body>
   <div class="app-shell">
@@ -146,12 +51,13 @@
 
   <div class="toast" id="toast" role="status"></div>
 
-  <script src="app.js?v=personal-arnold-v21"></script>
-  <script src="exercise-library-extra.js?v=personal-arnold-v21"></script>
-  <script src="progress.js?v=personal-arnold-v21"></script>
-  <script src="beginner-plan-v3.js?v=personal-arnold-v21"></script>
-  <script src="active-plan.js?v=personal-arnold-v21"></script>
-  <script src="visual-assets.js?v=personal-arnold-v21"></script>
-  <script src="schedule-editor-v14.js?v=personal-arnold-v21"></script>
+  <script src="app.js?v=persistence-v22"></script>
+  <script src="exercise-library-extra.js?v=persistence-v22"></script>
+  <script src="progress.js?v=persistence-v22"></script>
+  <script src="beginner-plan-v3.js?v=persistence-v22"></script>
+  <script src="active-plan.js?v=persistence-v22"></script>
+  <script src="visual-assets.js?v=persistence-v22"></script>
+  <script src="schedule-editor-v14.js?v=persistence-v22"></script>
+  <script src="saved-workouts-fix-v22.js?v=persistence-v22"></script>
 </body>
 </html>
