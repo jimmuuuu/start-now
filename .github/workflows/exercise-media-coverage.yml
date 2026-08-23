@@ -27,14 +27,17 @@ jobs:
       - name: Build full safe-match diagnostic
         run: node scripts/diagnose-exercise-media-v45.mjs
 
-      - name: Commit diagnostic report
+      - name: Verify safely mapped GIF URLs
+        run: node scripts/verify-safe-gifs-v45.mjs
+
+      - name: Commit diagnostic reports
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add EXERCISE_MEDIA_DIAGNOSTIC_V45.json EXERCISE_MEDIA_DIAGNOSTIC_V45.md
+          git add EXERCISE_MEDIA_DIAGNOSTIC_V45.json EXERCISE_MEDIA_DIAGNOSTIC_V45.md EXERCISE_MEDIA_LOAD_CHECK_V45.json EXERCISE_MEDIA_LOAD_CHECK_V45.md
           if git diff --cached --quiet; then
             echo 'Diagnostic already current.'
             exit 0
           fi
-          git commit -m 'Generate exercise media diagnostic [skip ci]'
+          git commit -m 'Generate exercise media diagnostics [skip ci]'
           git push origin HEAD
