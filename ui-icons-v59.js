@@ -70,6 +70,10 @@
     strong.innerHTML = `${icon(name, '', 18, 2.2)}${label}`;
   }
 
+  function cleanLeadingSymbol(text) {
+    return String(text || '').replace(/^[^A-Za-z0-9]+\s*/, '').trim();
+  }
+
   function decorate() {
     installStyles();
 
@@ -110,11 +114,11 @@
     });
 
     document.querySelectorAll('.reason strong').forEach(strong => {
-      const text = strong.textContent.trim();
-      if (/Consistency Starter|Consistency/i.test(text)) replaceReasonIcon(strong, 'flame', text.replace(/^\S+\s*/, ''));
-      else if (/First Five/i.test(text)) replaceReasonIcon(strong, 'trophy', text.replace(/^\S+\s*/, ''));
-      else if (/Progress Tracker|Progress/i.test(text)) replaceReasonIcon(strong, 'chart', text.replace(/^\S+\s*/, ''));
-      else if (/Completion/i.test(text)) replaceReasonIcon(strong, 'check', text.replace(/^\S+\s*/, ''));
+      const text = cleanLeadingSymbol(strong.textContent);
+      if (/Consistency Starter|Consistency/i.test(text)) replaceReasonIcon(strong, 'flame', text);
+      else if (/First Five/i.test(text)) replaceReasonIcon(strong, 'trophy', text);
+      else if (/Progress Tracker|Progress/i.test(text)) replaceReasonIcon(strong, 'chart', text);
+      else if (/Completion/i.test(text)) replaceReasonIcon(strong, 'check', text);
     });
 
     const searchMark = document.querySelector('.sn-library-search > span');
