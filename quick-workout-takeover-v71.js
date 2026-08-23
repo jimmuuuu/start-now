@@ -29,10 +29,7 @@
   }
 
   function legacyVisible() {
-    const root = document.getElementById('app');
-    if (!root) return false;
-    const text = root.textContent || '';
-    return !!root.querySelector('.sn65-page') || text.includes('Start empty workout') || text.includes('Choose exercises manually');
+    return !!document.querySelector('#app .sn65-page');
   }
 
   function renderCanonical() {
@@ -71,7 +68,7 @@
     };
   }
 
-  // If a legacy Quick Workout UI somehow appears, replace that exact screen only.
+  // If a legacy Quick Workout renderer appears, replace that exact screen only.
   const root = document.getElementById('app');
   if (root) {
     const observer = new MutationObserver(() => {
@@ -96,8 +93,7 @@
         buildWorkout: text.includes('Build workout'),
         chooseExisting: text.includes('Choose existing'),
         surpriseMe: text.includes('Surprise me'),
-        oldStartEmptyRemoved: !text.includes('Start empty workout'),
-        oldManualRemoved: !text.includes('Choose exercises manually')
+        legacyRendererAbsent: !document.querySelector('#app .sn65-page')
       };
     }
   };
