@@ -1,119 +1,108 @@
-# START/NOW Exercise Visual Audit — v39
+# START/NOW Exercise Media Audit — v41
 
-## What was wrong
+## Why the system changed
 
-The app did not have a real exercise-image library. The repository only had a muscle-anatomy asset plus a generic machine illustration originally intended for the Home plan card. Reusing that machine inside workouts made unrelated movements look wrong.
+START/NOW no longer uses generated exercise-machine art or generated start/finish exercise diagrams inside workout guides.
 
-## v39 fix
+Those approaches were visually inconsistent and could be misleading when equipment or body position was wrong. The new rule is simple: **use an approved pre-made exercise demonstration, or show that the demonstration is unavailable. Never invent one.**
 
-`exercise-visual-system-v39.js` is now the active exercise-visual resolver.
+## Media provider
 
-The system is **ID-first** and keeps one stable reference per exercise:
+v41 integrates the public wger exercise database through its read-only exercise-info API.
 
-- `imageRef: exercise:<exercise-id>`
-- `image`: a real exercise-specific asset when one exists, otherwise `null`
-- `visualKey`: the verified movement illustration key, or `null`
-- `equipment`
-- `primaryMuscle`
+The provider returns exercise translations/aliases plus exercise images and videos. START/NOW does not ask any image-generation model to create exercise visuals.
 
-Legacy/custom exercises can use conservative name aliases, but uncertain exercises deliberately fall back instead of guessing.
+`exercise-media-provider-v41.js` handles provider lookup and deterministic mapping.
 
-## Visual priority
+`exercise-media-ui-v41.js` handles the workout/exercise-page presentation.
 
-1. Correct exercise-specific image, when available.
-2. Verified exercise-specific inline illustration.
-3. Equipment-specific neutral fallback.
-4. Neutral generic fallback if equipment cannot be determined.
+## Media priority
 
-A random machine image is never used as a fallback.
+For a matched exercise START/NOW uses this priority:
 
-If a future image fails to load, the image error handler automatically replaces it with the neutral fallback. Images use lazy loading and `object-fit: contain` so they are not stretched or cropped.
+1. Pre-made exercise video from the provider.
+2. Pre-made provider image that is **not** marked AI-generated.
+3. `Exercise demonstration unavailable`.
 
-## Movement-specific visuals currently verified
+There is no generated-machine, generated-stick-figure, or random-equipment fallback.
 
-The resolver currently includes dedicated visuals for common movement families including:
+## Matching safety
 
-- Barbell, dumbbell, Smith, and machine chest presses
-- Pec deck and dumbbell fly
-- Romanian Deadlift / Barbell RDL
-- Dumbbell Romanian Deadlift
-- Lat Pulldown
-- Seated Cable Row
-- Barbell Row
-- Dumbbell Row
-- Leg Press
-- Leg Extension
-- Leg Curl
-- Calf Raise
-- Machine, dumbbell, and barbell shoulder press
-- Dumbbell, cable, and machine lateral raise
-- Machine/cable reverse-fly family
-- Face Pull
-- Barbell Curl
-- Dumbbell/Hammer Curl family
-- Triceps Pushdown
-- Push-Up family
-- Plank
-- Pull-Up / Chin-Up family
-- Dips
-- Bodyweight Squat
-- Lunge family
+The provider may use different names than START/NOW. v41 therefore has an alias layer for common exercises such as:
 
-Different equipment/setup variants use different visual keys where the setup matters. Bench press, for example, does not reuse the machine chest-press illustration.
+- Triceps Pushdown / Triceps Pressdown / Cable Pushdown
+- Seated Row / Seated Cable Row
+- Romanian Deadlift / Barbell Romanian Deadlift / RDL
+- Leg Press / Machine Leg Press
+- Chest Press / Machine Chest Press
+- Lat Pulldown / Cable Lat Pulldown
 
-## Romanian Deadlift verification
+Provider fuzzy search is used only to discover candidates. START/NOW does **not** approve a result just because it is fuzzy-similar. One of the provider's exercise names or aliases must exactly match one of START/NOW's accepted normalized names before its media is shown.
 
-Romanian Deadlift no longer resolves to the seated machine artwork.
+That prevents a similar-but-different exercise from being used as the demonstration.
 
-- Romanian Deadlift / Barbell Romanian Deadlift → `rdl-barbell`
-- Dumbbell Romanian Deadlift → `rdl-dumbbell`
+## Deterministic behavior
 
-If an unknown RDL variation cannot be classified safely, START/NOW shows the neutral equipment fallback instead of a false demonstration.
+Once an exercise is matched, START/NOW stores the selected provider exercise ID and media URL in `localStorage` under `sn_exercise_media_v41`.
 
-## Complete exercise audit
+That means repeatedly opening the same exercise uses the same pinned media instead of searching again or randomly selecting a different asset.
 
-Every exercise in the current `exerciseLibrary` is audited at startup. The full synchronized list is exposed as:
+Unavailable matches are cached for seven days so the app does not repeatedly hammer the provider. They can be retried later if the provider adds media.
 
-```js
-window.START_NOW_EXERCISE_VISUAL_AUDIT
-```
+## Performance
 
-The list of exercises that still need a proper movement-specific visual is exposed as:
+START/NOW does not download the provider's full exercise catalog.
 
-```js
-window.START_NOW_EXERCISES_NEEDING_VISUALS
-```
+Only the currently displayed exercise requests media. Previously resolved results are reused from the local cache.
 
-Each audit row includes:
+Video uses:
 
-- ID
-- name
-- muscle
-- equipment
-- real image path, if present
-- visual key
-- status
+- `autoplay`
+- `muted`
+- `loop`
+- `playsinline`
+- `preload="metadata"`
 
-Status is either:
+Images use:
 
-- `exercise-specific illustration`
-- `safe equipment fallback — proper demo still needed`
+- `loading="lazy"`
+- `decoding="async"`
+- `object-fit: contain`
 
-This runtime audit is used instead of pretending all 250 exercises already have verified demonstrations. It stays synchronized as the exercise library changes.
+A subtle skeleton is shown while media is being resolved.
 
-## User-facing behavior for missing visuals
+## Failure behavior
 
-Exercises without a verified demonstration now show a polished card containing:
+If the provider cannot be reached, no safe exact match exists, the exercise has no approved media, or a media file fails to load, the workout displays:
 
-- a correct equipment icon
-- the exercise name
-- `No demonstration available yet`
-- equipment and muscle information
+**Exercise demonstration unavailable**
 
-No broken image icon is shown, no blank white box is shown, and no unrelated machine is substituted.
+The user can still see the exercise name, sets, reps, rest time, coach cue, instructions, and primary muscles.
 
-## Reliability improvement from v38 to v39
+Broken-image icons and unrelated exercise images are never substituted.
 
-v39 removes the old workout-visual enhancer from the page and uses a single resolver/observer. It only redraws when the current exercise actually changes, avoiding competing visual patches and repeated DOM replacement.
+## Attribution
 
-The rule is now simple: **accuracy over decoration**.
+Provider media metadata includes license and author information. When available, START/NOW displays a small media attribution directly on the media container.
+
+## Exercise page layout
+
+Exercise detail pages are patched to use the same deterministic media resolver and then show:
+
+1. Exercise name
+2. Large exercise media container
+3. Primary/secondary muscles
+4. How to perform it
+5. Form tips
+6. Existing alternatives/history controls
+
+## Old generated visual code
+
+The previous v40 illustration files remain in the repository for history, but `index.html` no longer loads them. The live app loads only:
+
+- `exercise-media-provider-v41.js`
+- `exercise-media-ui-v41.js`
+
+for exercise demonstrations.
+
+The Home muscle-focus artwork remains separate from exercise demonstrations and is not used as an exercise guide.
