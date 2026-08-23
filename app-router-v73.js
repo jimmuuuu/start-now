@@ -1,4 +1,4 @@
-// START/NOW v73 — transactional router: render first, commit navigation only after success.
+// START/NOW v74 — targeted Quick Action route fix for Quick Workout + Exercise Library.
 (() => {
   const root = document.getElementById('app');
   if (!root || typeof state === 'undefined' || typeof window.render !== 'function') return;
@@ -79,12 +79,31 @@
   function renderDestination(target) {
     if (target === 'quickWorkout') {
       const module = window.START_NOW_QUICK_WORKOUT;
-      if (!module?.render) throw new Error('Quick Workout renderer is unavailable');
+      if (!module || typeof module.render !== 'function') {
+        throw new Error('Quick Workout module is not available');
+      }
       module.render();
       patchQuickWorkoutCopy();
+      if (!root.querySelector('.sn66-page')) {
+        throw new Error('Quick Workout renderer ran but did not mount .sn66-page');
+      }
       return;
     }
 
+    if (target === 'exerciseLibrary') {
+      const module = window.START_NOW_EXERCISE_LIBRARY_ROUTE;
+      if (!module || typeof module.render !== 'function') {
+        throw new Error('Exercise Library route bridge is not available');
+      }
+      state.__quickActionLibraryReturn = 'home';
+      module.render();
+      if (!root.querySelector('.sn-page #snLibrarySearch') || !root.querySelector('.sn-library-list')) {
+        throw new Error('Exercise Library renderer ran but its search/list UI did not mount');
+      }
+      return;
+    }
+
+    // These two routes were already working in v73. Keep their implementation unchanged.
     if (target === 'calendar') {
       const module = window.START_NOW_WORKOUT_CALENDAR;
       if (!module?.render) throw new Error('Workout Calendar renderer is unavailable');
@@ -96,12 +115,6 @@
       const module = window.START_NOW_QUICK_ACTIONS;
       if (!module?.renderStats) throw new Error('My Stats renderer is unavailable');
       module.renderStats();
-      return;
-    }
-
-    if (target === 'exerciseLibrary') {
-      // product-pages-v36 owns the existing Exercise Library renderer.
-      previousRender.call(window);
       return;
     }
 
@@ -119,9 +132,9 @@
       routeExists: !isSecondary(target) || Boolean(selector),
       rendererExists:
         target === 'quickWorkout' ? Boolean(window.START_NOW_QUICK_WORKOUT?.render) :
+        target === 'exerciseLibrary' ? Boolean(window.START_NOW_EXERCISE_LIBRARY_ROUTE?.render) :
         target === 'calendar' ? Boolean(window.START_NOW_WORKOUT_CALENDAR?.render) :
-        target === 'myStats' ? Boolean(window.START_NOW_QUICK_ACTIONS?.renderStats) :
-        target === 'exerciseLibrary' ? true : true,
+        target === 'myStats' ? Boolean(window.START_NOW_QUICK_ACTIONS?.renderStats) : true,
       contentVisible: selector ? Boolean(root.querySelector(selector)) : root.children.length > 0,
       homeHidden: leakedHomeSelectors.length === 0,
       leakedHomeSelectors,
@@ -149,12 +162,11 @@
     const destination = normalize(target);
     const previousStatePage = normalize(fromPage || currentPage || 'home');
 
-    // Critical v73 rule: DO NOT clear #app before the destination renderer succeeds.
-    // Every START/NOW page renderer already replaces app.innerHTML itself.
+    // Render first. Never erase the current screen before a destination proves it can mount.
     try {
       renderDestination(destination);
       const audit = pageAudit(destination);
-      if (!audit.contentVisible || audit.blank || !audit.homeHidden) {
+      if (!audit.rendererExists || !audit.contentVisible || audit.blank || !audit.homeHidden) {
         throw new Error(`Destination did not render cleanly: ${JSON.stringify(audit)}`);
       }
 
@@ -233,7 +245,7 @@
     return navigate(destination, { keepBack: true });
   }
 
-  // Quick Action cards route through one transactional state/page path.
+  // All four cards use the same delegated click path. Calendar/Stats remain unchanged.
   document.addEventListener('click', event => {
     const card = event.target.closest?.('[data-sn70-action]');
     if (!card) return;
@@ -244,7 +256,6 @@
     navigate(target);
   }, true);
 
-  // Center + opens the same standalone Quick Workout page.
   document.addEventListener('click', event => {
     if (!event.target.closest?.('#quickStart')) return;
     event.preventDefault();
@@ -252,7 +263,6 @@
     navigate('quickWorkout');
   }, true);
 
-  // Secondary back buttons return to their entry main page.
   document.addEventListener('click', event => {
     const page = normalize(state.page);
     if (!isSecondary(page)) return;
@@ -265,7 +275,7 @@
 
   window.render = renderCurrent;
   window.START_NOW_ROUTER = {
-    version: 'v73',
+    version: 'v74',
     navigate,
     back: goBack,
     render: renderCurrent,
