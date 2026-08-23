@@ -3,7 +3,12 @@ name: Navigation smoke
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - NAVIGATION_SMOKE_STATUS.md
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   navigation:
@@ -19,4 +24,22 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run navigation smoke tests
+        id: smoke
+        continue-on-error: true
         run: npm run test:e2e
+      - name: Record test result
+        if: always()
+        env:
+          TEST_OUTCOME: ${{ steps.smoke.outcome }}
+          TEST_COMMIT: ${{ github.sha }}
+        run: |
+          if [ "$TEST_OUTCOME" = "success" ]; then STATUS="PASS"; else STATUS="FAIL"; fi
+          printf '# START/NOW Navigation Smoke Status\n\n- Status: **%s**\n- Tested commit: `%s`\n- Workflow run: `%s`\n- Recorded: `%s`\n' "$STATUS" "$TEST_COMMIT" "$GITHUB_RUN_ID" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > NAVIGATION_SMOKE_STATUS.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add NAVIGATION_SMOKE_STATUS.md
+          git commit -m "test: record navigation smoke result [skip ci]" || true
+          git push || true
+      - name: Fail workflow when smoke tests fail
+        if: steps.smoke.outcome != 'success'
+        run: exit 1
