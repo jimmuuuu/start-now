@@ -1,4 +1,4 @@
-# v49 focused external source comparison + strict coverage gate
+# v50 focused external source comparison + strict final review + coverage gate
 name: Exercise media coverage
 
 on:
@@ -27,15 +27,18 @@ jobs:
       - name: Compare additional legitimate media sources
         run: node scripts/analyze-additional-media-v49.mjs
 
+      - name: Apply final strict-equivalence review
+        run: node scripts/finalize-strict-media-audit-v50.mjs
+
       - name: Commit external-source audit
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add EXERCISE_MEDIA_ADDITIONAL_AUDIT_V49.json EXERCISE_MEDIA_ADDITIONAL_AUDIT_V49.md exercise-media-map-pending-v49.json
+          git add EXERCISE_MEDIA_ADDITIONAL_AUDIT_V49.json EXERCISE_MEDIA_ADDITIONAL_AUDIT_V49.md exercise-media-map-pending-v49.json EXERCISE_MEDIA_FINAL_AUDIT_V50.json EXERCISE_MEDIA_FINAL_AUDIT_V50.md exercise-media-map-pending-v50.json
           if git diff --cached --quiet; then
             echo 'Additional audit already current.'
           else
-            git commit -m 'Generate additional exercise media audit [skip ci]'
+            git commit -m 'Generate strict final exercise media audit [skip ci]'
             git push origin HEAD
           fi
 
