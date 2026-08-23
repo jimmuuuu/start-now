@@ -1,31 +1,22 @@
 {
-  "generatedAt": "2026-08-23T05:26:39.249Z",
-  "sourceNotes": {
-    "WorkoutX": "Public catalog names checked. Production GIF access requires authenticated API use; catalog-only hits are candidates, not approvals.",
-    "MoveBase": "API probed without credentials. Per-exercise audit requires RapidAPI authentication; no unauthenticated media was approved.",
-    "wger": "Public API checked. Only strict-equivalent matches with a loadable video and an explicit open license are auto-approved.",
-    "ExerciseDB": "Existing provider candidates rechecked using strict aliases/equipment/muscle/movement; loadable GIF required for any new approval.",
-    "FreeExerciseDB": "Existing public-domain start/end candidates included for comparison only; v49 does not auto-promote unresolved approximate matches."
-  },
-  "moveBaseStatus": {
-    "queried": true,
-    "httpStatus": 401,
-    "authRequired": true
-  },
+  "generatedAt": "2026-08-23T05:26:39.323Z",
+  "standard": "strict same-exercise, same-equipment-setup where specified; no approximate movement approval",
   "counts": {
     "totalExercises": 250,
-    "existingExerciseDBApproved": 85,
-    "existingFreeExerciseDBApproved": 58,
-    "newlyApproved": 13,
-    "newlyApprovedExerciseDB": 13,
-    "newlyApprovedWger": 0,
+    "exerciseDBApproved": 97,
+    "freeExerciseDBApproved": 58,
+    "newlyApprovedExerciseDB": 12,
     "workoutXApproved": 0,
     "moveBaseApproved": 0,
-    "stillMissing": 94,
-    "coverage": 156,
-    "coveragePercent": 62.4
+    "wgerApproved": 0,
+    "otherLicensedApproved": 0,
+    "stillMissing": 95,
+    "accountedDemonstrations": 155,
+    "accountedCoveragePercent": 62,
+    "verifiedWorkingGifCount": 97,
+    "verifiedWorkingGifPercent": 38.8
   },
-  "stagedMappings": [
+  "approvedMappings": [
     {
       "appExercise": "Wide-Grip Push-Up",
       "appId": "wide-grip-push-up",
@@ -72,16 +63,6 @@
       "provider": "ExerciseDB",
       "providerExerciseId": "r0z6xzQ",
       "mediaUrl": "https://static.exercisedb.dev/media/r0z6xzQ.gif",
-      "mediaType": "gif",
-      "verified": true,
-      "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
-    },
-    {
-      "appExercise": "T-Bar Row",
-      "appId": "t-bar-row",
-      "provider": "ExerciseDB",
-      "providerExerciseId": "aaXr7ld",
-      "mediaUrl": "https://static.exercisedb.dev/media/aaXr7ld.gif",
       "mediaType": "gif",
       "verified": true,
       "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
@@ -157,6 +138,20 @@
       "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
     }
   ],
+  "demotedMappings": [
+    {
+      "appExercise": "T-Bar Row",
+      "appId": "t-bar-row",
+      "provider": "ExerciseDB",
+      "providerExerciseId": "aaXr7ld",
+      "mediaUrl": "https://static.exercisedb.dev/media/aaXr7ld.gif",
+      "mediaType": "gif",
+      "verified": false,
+      "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load",
+      "reviewStatus": "needs-explicit-review",
+      "reviewReason": "START/NOW says generic T-Bar Row, while the staged provider match is a lever-machine T-bar row. Because the app does not specify that machine setup, this is not strict enough to auto-approve."
+    }
+  ],
   "rows": [
     {
       "appId": "cable-fly",
@@ -217,7 +212,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/lJJ7Yq8.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "wide-grip-push-up",
@@ -285,7 +281,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "low-to-high-cable-fly",
@@ -355,7 +352,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "high-to-low-cable-fly",
@@ -425,7 +423,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "single-arm-cable-fly",
@@ -480,7 +479,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/w4dLzSx.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "standing-dumbbell-shoulder-press",
@@ -548,7 +548,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "arnold-press",
@@ -616,7 +617,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "lean-away-lateral-raise",
@@ -683,7 +685,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/DsgkuIt.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "landmine-press",
@@ -801,7 +804,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "single-arm-landmine-press",
@@ -968,7 +972,8 @@
           "mediaUrl": "https://wger.de/media/exercise-images/1968/cd92e973-a0d9-4e5f-9011-5369012598d3.png",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "z-press",
@@ -1020,7 +1025,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "pike-push-up",
@@ -1103,7 +1109,8 @@
           "mediaUrl": "https://wger.de/media/exercise-images/1551/a6a9e561-3965-45c6-9f2b-ee671e1a3a45.png",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "hand-release-pike-push-up",
@@ -1149,7 +1156,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "bent-over-dumbbell-reverse-fly",
@@ -1205,7 +1213,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/prbWx1D.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "chest-supported-rear-delt-raise",
@@ -1278,7 +1287,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/Ln9iTbU.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "cable-rear-delt-row",
@@ -1331,7 +1341,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "assisted-pull-up",
@@ -1428,7 +1439,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "close-grip-lat-pulldown",
@@ -1489,7 +1501,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "neutral-grip-lat-pulldown",
@@ -1575,7 +1588,8 @@
           "mediaUrl": "https://wger.de/media/exercise-images/1136/5778a8e9-c606-4843-89c8-9d9469eeb6e4.PNG",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "single-arm-lat-pulldown",
@@ -1678,7 +1692,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "pendlay-row",
@@ -1773,7 +1788,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "underhand-barbell-row",
@@ -1840,7 +1856,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/r0z6xzQ.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "chest-supported-dumbbell-row",
@@ -1921,7 +1938,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "t-bar-row",
@@ -1932,22 +1950,7 @@
       ],
       "aliases": [],
       "status": "missing",
-      "approvedMatch": {
-        "source": "ExerciseDB",
-        "providerExerciseId": "aaXr7ld",
-        "name": "lever t bar row",
-        "equipment": [
-          "leverage machine"
-        ],
-        "muscles": [
-          "upper back",
-          "back"
-        ],
-        "mediaUrl": "https://static.exercisedb.dev/media/aaXr7ld.gif",
-        "mediaType": "gif",
-        "confidence": 99,
-        "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
-      },
+      "approvedMatch": null,
       "topCandidates": [
         {
           "source": "wger",
@@ -2008,7 +2011,9 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "missing",
+      "finalReviewReason": "START/NOW says generic T-Bar Row, while the staged provider match is a lever-machine T-bar row. Because the app does not specify that machine setup, this is not strict enough to auto-approve."
     },
     {
       "appId": "chest-supported-t-bar-row",
@@ -2080,7 +2085,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/aaXr7ld.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "machine-low-row",
@@ -2178,7 +2184,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "wide-grip-cable-row",
@@ -2234,7 +2241,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/kesXOpB.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "single-arm-cable-row",
@@ -2302,7 +2310,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/vpp9Ku2.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "meadows-row",
@@ -2417,7 +2426,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/4OaumBr.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "landmine-row",
@@ -2511,7 +2521,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "seal-row",
@@ -2596,7 +2607,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/bZGHsAZ.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "trx-row",
@@ -2703,7 +2715,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/4OaumBr.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "rack-pull",
@@ -2756,7 +2769,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "conventional-deadlift",
@@ -2809,7 +2823,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "back-extension",
@@ -2862,7 +2877,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "smith-machine-shrug",
@@ -2933,7 +2949,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/MzNnwx9.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "trap-bar-shrug",
@@ -2986,7 +3003,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/jQGwmxN.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "suitcase-carry",
@@ -3063,7 +3081,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "alternating-dumbbell-curl",
@@ -3157,7 +3176,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "straight-bar-cable-curl",
@@ -3219,7 +3239,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "rope-hammer-curl",
@@ -3287,7 +3308,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "bayesian-cable-curl",
@@ -3349,7 +3371,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "rope-triceps-pushdown",
@@ -3417,7 +3440,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "straight-bar-pushdown",
@@ -3470,7 +3494,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "v-bar-pushdown",
@@ -3538,7 +3563,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "reverse-grip-pushdown",
@@ -3606,7 +3632,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "overhead-cable-triceps-extension",
@@ -3670,7 +3697,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/1xHyxys.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "rope-overhead-extension",
@@ -3725,7 +3753,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/2IxROQ1.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "single-arm-dumbbell-triceps-extension",
@@ -3802,7 +3831,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "skull-crusher",
@@ -3866,7 +3896,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/h8LFzo9.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "ez-bar-skull-crusher",
@@ -3921,7 +3952,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/1cTf2Ux.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "dumbbell-skull-crusher",
@@ -3978,7 +4010,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "close-grip-bench-press",
@@ -4036,7 +4069,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "bench-dip",
@@ -4094,7 +4128,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "assisted-dip",
@@ -4145,7 +4180,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "dumbbell-wrist-curl",
@@ -4201,7 +4237,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/D1xYJAU.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "dead-hang",
@@ -4249,7 +4286,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "towel-hang",
@@ -4299,7 +4337,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "pendulum-squat",
@@ -4393,7 +4432,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "bulgarian-split-squat",
@@ -4498,7 +4538,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/9E25EOx.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "dumbbell-split-squat",
@@ -4581,7 +4622,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "step-up",
@@ -4627,7 +4669,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "wall-sit",
@@ -4711,7 +4754,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/sVQCCeG.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "spanish-squat",
@@ -4786,7 +4830,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/IMRsOCn.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "cyclist-squat",
@@ -4861,7 +4906,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/IMRsOCn.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "heel-elevated-goblet-squat",
@@ -4914,7 +4960,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "single-leg-leg-curl",
@@ -4982,7 +5029,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/C5jncD2.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "single-leg-romanian-deadlift",
@@ -5030,7 +5078,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "stiff-leg-deadlift",
@@ -5081,7 +5130,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/5eLRITT.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "smith-machine-hip-thrust",
@@ -5141,7 +5191,8 @@
           "mediaUrl": "https://wger.de/media/exercise-images/1748/923a3ff7-c269-49bd-9f03-697151a40f06.jpg",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "dumbbell-hip-thrust",
@@ -5245,7 +5296,8 @@
           "mediaUrl": "https://wger.de/media/exercise-video/294/45bacf4b-1bb6-4d47-8bd1-9f00eddd4019.MOV",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "machine-glute-drive",
@@ -5334,7 +5386,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "cable-glute-kickback",
@@ -5387,7 +5440,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "machine-glute-kickback",
@@ -5455,7 +5509,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "donkey-kick",
@@ -5524,7 +5579,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "fire-hydrant",
@@ -5577,7 +5633,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "frog-pump",
@@ -5623,7 +5680,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "step-down",
@@ -5706,7 +5764,8 @@
           "mediaUrl": "https://wger.de/media/exercise-images/981/f9377a7e-eb58-4cca-b805-2d36863aeb03.png",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "curtsy-lunge",
@@ -5789,7 +5848,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/RRWFUcw.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "cable-hip-abduction",
@@ -5837,7 +5897,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "band-hip-abduction",
@@ -5890,7 +5951,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "seated-hip-abduction",
@@ -5952,7 +6014,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/CHpahtl.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "standing-hip-abduction",
@@ -6000,7 +6063,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "lateral-band-walk",
@@ -6059,7 +6123,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "single-leg-calf-raise",
@@ -6115,7 +6180,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "tibialis-raise",
@@ -6165,7 +6231,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "bird-dog",
@@ -6249,7 +6316,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "hollow-hold",
@@ -6375,7 +6443,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "hollow-rock",
@@ -6501,7 +6570,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "plank-shoulder-tap",
@@ -6557,7 +6627,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/h1ezqSu.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "swiss-ball-pike",
@@ -6605,7 +6676,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "v-up",
@@ -6661,7 +6733,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/Bn6TXyO.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "toe-touch",
@@ -6739,7 +6812,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "cable-wood-chop",
@@ -6787,7 +6861,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "landmine-rotation",
@@ -6880,7 +6955,8 @@
           "mediaUrl": null,
           "decision": "REVIEW"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "suitcase-march",
@@ -6953,7 +7029,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "dumbbell-thruster",
@@ -7036,7 +7113,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "kettlebell-goblet-thruster",
@@ -7089,7 +7167,8 @@
           "mediaUrl": "https://static.exercisedb.dev/media/yWxMvB5.gif",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "dumbbell-clean-and-press",
@@ -7137,7 +7216,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "kettlebell-clean-and-press",
@@ -7285,7 +7365,8 @@
           "mediaUrl": "https://wger.de/media/exercise-images/1901/046f0f42-0ed5-48c5-a9ee-41de25e3b6a0.png",
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "kettlebell-deadlift",
@@ -7360,7 +7441,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "sled-pull",
@@ -7406,7 +7488,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "battle-rope-waves",
@@ -7541,7 +7624,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "medicine-ball-slam",
@@ -7594,7 +7678,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "incline-treadmill-walk",
@@ -7662,7 +7747,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "approved"
     },
     {
       "appId": "stair-climber",
@@ -7713,7 +7799,8 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
     },
     {
       "appId": "ski-erg",
@@ -7764,7 +7851,865 @@
           "mediaUrl": null,
           "decision": "REJECT / NOT EXACTLY VERIFIED"
         }
-      ]
+      ],
+      "finalStatus": "missing"
+    }
+  ],
+  "remainingMissing": [
+    {
+      "appId": "cable-fly",
+      "appName": "Cable Fly",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Chest"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "low-to-high-cable-fly",
+      "appName": "Low-to-High Cable Fly",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Chest"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "high-to-low-cable-fly",
+      "appName": "High-to-Low Cable Fly",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Chest"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "single-arm-cable-fly",
+      "appName": "Single-Arm Cable Fly",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Chest"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "lean-away-lateral-raise",
+      "appName": "Lean-Away Lateral Raise",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "landmine-press",
+      "appName": "Landmine Press",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "single-arm-landmine-press",
+      "appName": "Single-Arm Landmine Press",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "z-press",
+      "appName": "Z Press",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "pike-push-up",
+      "appName": "Pike Push-Up",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "hand-release-pike-push-up",
+      "appName": "Hand-Release Pike Push-Up",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "bent-over-dumbbell-reverse-fly",
+      "appName": "Bent-Over Dumbbell Reverse Fly",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Rear Delts"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "chest-supported-rear-delt-raise",
+      "appName": "Chest-Supported Rear Delt Raise",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Rear Delts"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "cable-rear-delt-row",
+      "appName": "Cable Rear Delt Row",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Rear Delts"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "assisted-pull-up",
+      "appName": "Assisted Pull-Up",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "close-grip-lat-pulldown",
+      "appName": "Close-Grip Lat Pulldown",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "neutral-grip-lat-pulldown",
+      "appName": "Neutral-Grip Lat Pulldown",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "underhand-barbell-row",
+      "appName": "Underhand Barbell Row",
+      "equipment": "Barbell",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "chest-supported-dumbbell-row",
+      "appName": "Chest-Supported Dumbbell Row",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "t-bar-row",
+      "appName": "T-Bar Row",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "chest-supported-t-bar-row",
+      "appName": "Chest-Supported T-Bar Row",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "machine-low-row",
+      "appName": "Machine Low Row",
+      "equipment": "Machine",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "wide-grip-cable-row",
+      "appName": "Wide-Grip Cable Row",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "single-arm-cable-row",
+      "appName": "Single-Arm Cable Row",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "meadows-row",
+      "appName": "Meadows Row",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "landmine-row",
+      "appName": "Landmine Row",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "seal-row",
+      "appName": "Seal Row",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "trx-row",
+      "appName": "TRX Row",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "rack-pull",
+      "appName": "Rack Pull",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "conventional-deadlift",
+      "appName": "Conventional Deadlift",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "back-extension",
+      "appName": "Back Extension",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Back"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "trap-bar-shrug",
+      "appName": "Trap Bar Shrug",
+      "equipment": "Trap Bar",
+      "primaryMuscles": [
+        "Traps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "suitcase-carry",
+      "appName": "Suitcase Carry",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Traps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "alternating-dumbbell-curl",
+      "appName": "Alternating Dumbbell Curl",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Biceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "straight-bar-cable-curl",
+      "appName": "Straight-Bar Cable Curl",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Biceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "bayesian-cable-curl",
+      "appName": "Bayesian Cable Curl",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Biceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "straight-bar-pushdown",
+      "appName": "Straight-Bar Pushdown",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "overhead-cable-triceps-extension",
+      "appName": "Overhead Cable Triceps Extension",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "rope-overhead-extension",
+      "appName": "Rope Overhead Extension",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "single-arm-dumbbell-triceps-extension",
+      "appName": "Single-Arm Dumbbell Triceps Extension",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "skull-crusher",
+      "appName": "Skull Crusher",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "ez-bar-skull-crusher",
+      "appName": "EZ-Bar Skull Crusher",
+      "equipment": "Barbell",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "dumbbell-skull-crusher",
+      "appName": "Dumbbell Skull Crusher",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "close-grip-bench-press",
+      "appName": "Close-Grip Bench Press",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "bench-dip",
+      "appName": "Bench Dip",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "assisted-dip",
+      "appName": "Assisted Dip",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Triceps"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "dumbbell-wrist-curl",
+      "appName": "Dumbbell Wrist Curl",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Forearms"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "dead-hang",
+      "appName": "Dead Hang",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Forearms"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "towel-hang",
+      "appName": "Towel Hang",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Forearms"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "pendulum-squat",
+      "appName": "Pendulum Squat",
+      "equipment": "Machine",
+      "primaryMuscles": [
+        "Quads"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "bulgarian-split-squat",
+      "appName": "Bulgarian Split Squat",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Quads"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "dumbbell-split-squat",
+      "appName": "Dumbbell Split Squat",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Quads"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "step-up",
+      "appName": "Step-Up",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Quads"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "wall-sit",
+      "appName": "Wall Sit",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Quads"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "spanish-squat",
+      "appName": "Spanish Squat",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Quads"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "cyclist-squat",
+      "appName": "Cyclist Squat",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Quads"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "heel-elevated-goblet-squat",
+      "appName": "Heel-Elevated Goblet Squat",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Quads"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "single-leg-leg-curl",
+      "appName": "Single-Leg Leg Curl",
+      "equipment": "Machine",
+      "primaryMuscles": [
+        "Hamstrings"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "single-leg-romanian-deadlift",
+      "appName": "Single-Leg Romanian Deadlift",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Hamstrings"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "stiff-leg-deadlift",
+      "appName": "Stiff-Leg Deadlift",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Hamstrings"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "smith-machine-hip-thrust",
+      "appName": "Smith Machine Hip Thrust",
+      "equipment": "Smith Machine",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "dumbbell-hip-thrust",
+      "appName": "Dumbbell Hip Thrust",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "machine-glute-drive",
+      "appName": "Machine Glute Drive",
+      "equipment": "Machine",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "cable-glute-kickback",
+      "appName": "Cable Glute Kickback",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "machine-glute-kickback",
+      "appName": "Machine Glute Kickback",
+      "equipment": "Machine",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "donkey-kick",
+      "appName": "Donkey Kick",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "fire-hydrant",
+      "appName": "Fire Hydrant",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "frog-pump",
+      "appName": "Frog Pump",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "step-down",
+      "appName": "Step-Down",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "curtsy-lunge",
+      "appName": "Curtsy Lunge",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "cable-hip-abduction",
+      "appName": "Cable Hip Abduction",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "band-hip-abduction",
+      "appName": "Band Hip Abduction",
+      "equipment": "Resistance Band",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "seated-hip-abduction",
+      "appName": "Seated Hip Abduction",
+      "equipment": "Machine",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "standing-hip-abduction",
+      "appName": "Standing Hip Abduction",
+      "equipment": "Machine",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "lateral-band-walk",
+      "appName": "Lateral Band Walk",
+      "equipment": "Resistance Band",
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "single-leg-calf-raise",
+      "appName": "Single-Leg Calf Raise",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Calves"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "tibialis-raise",
+      "appName": "Tibialis Raise",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Calves"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "bird-dog",
+      "appName": "Bird Dog",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Core"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "hollow-hold",
+      "appName": "Hollow Hold",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Core"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "hollow-rock",
+      "appName": "Hollow Rock",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Core"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "plank-shoulder-tap",
+      "appName": "Plank Shoulder Tap",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Core"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "swiss-ball-pike",
+      "appName": "Swiss Ball Pike",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Core"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "v-up",
+      "appName": "V-Up",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Core"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "toe-touch",
+      "appName": "Toe Touch",
+      "equipment": "Bodyweight",
+      "primaryMuscles": [
+        "Core"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "cable-wood-chop",
+      "appName": "Cable Wood Chop",
+      "equipment": "Cable",
+      "primaryMuscles": [
+        "Core"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "suitcase-march",
+      "appName": "Suitcase March",
+      "equipment": "Gym",
+      "primaryMuscles": [
+        "Core"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "dumbbell-thruster",
+      "appName": "Dumbbell Thruster",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Full Body"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "kettlebell-goblet-thruster",
+      "appName": "Kettlebell Goblet Thruster",
+      "equipment": "Kettlebell",
+      "primaryMuscles": [
+        "Full Body"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "dumbbell-clean-and-press",
+      "appName": "Dumbbell Clean and Press",
+      "equipment": "Dumbbell",
+      "primaryMuscles": [
+        "Full Body"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "kettlebell-clean-and-press",
+      "appName": "Kettlebell Clean and Press",
+      "equipment": "Kettlebell",
+      "primaryMuscles": [
+        "Full Body"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "kettlebell-deadlift",
+      "appName": "Kettlebell Deadlift",
+      "equipment": "Kettlebell",
+      "primaryMuscles": [
+        "Full Body"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "sled-pull",
+      "appName": "Sled Pull",
+      "equipment": "Sled",
+      "primaryMuscles": [
+        "Full Body"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "battle-rope-waves",
+      "appName": "Battle Rope Waves",
+      "equipment": "Rope",
+      "primaryMuscles": [
+        "Full Body"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "medicine-ball-slam",
+      "appName": "Medicine Ball Slam",
+      "equipment": "Medicine Ball",
+      "primaryMuscles": [
+        "Full Body"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "stair-climber",
+      "appName": "Stair Climber",
+      "equipment": "Stair Machine",
+      "primaryMuscles": [
+        "Cardio"
+      ],
+      "status": "missing"
+    },
+    {
+      "appId": "ski-erg",
+      "appName": "Ski Erg",
+      "equipment": "SkiErg",
+      "primaryMuscles": [
+        "Cardio"
+      ],
+      "status": "missing"
     }
   ]
 }
