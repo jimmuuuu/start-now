@@ -8,6 +8,13 @@ on:
       - 'exercise-library-extra.js'
       - 'scripts/build-exercise-media-map.mjs'
       - '.github/workflows/exercise-media-coverage.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app.js'
+      - 'exercise-library-extra.js'
+      - 'scripts/build-exercise-media-map.mjs'
+      - '.github/workflows/exercise-media-coverage.yml'
   workflow_dispatch:
 
 permissions:
@@ -22,6 +29,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - uses: actions/setup-node@v4
         with:
@@ -40,4 +48,4 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add exercise-media-map-v43.js EXERCISE_MEDIA_COVERAGE_V43.md
           git commit -m 'Generate verified exercise GIF map [skip ci]'
-          git push
+          git push origin HEAD
