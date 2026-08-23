@@ -1,23 +1,31 @@
-// START/NOW v61 — make the 7-day achievement visually match the Home streak badge.
+// START/NOW v62 — Home-style streak badge, muted until the 7-day achievement is earned.
 (() => {
   function installStyles(){
-    if(document.getElementById('sn61-streak-achievement-styles')) return;
+    if(document.getElementById('sn62-streak-achievement-styles')) return;
     const style=document.createElement('style');
-    style.id='sn61-streak-achievement-styles';
+    style.id='sn62-streak-achievement-styles';
     style.textContent=`
-      .achievement-mini[data-achievement-id="streak-7"].locked{opacity:1}
+      .achievement-mini[data-achievement-id="streak-7"].locked{opacity:.68;background:var(--surface)}
       .achievement-mini[data-achievement-id="streak-7"].locked strong,
       .achievement-mini[data-achievement-id="streak-7"].locked small{color:var(--muted)}
       .achievement-mini .milestone-icon.milestone-icon-home-streak{
         width:54px;height:54px;border-radius:50%;display:grid;place-items:center;
-        margin:0 auto 12px;background:#F1F9DD;color:inherit;transform:none;
+        margin:0 auto 12px;transform:none;transition:background .18s ease,filter .18s ease,opacity .18s ease;
       }
-      .achievement-mini.completed .milestone-icon.milestone-icon-home-streak,
-      .achievement-mini.locked .milestone-icon.milestone-icon-home-streak{
-        background:#F1F9DD;color:inherit;transform:none;
+      .achievement-mini[data-achievement-id="streak-7"].locked .milestone-icon-home-streak{
+        background:#F1F3F5;color:inherit;filter:grayscale(1);opacity:.52;
+      }
+      .achievement-mini[data-achievement-id="streak-7"].completed .milestone-icon-home-streak{
+        background:#F1F9DD;color:inherit;filter:none;opacity:1;
       }
       .milestone-icon-home-streak .streak-fire{
         display:block;font-size:34px;line-height:1;transform:translateY(-1px)
+      }
+      .dark .achievement-mini[data-achievement-id="streak-7"].locked .milestone-icon-home-streak{
+        background:#25292E;filter:grayscale(1);opacity:.5;
+      }
+      .dark .achievement-mini[data-achievement-id="streak-7"].completed .milestone-icon-home-streak{
+        background:#29321E;filter:none;opacity:1;
       }
       @media(max-width:390px){
         .achievement-mini .milestone-icon.milestone-icon-home-streak{
@@ -54,5 +62,5 @@
   }
 
   apply();
-  window.START_NOW_STREAK_ACHIEVEMENT={version:'v61',apply};
+  window.START_NOW_STREAK_ACHIEVEMENT={version:'v62',apply};
 })();
