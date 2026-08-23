@@ -1,4 +1,4 @@
-# v46 diagnostic branch trigger
+# v46 diagnostic + strict coverage gate
 name: Exercise media coverage
 
 on:
@@ -40,7 +40,10 @@ jobs:
           git add EXERCISE_MEDIA_DIAGNOSTIC_V45.json EXERCISE_MEDIA_DIAGNOSTIC_V45.md EXERCISE_MEDIA_LOAD_CHECK_V45.json EXERCISE_MEDIA_LOAD_CHECK_V45.md EXERCISE_MEDIA_BACKUP_DIAGNOSTIC_V46.json EXERCISE_MEDIA_BACKUP_DIAGNOSTIC_V46.md
           if git diff --cached --quiet; then
             echo 'Diagnostics already current.'
-            exit 0
+          else
+            git commit -m 'Generate exercise media diagnostics [skip ci]'
+            git push origin HEAD
           fi
-          git commit -m 'Generate exercise media diagnostics [skip ci]'
-          git push origin HEAD
+
+      - name: Require 100 percent working GIF coverage
+        run: node scripts/assert-100-exercise-gif-coverage.mjs
