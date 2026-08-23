@@ -32,6 +32,13 @@
 }
 .active-plan-banner strong{display:block;font-size:13px;margin-bottom:2px}
 .active-plan-banner small{display:block;color:var(--muted);font-size:11px;line-height:1.35}
+
+/* Rest-day card replaces the base coral decorative circle with a soft blue accent. */
+.sn54-rest-card::after{
+  background:rgba(47,109,246,.09)!important;
+}
+
 .dark .current-plan-pill{background:#243018;color:#b9df65}
 .dark .rest-plan-card{background:var(--surface);border-color:#2e3033}
 .dark .active-plan-banner{background:#171d14;border-color:#34422a}
+.dark .sn54-rest-card::after{background:rgba(59,130,246,.10)!important}
