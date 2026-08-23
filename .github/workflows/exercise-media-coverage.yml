@@ -1,0 +1,43 @@
+name: Exercise media coverage
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app.js'
+      - 'exercise-library-extra.js'
+      - 'scripts/build-exercise-media-map.mjs'
+      - '.github/workflows/exercise-media-coverage.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-media-map:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build and verify complete exercise GIF map
+        run: node scripts/build-exercise-media-map.mjs
+
+      - name: Commit generated deterministic media map
+        run: |
+          if git diff --quiet -- exercise-media-map-v43.js EXERCISE_MEDIA_COVERAGE_V43.md; then
+            echo 'Generated media map already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add exercise-media-map-v43.js EXERCISE_MEDIA_COVERAGE_V43.md
+          git commit -m 'Generate verified exercise GIF map [skip ci]'
+          git push
