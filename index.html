@@ -10,7 +10,7 @@
 
   <script>
     (() => {
-      const version = "start-now-real-streak-v24";
+      const version = "start-now-nav-icons-v25";
       if (localStorage.getItem("sn_runtime_version") === version) return;
       window.addEventListener("load", async () => {
         try {
@@ -30,19 +30,19 @@
     })();
   </script>
 
-  <link rel="manifest" href="manifest.webmanifest?v=real-streak-v24" />
-  <link rel="stylesheet" href="app.css?v=real-streak-v24" />
-  <link rel="stylesheet" href="builder.css?v=real-streak-v24" />
-  <link rel="stylesheet" href="progress.css?v=real-streak-v24" />
-  <link rel="stylesheet" href="beginner-plan.css?v=real-streak-v24" />
-  <link rel="stylesheet" href="active-plan.css?v=real-streak-v24" />
+  <link rel="manifest" href="manifest.webmanifest?v=nav-icons-v25" />
+  <link rel="stylesheet" href="app.css?v=nav-icons-v25" />
+  <link rel="stylesheet" href="builder.css?v=nav-icons-v25" />
+  <link rel="stylesheet" href="progress.css?v=nav-icons-v25" />
+  <link rel="stylesheet" href="beginner-plan.css?v=nav-icons-v25" />
+  <link rel="stylesheet" href="active-plan.css?v=nav-icons-v25" />
 </head>
 <body>
   <div class="app-shell">
     <main id="app"></main>
     <nav class="bottom-nav" aria-label="Main navigation">
       <button class="nav-item active" data-page="home"><span class="nav-icon">⌂</span><span>Home</span></button>
-      <button class="nav-item" data-page="workouts"><span class="nav-icon">🏋</span><span>Workouts</span></button>
+      <button class="nav-item" data-page="workouts"><span class="nav-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9v6M4 10v4M18 9v6M20 10v4M6 12h12"/></svg></span><span>Workouts</span></button>
       <button class="nav-fab" id="quickStart" aria-label="Quick start">+</button>
       <button class="nav-item" data-page="progress"><span class="nav-icon">▥</span><span>Progress</span></button>
       <button class="nav-item" data-page="profile"><span class="nav-icon">◎</span><span>Profile</span></button>
@@ -51,15 +51,15 @@
 
   <div class="toast" id="toast" role="status"></div>
 
-  <script src="app.js?v=real-streak-v24"></script>
-  <script src="exercise-library-extra.js?v=real-streak-v24"></script>
-  <script src="progress.js?v=real-streak-v24"></script>
-  <script src="beginner-plan-v3.js?v=real-streak-v24"></script>
-  <script src="active-plan.js?v=real-streak-v24"></script>
-  <script src="visual-assets.js?v=real-streak-v24"></script>
-  <script src="schedule-editor-v14.js?v=real-streak-v24"></script>
-  <script src="saved-workouts-fix-v22.js?v=real-streak-v24"></script>
-  <script src="grading-system-v22.js?v=real-streak-v24"></script>
-  <script src="real-streak-v24.js?v=real-streak-v24"></script>
+  <script src="app.js?v=nav-icons-v25"></script>
+  <script src="exercise-library-extra.js?v=nav-icons-v25"></script>
+  <script src="progress.js?v=nav-icons-v25"></script>
+  <script src="beginner-plan-v3.js?v=nav-icons-v25"></script>
+  <script src="active-plan.js?v=nav-icons-v25"></script>
+  <script src="visual-assets.js?v=nav-icons-v25"></script>
+  <script src="schedule-editor-v14.js?v=nav-icons-v25"></script>
+  <script src="saved-workouts-fix-v22.js?v=nav-icons-v25"></script>
+  <script src="grading-system-v22.js?v=nav-icons-v25"></script>
+  <script src="real-streak-v24.js?v=nav-icons-v25"></script>
 </body>
 </html>
