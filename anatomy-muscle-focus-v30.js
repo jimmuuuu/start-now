@@ -1,6 +1,6 @@
-// START/NOW v30 — high-quality anatomical muscle focus using generated front/back anatomy art.
+// START/NOW v31 — high-quality anatomical muscle focus using generated front/back anatomy art.
 (() => {
-  const ANATOMY_IMAGE = "assets/muscle_anatomy_base.webp?v=anatomy-v30";
+  const ANATOMY_IMAGE = "https://raw.githubusercontent.com/jimmuuuu/start-now/main/assets/muscle_anatomy_base.webp?v=anatomy-v31";
   const ACTIVE = "#3B82F6";
   const ACTIVE_STROKE = "#1D4ED8";
 
@@ -48,14 +48,14 @@
   function stroke(zones, zone) { return active(zones, zone) ? ACTIVE_STROKE : "transparent"; }
 
   function installStyles() {
-    if (document.getElementById("sn-anatomy-focus-v30-styles")) return;
+    if (document.getElementById("sn-anatomy-focus-v31-styles")) return;
     const style = document.createElement("style");
-    style.id = "sn-anatomy-focus-v30-styles";
+    style.id = "sn-anatomy-focus-v31-styles";
     style.textContent = `
-      .body-visual{min-height:290px;display:flex;align-items:center;justify-content:center}
-      .sn-anatomy-wrap{position:relative;width:100%;max-width:365px;margin:0 auto}
-      .sn-anatomy-img{display:block;width:100%;height:auto;position:relative;z-index:1}
-      .sn-anatomy-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;overflow:visible}
+      .body-visual{min-height:310px;display:flex;align-items:center;justify-content:center}
+      .sn-anatomy-wrap{position:relative;width:100%;max-width:390px;margin:0 auto}
+      .sn-anatomy-img{display:block;width:100%;height:auto;position:relative;z-index:1;object-fit:contain}
+      .sn-anatomy-overlay{position:absolute;left:0;top:0;width:100%;height:auto;aspect-ratio:900/774;z-index:2;pointer-events:none;overflow:visible}
       .sn-anatomy-overlay .active-zone{mix-blend-mode:multiply;filter:drop-shadow(0 0 1.5px rgba(29,78,216,.45))}
       .sn-anatomy-label{margin-top:8px;text-align:center;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.05em}
       .dark .sn-anatomy-img{filter:brightness(.92) contrast(1.04)}
@@ -65,13 +65,13 @@
 
   function zonePath(zones, zone, d) {
     if (!active(zones, zone)) return "";
-    return `<path class="active-zone" d="${d}" fill="${fill(zones, zone)}" fill-opacity=".63" stroke="${stroke(zones, zone)}" stroke-width="2" stroke-linejoin="round"/>`;
+    return `<path class="active-zone" d="${d}" fill="${fill(zones, zone)}" fill-opacity=".55" stroke="${stroke(zones, zone)}" stroke-width="2" stroke-linejoin="round"/>`;
   }
 
   function zoneEllipse(zones, zone, cx, cy, rx, ry, rotate = 0) {
     if (!active(zones, zone)) return "";
     const transform = rotate ? ` transform="rotate(${rotate} ${cx} ${cy})"` : "";
-    return `<ellipse class="active-zone" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"${transform} fill="${fill(zones, zone)}" fill-opacity=".63" stroke="${stroke(zones, zone)}" stroke-width="2"/>`;
+    return `<ellipse class="active-zone" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"${transform} fill="${fill(zones, zone)}" fill-opacity=".55" stroke="${stroke(zones, zone)}" stroke-width="2"/>`;
   }
 
   function overlayMarkup(workout) {
@@ -111,7 +111,7 @@
     const names = musclesFor(workout).join(", ") || "Full body";
     return `
       <div class="sn-anatomy-wrap" aria-label="Muscle focus: ${esc(names)}">
-        <img class="sn-anatomy-img" src="${ANATOMY_IMAGE}" alt="Detailed front and back anatomical muscle diagram" />
+        <img class="sn-anatomy-img" src="${ANATOMY_IMAGE}" alt="Detailed front and back anatomical muscle diagram" loading="eager" />
         ${overlayMarkup(workout)}
         <div class="sn-anatomy-label">BLUE = TODAY’S FOCUS</div>
       </div>`;
