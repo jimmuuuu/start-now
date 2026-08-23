@@ -1,4 +1,4 @@
-# v46 diagnostic + strict coverage gate
+# v47 diagnostics + exact missing export + strict coverage gate
 name: Exercise media coverage
 
 on:
@@ -33,11 +33,14 @@ jobs:
       - name: Audit public-domain backup media
         run: node scripts/diagnose-free-db-v46.mjs
 
+      - name: Export exact remaining exercise list
+        run: node scripts/build-missing-exercise-media-v47.mjs
+
       - name: Commit diagnostic reports
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add EXERCISE_MEDIA_DIAGNOSTIC_V45.json EXERCISE_MEDIA_DIAGNOSTIC_V45.md EXERCISE_MEDIA_LOAD_CHECK_V45.json EXERCISE_MEDIA_LOAD_CHECK_V45.md EXERCISE_MEDIA_BACKUP_DIAGNOSTIC_V46.json EXERCISE_MEDIA_BACKUP_DIAGNOSTIC_V46.md
+          git add EXERCISE_MEDIA_DIAGNOSTIC_V45.json EXERCISE_MEDIA_DIAGNOSTIC_V45.md EXERCISE_MEDIA_LOAD_CHECK_V45.json EXERCISE_MEDIA_LOAD_CHECK_V45.md EXERCISE_MEDIA_BACKUP_DIAGNOSTIC_V46.json EXERCISE_MEDIA_BACKUP_DIAGNOSTIC_V46.md missing-exercise-media.json
           if git diff --cached --quiet; then
             echo 'Diagnostics already current.'
           else
