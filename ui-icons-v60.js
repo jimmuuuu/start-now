@@ -1,4 +1,4 @@
-// START/NOW v60 — consistent SVG UI icons with one intentional live-streak emoji exception.
+// START/NOW v76 — consistent SVG UI icons; Home tiles now permanently use Quick Actions.
 (() => {
   const ICONS = {
     calendarDays: '<path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>',
@@ -8,6 +8,8 @@
     trophy: '<path d="M8 21h8M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4a2 2 0 0 0 2 4h1M17 6h3a2 2 0 0 1-2 4h-1"/>',
     flame: '<path d="M12 22c4 0 7-3 7-7 0-2.6-1.3-5-3.5-7.4-.4 2-1.4 3.3-3 4.2.4-3.5-1.2-6.8-4.1-9.8.2 3.6-3.4 6.1-3.4 10.3C5 17.8 8 22 12 22z"/><path d="M9.7 16.5c0 1.6 1 2.8 2.4 2.8 1.6 0 2.7-1.2 2.7-2.8 0-1.1-.6-2.2-1.6-3.2-.2 1-.7 1.7-1.5 2.1.1-1.4-.4-2.6-1.4-3.7.1 1.7-.6 3-0.6 4.8z"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
+    zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+    bookOpen: '<path d="M2 5.5A3.5 3.5 0 0 1 5.5 2H11v17H5.5A3.5 3.5 0 0 0 2 22.5z"/><path d="M22 5.5A3.5 3.5 0 0 0 18.5 2H13v17h5.5a3.5 3.5 0 0 1 3.5 3.5z"/>',
     check: '<path d="m5 12 4 4L19 6"/>',
     house: '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
@@ -21,11 +23,13 @@
     return `<svg class="sn60-icon ${className}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`;
   }
 
+  // v76: this is now the canonical Home-card definition. The old Today / Workouts /
+  // Progress / Achievements definitions were removed so they cannot be resurrected by decorate().
   const quickLinks = [
-    { title: 'Today', subtitle: 'Your plan', icon: 'calendarDays', page: 'home', tone: 'coral' },
-    { title: 'Workouts', subtitle: 'Create & schedule', icon: 'dumbbell', page: 'workouts', tone: 'bluebg' },
-    { title: 'Progress', subtitle: 'Track results', icon: 'chart', page: 'progress', tone: 'limebg' },
-    { title: 'Achievements', subtitle: 'Earn rewards', icon: 'trophy', page: 'progress', tone: 'goldbg' }
+    { title: 'Quick Workout', subtitle: 'Train now', icon: 'zap', action: 'quickWorkout', tone: 'coral' },
+    { title: 'Exercise Library', subtitle: 'Browse exercises', icon: 'bookOpen', action: 'exerciseLibrary', tone: 'bluebg' },
+    { title: 'Workout Calendar', subtitle: 'History & streaks', icon: 'calendarDays', action: 'calendar', tone: 'limebg' },
+    { title: 'My Stats', subtitle: 'See your numbers', icon: 'chart', action: 'myStats', tone: 'goldbg' }
   ];
 
   function installStyles() {
@@ -38,6 +42,7 @@
       .tile.limebg .sn60-quick-icon-wrap{background:rgba(38,48,13,.10);color:#26300d}
       .tile.goldbg .sn60-quick-icon-wrap{background:rgba(62,44,3,.10);color:#3e2c03}
       .tile .sn60-quick-icon-wrap + strong{margin-top:14px}
+      .sn60-quick-actions{margin-top:18px}.sn60-quick-actions-head{margin:0 2px 10px;font-size:12px;font-weight:850;letter-spacing:.12em;text-transform:uppercase;color:#2F6DF6}
       .card-label .sn60-icon,.streak .sn60-icon{width:18px;height:18px}
       .workout-icon .sn60-icon{width:22px;height:22px;margin:auto}
       .create-workout-btn,.sn60-icon-label{display:inline-flex;align-items:center;gap:7px}
@@ -76,18 +81,43 @@
     document.head.appendChild(style);
   }
 
+  function openQuickAction(action) {
+    if (window.START_NOW_QUICK_ACTIONS?.openAction) {
+      window.START_NOW_QUICK_ACTIONS.openAction(action);
+      return;
+    }
+    if (typeof state === 'undefined' || typeof render !== 'function') return;
+    state.page = action;
+    render();
+  }
+
   function renderQuickLinks() {
-    const root = document.querySelector('.tiles');
-    if (!root) return;
-    root.innerHTML = quickLinks.map(item => `
-      <button class="tile ${item.tone}" data-go="${item.page}">
+    let tiles = document.querySelector('.sn70-quick-actions .tiles') || document.querySelector('.tiles');
+    if (!tiles) return;
+
+    let section = tiles.closest('.sn70-quick-actions, .sn60-quick-actions');
+    if (!section) {
+      section = document.createElement('section');
+      section.className = 'sn60-quick-actions';
+      tiles.replaceWith(section);
+      section.innerHTML = '<div class="sn60-quick-actions-head">Quick Actions</div><div class="tiles"></div>';
+      tiles = section.querySelector('.tiles');
+    }
+
+    // If quick-actions-v70 already owns the section, leave its heading/style intact and only
+    // guarantee that the four canonical actions are present.
+    tiles.innerHTML = quickLinks.map(item => `
+      <button type="button" class="tile ${item.tone}" data-sn70-action="${item.action}" aria-label="${item.title} — ${item.subtitle}">
         <div class="sn60-quick-icon-wrap">${icon(item.icon, 'quick-card-icon', 28, 2.2)}</div>
         <strong>${item.title}</strong><span>${item.subtitle}</span>
       </button>`).join('');
-    root.querySelectorAll('[data-go]').forEach(btn => btn.addEventListener('click', () => {
-      if (typeof state !== 'undefined') state.page = btn.dataset.go;
-      if (typeof render === 'function') render();
-    }));
+
+    tiles.querySelectorAll('[data-sn70-action]').forEach(btn => {
+      btn.onclick = event => {
+        event.preventDefault();
+        openQuickAction(btn.dataset.sn70Action);
+      };
+    });
   }
 
   function replaceReasonIcon(strong, name, label) {
@@ -105,6 +135,7 @@
       node.innerHTML = icon(node.dataset.snIcon, '', Number(node.dataset.snSize || 22), Number(node.dataset.snStroke || 2.2));
     });
 
+    // v76: decoration may run many times, but it can only render the NEW Quick Actions now.
     renderQuickLinks();
 
     const planLabel = document.querySelector('.plan-card .card-label');
@@ -151,7 +182,7 @@
   }
 
   installStyles();
-  window.START_NOW_ICONS = { version: 'v60', icon, quickLinks, decorate };
+  window.START_NOW_ICONS = { version: 'v76', icon, quickLinks, decorate };
 
   if (typeof render === 'function') {
     const priorRender = render;
