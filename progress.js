@@ -296,7 +296,7 @@
           <div class="progress-ring-small" style="--progress:${targetPercent*3.6}deg"><span>${targetPercent}%</span></div>
         </div>
         <div class="activity-week">
-          ${weekDays.map(day=>`<div class="activity-day ${day.count?"active":""} ${day.today?"today":""}" title="${day.full}"><div class="activity-dot">${day.count?"✓":""}</div><span>${day.label}</span></div>`).join("")}
+          ${weekDays.map(day=>`<div class="activity-day ${day.count?"active":""} ${day.today?"today":""}" title="${day.full}"><div class="activity-dot">${day.count?'<span data-sn-icon="check" data-sn-size="14" data-sn-stroke="2.5" aria-hidden="true"></span>':""}</div><span>${day.label}</span></div>`).join("")}
         </div>
         <p class="progress-insight">${progressInsight(weekSessions,target,records)}</p>
       </section>
@@ -359,9 +359,21 @@
       <section class="card progress-section-card">
         <div class="progress-section-head"><div><span class="section-kicker gold">ACHIEVEMENTS</span><h2>Milestones</h2></div></div>
         <div class="achievement-mini-grid">
-          <div class="achievement-mini ${state.streak>=7?"unlocked":""}"><span>🔥</span><strong>7-day streak</strong><small>${state.streak>=7?"Unlocked":"Keep going"}</small></div>
-          <div class="achievement-mini ${state.completedWorkouts>=5?"unlocked":""}"><span>🏆</span><strong>First five</strong><small>${state.completedWorkouts>=5?"Unlocked":"Complete 5 workouts"}</small></div>
-          <div class="achievement-mini ${records.length>=3?"unlocked":""}"><span>📈</span><strong>3 strength PRs</strong><small>${records.length>=3?"Unlocked":"Log your lifts"}</small></div>
+          <div class="achievement-mini ${state.streak>=7?"unlocked completed":"locked"}" data-achievement-id="streak-7">
+            <div class="milestone-icon milestone-icon-coral" data-sn-icon="flame" data-sn-size="26" data-sn-stroke="2.1" aria-hidden="true"></div>
+            <strong>7-day streak</strong><small>${state.streak>=7?"Unlocked":"Keep going"}</small>
+            ${state.streak>=7?'<div class="milestone-complete" data-sn-icon="check" data-sn-size="13" data-sn-stroke="2.6" aria-hidden="true"></div>':""}
+          </div>
+          <div class="achievement-mini ${state.completedWorkouts>=5?"unlocked completed":"locked"}" data-achievement-id="first-five">
+            <div class="milestone-icon milestone-icon-gold" data-sn-icon="trophy" data-sn-size="26" data-sn-stroke="2.1" aria-hidden="true"></div>
+            <strong>First five</strong><small>${state.completedWorkouts>=5?"Unlocked":"Complete 5 workouts"}</small>
+            ${state.completedWorkouts>=5?'<div class="milestone-complete" data-sn-icon="check" data-sn-size="13" data-sn-stroke="2.6" aria-hidden="true"></div>':""}
+          </div>
+          <div class="achievement-mini ${records.length>=3?"unlocked completed":"locked"}" data-achievement-id="strength-prs-3">
+            <div class="milestone-icon milestone-icon-blue" data-sn-icon="trendingUp" data-sn-size="26" data-sn-stroke="2.1" aria-hidden="true"></div>
+            <strong>3 strength PRs</strong><small>${records.length>=3?"Unlocked":"Log your lifts"}</small>
+            ${records.length>=3?'<div class="milestone-complete" data-sn-icon="check" data-sn-size="13" data-sn-stroke="2.6" aria-hidden="true"></div>':""}
+          </div>
         </div>
       </section>
     `;
