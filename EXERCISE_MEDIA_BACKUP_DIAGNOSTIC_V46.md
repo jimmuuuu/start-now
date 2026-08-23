@@ -1,0 +1,176 @@
+# Public-domain backup media diagnostic v46
+
+- ExerciseDB-unresolved input: **165**
+- Safely matched to Free Exercise DB start/end media: **58**
+- Still unresolved: **107**
+
+These matches are start/end JPG pairs from the public-domain Free Exercise DB. They can be converted into local looping GIFs without AI generation.
+
+## Matched
+- ✓ Triceps Pushdown → Triceps Pushdown (Triceps_Pushdown)
+- ✓ Lat Pulldown → Wide-Grip Lat Pulldown (Wide-Grip_Lat_Pulldown)
+- ✓ Leg Press → Leg Press (Leg_Press)
+- ✓ Plank → Plank (Plank)
+- ✓ Pec Deck Fly → Butterfly (Butterfly)
+- ✓ Svend Press → Svend Press (Svend_Press)
+- ✓ Barbell Overhead Press → Standing Military Press (Standing_Military_Press)
+- ✓ Seated Barbell Press → Seated Barbell Military Press (Seated_Barbell_Military_Press)
+- ✓ Plate Front Raise → Front Plate Raise (Front_Plate_Raise)
+- ✓ Upright Row → Upright Barbell Row (Upright_Barbell_Row)
+- ✓ Face Pull → Face Pull (Face_Pull)
+- ✓ Rear Delt Cable Fly → Cable Rear Delt Fly (Cable_Rear_Delt_Fly)
+- ✓ Machine Reverse Fly → Reverse Machine Flyes (Reverse_Machine_Flyes)
+- ✓ Band Pull-Apart → Band Pull Apart (Band_Pull_Apart)
+- ✓ Wide-Grip Lat Pulldown → Wide-Grip Lat Pulldown (Wide-Grip_Lat_Pulldown)
+- ✓ Straight-Arm Pulldown → Straight-Arm Pulldown (Straight-Arm_Pulldown)
+- ✓ Machine High Row → Leverage High Row (Leverage_High_Row)
+- ✓ Cable Row → Seated Cable Rows (Seated_Cable_Rows)
+- ✓ Sumo Deadlift → Sumo Deadlift (Sumo_Deadlift)
+- ✓ Good Morning → Good Morning (Good_Morning)
+- ✓ Farmer Carry → Farmer's Walk (Farmers_Walk)
+- ✓ Preacher Curl → Preacher Curl (Preacher_Curl)
+- ✓ Cross-Body Hammer Curl → Cross Body Hammer Curl (Cross_Body_Hammer_Curl)
+- ✓ Concentration Curl → Concentration Curls (Concentration_Curls)
+- ✓ Spider Curl → Spider Curl (Spider_Curl)
+- ✓ Wrist Curl → Palms-Up Barbell Wrist Curl Over A Bench (Palms-Up_Barbell_Wrist_Curl_Over_A_Bench)
+- ✓ Reverse Wrist Curl → Palms-Down Wrist Curl Over A Bench (Palms-Down_Wrist_Curl_Over_A_Bench)
+- ✓ Behind-the-Back Wrist Curl → Standing Palms-Up Barbell Behind The Back Wrist Curl (Standing_Palms-Up_Barbell_Behind_The_Back_Wrist_Curl)
+- ✓ Plate Pinch → Plate Pinch (Plate_Pinch)
+- ✓ Front Squat → Front Barbell Squat (Front_Barbell_Squat)
+- ✓ Box Squat → Box Squat (Box_Squat)
+- ✓ Seated Leg Curl → Seated Leg Curl (Seated_Leg_Curl)
+- ✓ Lying Leg Curl → Lying Leg Curls (Lying_Leg_Curls)
+- ✓ Standing Leg Curl → Standing Leg Curl (Standing_Leg_Curl)
+- ✓ Nordic Hamstring Curl → Natural Glute Ham Raise (Natural_Glute_Ham_Raise)
+- ✓ Cable Pull-Through → Pull Through (Pull_Through)
+- ✓ 45-Degree Back Extension → Hyperextensions (Back Extensions) (Hyperextensions_Back_Extensions)
+- ✓ Barbell Hip Thrust → Barbell Hip Thrust (Barbell_Hip_Thrust)
+- ✓ Glute Bridge → Butt Lift (Bridge) (Butt_Lift_Bridge)
+- ✓ Single-Leg Glute Bridge → Single Leg Glute Bridge (Single_Leg_Glute_Bridge)
+- ✓ Smith Machine Calf Raise → Smith Machine Calf Raise (Smith_Machine_Calf_Raise)
+- ✓ Machine Calf Raise → Standing Calf Raises (Standing_Calf_Raises)
+- ✓ Crunch → Crunches (Crunches)
+- ✓ Sit-Up → Sit-Up (Sit-Up)
+- ✓ Bicycle Crunch → Air Bike (Air_Bike)
+- ✓ Side Plank → Side Bridge (Side_Bridge)
+- ✓ Hanging Knee Raise → Hanging Leg Raise (Hanging_Leg_Raise)
+- ✓ Ab Wheel Rollout → Ab Roller (Ab_Roller)
+- ✓ Stability Ball Crunch → Exercise Ball Crunch (Exercise_Ball_Crunch)
+- ✓ Pallof Press → Pallof Press (Pallof_Press)
+- ✓ Push Press → Push Press (Push_Press)
+- ✓ Sled Push → Sled Push (Sled_Push)
+- ✓ Treadmill Walk → Walking, Treadmill (Walking_Treadmill)
+- ✓ Treadmill Run → Running, Treadmill (Running_Treadmill)
+- ✓ Stationary Bike → Bicycling, Stationary (Bicycling_Stationary)
+- ✓ Recumbent Bike → Recumbent Bike (Recumbent_Bike)
+- ✓ Elliptical → Elliptical Trainer (Elliptical_Trainer)
+- ✓ Rowing Machine → Rowing, Stationary (Rowing_Stationary)
+
+## Still unresolved
+- Cable Fly (cable-fly) — Cable Rear Delt Fly [cable] | Flat Bench Cable Flyes [cable] | Cable Crossover [cable] | Cable Crunch [cable]
+- Wide-Grip Push-Up (wide-grip-push-up) — Push-Up Wide [body only] | Incline Push-Up Wide [body only] | Incline Push-Up Close-Grip [body only] | Incline Push-Up Reverse Grip [body only]
+- Low-to-High Cable Fly (low-to-high-cable-fly) — High Cable Curls [cable] | Low Cable Crossover [cable] | Cable Rear Delt Fly [cable] | Flat Bench Cable Flyes [cable]
+- High-to-Low Cable Fly (high-to-low-cable-fly) — High Cable Curls [cable] | Low Cable Crossover [cable] | Cable Rear Delt Fly [cable] | Flat Bench Cable Flyes [cable]
+- Single-Arm Cable Fly (single-arm-cable-fly) — Single-Arm Cable Crossover [cable] | Cable Rear Delt Fly [cable] | Flat Bench Cable Flyes [cable] | Cable One Arm Tricep Extension [cable]
+- Standing Dumbbell Shoulder Press (standing-dumbbell-shoulder-press) — Dumbbell Shoulder Press [dumbbell] | Standing Dumbbell Press [dumbbell] | Standing Alternating Dumbbell Press [dumbbell] | Dumbbell One-Arm Shoulder Press [dumbbell]
+- Arnold Press (arnold-press) — Arnold Dumbbell Press [dumbbell] | Kettlebell Arnold Press [kettlebells] | Bent Press [kettlebells] | Board Press [barbell]
+- Lean-Away Lateral Raise (lean-away-lateral-raise) — Side Lateral Raise [dumbbell] | Cable Seated Lateral Raise [cable] | Lateral Raise - With Bands [bands] | Seated Side Lateral Raise [dumbbell]
+- Landmine Press (landmine-press) — Bent Press [kettlebells] | Board Press [barbell] | Calf Press [machine] | Chain Press [other]
+- Single-Arm Landmine Press (single-arm-landmine-press) — One Arm Floor Press [barbell] | Single-Arm Cable Crossover [cable] | Single-Arm Linear Jammer [barbell] | Single-Arm Push-Up [body only]
+- Z Press (z-press) — Bent Press [kettlebells] | Board Press [barbell] | Calf Press [machine] | Chain Press [other]
+- Pike Push-Up (pike-push-up) — Pushups [body only] | Clock Push-Up [body only] | Decline Push-Up [unknown] | Incline Push-Up [body only]
+- Hand-Release Pike Push-Up (hand-release-pike-push-up) — Pushups [body only] | Clock Push-Up [body only] | Decline Push-Up [unknown] | Incline Push-Up [body only]
+- Bent-Over Dumbbell Reverse Fly (bent-over-dumbbell-reverse-fly) — Bent Over Two-Dumbbell Row [dumbbell] | Dumbbell Flyes [dumbbell] | Reverse Flyes [dumbbell] | Decline Dumbbell Flyes [dumbbell]
+- Chest-Supported Rear Delt Raise (chest-supported-rear-delt-raise) — Lying Rear Delt Raise [dumbbell] | Seated Bent-Over Rear Delt Raise [dumbbell] | Rear Leg Raises [body only] | Barbell Rear Delt Row [barbell]
+- Cable Rear Delt Row (cable-rear-delt-row) — Cable Rope Rear-Delt Rows [cable] | Cable Rear Delt Fly [cable] | Elevated Cable Rows [cable] | Seated Cable Rows [cable]
+- Assisted Pull-Up (assisted-pull-up) — Pullups [body only] | Scapular Pull-Up [unknown] | V-Bar Pullup [body only] | Wide-Grip Rear Pull-Up [body only]
+- Close-Grip Lat Pulldown (close-grip-lat-pulldown) — Close-Grip Front Lat Pulldown [cable] | Wide-Grip Lat Pulldown [cable] | One Arm Lat Pulldown [cable] | Full Range-Of-Motion Lat Pulldown [cable]
+- Neutral-Grip Lat Pulldown (neutral-grip-lat-pulldown) — Wide-Grip Lat Pulldown [cable] | Close-Grip Front Lat Pulldown [cable] | One Arm Lat Pulldown [cable] | Full Range-Of-Motion Lat Pulldown [cable]
+- Single-Arm Lat Pulldown (single-arm-lat-pulldown) — One Arm Lat Pulldown [cable] | Straight-Arm Pulldown [cable] | Rope Straight-Arm Pulldown [cable] | Single-Arm Cable Crossover [cable]
+- Pendlay Row (pendlay-row) — Inverted Row [unknown] | Shotgun Row [cable] | Sled Row [other] | Suspended Row [other]
+- Underhand Barbell Row (underhand-barbell-row) — Upright Barbell Row [barbell] | Barbell Rear Delt Row [barbell] | Bent Over Barbell Row [barbell] | Lying Cambered Barbell Row [barbell]
+- Chest-Supported Dumbbell Row (chest-supported-dumbbell-row) — Dumbbell Incline Row [dumbbell] | One-Arm Dumbbell Row [dumbbell] | Standing Dumbbell Upright Row [dumbbell] | Bent Over Two-Dumbbell Row [dumbbell]
+- T-Bar Row (t-bar-row) — Lying T-Bar Row [machine] | T-Bar Row with Handle [barbell] | One-Arm Long Bar Row [barbell] | Straight Bar Bench Mid Rows [barbell]
+- Chest-Supported T-Bar Row (chest-supported-t-bar-row) — Lying T-Bar Row [machine] | T-Bar Row with Handle [barbell] | One-Arm Long Bar Row [barbell] | Straight Bar Bench Mid Rows [barbell]
+- Machine Low Row (machine-low-row) — Smith Machine Upright Row [machine] | Smith Machine Bent Over Row [machine] | Smith Machine One-Arm Upright Row [machine] | Dip Machine [machine]
+- Wide-Grip Cable Row (wide-grip-cable-row) — Elevated Cable Rows [cable] | Seated Cable Rows [cable] | Upright Cable Row [cable] | Wide-Grip Lat Pulldown [cable]
+- Single-Arm Cable Row (single-arm-cable-row) — Single-Arm Cable Crossover [cable] | Kneeling Single-Arm High Pulley Row [cable] | Seated One-arm Cable Pulley Rows [cable] | Elevated Cable Rows [cable]
+- Meadows Row (meadows-row) — Inverted Row [unknown] | Shotgun Row [cable] | Sled Row [other] | Suspended Row [other]
+- Landmine Row (landmine-row) — Inverted Row [unknown] | Shotgun Row [cable] | Sled Row [other] | Suspended Row [other]
+- Seal Row (seal-row) — Inverted Row [unknown] | Shotgun Row [cable] | Sled Row [other] | Suspended Row [other]
+- TRX Row (trx-row) — Inverted Row [unknown] | Shotgun Row [cable] | Sled Row [other] | Suspended Row [other]
+- Rack Pull (rack-pull) — Rack Pull with Bands [barbell] | Clean Pull [barbell] | Face Pull [cable] | Pull Through [cable]
+- Conventional Deadlift (conventional-deadlift) — Axle Deadlift [other] | Barbell Deadlift [barbell] | Car Deadlift [other] | Clean Deadlift [barbell]
+- Back Extension (back-extension) — Hyperextensions (Back Extensions) [other] | Elbows Back [unknown] | Leg Extensions [machine] | Chain Handle Extension [other]
+- Smith Machine Shrug (smith-machine-shrug) — Smith Machine Behind the Back Shrug [machine] | Smith Machine Squat [machine] | Calf-Machine Shoulder Shrug [machine] | Smith Machine Bench Press [machine]
+- Trap Bar Shrug (trap-bar-shrug) — Trap Bar Deadlift [other] | Barbell Shrug [barbell] | Clean Shrug [barbell] | Dumbbell Shrug [dumbbell]
+- Suitcase Carry (suitcase-carry) — Rickshaw Carry [other] | 3/4 Sit-Up [body only] | 90/90 Hamstring [body only] | Ab Crunch Machine [machine]
+- Alternating Dumbbell Curl (alternating-dumbbell-curl) — Dumbbell Bicep Curl [dumbbell] | Incline Dumbbell Curl [dumbbell] | Seated Dumbbell Curl [dumbbell] | Alternate Incline Dumbbell Curl [dumbbell]
+- Straight-Bar Cable Curl (straight-bar-cable-curl) — Cable Preacher Curl [cable] | Cable Wrist Curl [cable] | High Cable Curls [cable] | Lying Cable Curl [cable]
+- Rope Hammer Curl (rope-hammer-curl) — Hammer Curls [dumbbell] | Cable Hammer Curls - Rope Attachment [cable] | Alternate Hammer Curl [dumbbell] | Incline Hammer Curls [dumbbell]
+- Bayesian Cable Curl (bayesian-cable-curl) — Cable Preacher Curl [cable] | Cable Wrist Curl [cable] | High Cable Curls [cable] | Lying Cable Curl [cable]
+- Rope Triceps Pushdown (rope-triceps-pushdown) — Triceps Pushdown - Rope Attachment [cable] | Triceps Pushdown [cable] | Reverse Grip Triceps Pushdown [cable] | Cable Rope Overhead Triceps Extension [cable]
+- Straight-Bar Pushdown (straight-bar-pushdown) — Triceps Pushdown - V-Bar Attachment [cable] | Triceps Pushdown [cable] | Cable Incline Pushdown [cable] | Straight-Arm Pulldown [cable]
+- V-Bar Pushdown (v-bar-pushdown) — Triceps Pushdown - V-Bar Attachment [cable] | V-Bar Pulldown [cable] | Triceps Pushdown [cable] | Cable Incline Pushdown [cable]
+- Reverse-Grip Pushdown (reverse-grip-pushdown) — Reverse Grip Triceps Pushdown [cable] | Triceps Pushdown [cable] | Cable Incline Pushdown [cable] | Cable Reverse Crunch [cable]
+- Overhead Cable Triceps Extension (overhead-cable-triceps-extension) — Cable Rope Overhead Triceps Extension [cable] | Cable Incline Triceps Extension [cable] | Cable Lying Triceps Extension [cable] | Kneeling Cable Triceps Extension [cable]
+- Rope Overhead Extension (rope-overhead-extension) — Cable Rope Overhead Triceps Extension [cable] | Triceps Overhead Extension with Rope [cable] | Sled Overhead Triceps Extension [other] | Standing Overhead Barbell Triceps Extension [barbell]
+- Single-Arm Dumbbell Triceps Extension (single-arm-dumbbell-triceps-extension) — Dumbbell One-Arm Triceps Extension [dumbbell] | One Arm Pronated Dumbbell Triceps Extension [dumbbell] | One Arm Supinated Dumbbell Triceps Extension [dumbbell] | Standing One-Arm Dumbbell Triceps Extension [dumbbell]
+- Skull Crusher (skull-crusher) — Band Skull Crusher [bands] | Decline Close-Grip Bench To Skull Crusher [barbell] | 3/4 Sit-Up [body only] | 90/90 Hamstring [body only]
+- EZ-Bar Skull Crusher (ez-bar-skull-crusher) — EZ-Bar Curl [e-z curl bar] | EZ-Bar Skullcrusher [e-z curl bar] | Close-Grip EZ-Bar Press [e-z curl bar] | Close-Grip EZ Bar Curl [barbell]
+- Dumbbell Skull Crusher (dumbbell-skull-crusher) — Dumbbell Clean [dumbbell] | Dumbbell Flyes [dumbbell] | Dumbbell Lunges [dumbbell] | Dumbbell Raise [dumbbell]
+- Close-Grip Bench Press (close-grip-bench-press) — Close-Grip Barbell Bench Press [barbell] | Smith Machine Close-Grip Bench Press [machine] | Close-Grip Dumbbell Press [dumbbell] | Barbell Bench Press - Medium Grip [barbell]
+- Bench Dip (bench-dip) — Weighted Bench Dip [other] | Bench Dips [body only] | Bench Jump [body only] | Bench Sprint [other]
+- Assisted Dip (assisted-dip) — Dip Machine [machine] | Jerk Dip Squat [barbell] | Parallel Bar Dip [other] | Weighted Bench Dip [other]
+- Dumbbell Wrist Curl (dumbbell-wrist-curl) — Dumbbell Bicep Curl [dumbbell] | Incline Dumbbell Curl [dumbbell] | Seated Dumbbell Curl [dumbbell] | Seated Dumbbell Palms-Down Wrist Curl [dumbbell]
+- Dead Hang (dead-hang) — Dead Bug [body only] | Hang Clean [barbell] | Hang Snatch [barbell] | Alternating Hang Clean [kettlebells]
+- Towel Hang (towel-hang) — Hang Clean [barbell] | Hang Snatch [barbell] | Alternating Hang Clean [kettlebells] | Kettlebell Hang Clean [kettlebells]
+- Pendulum Squat (pendulum-squat) — Barbell Squat [barbell] | Bodyweight Squat [body only] | Box Squat [barbell] | Chair Squat [machine]
+- Bulgarian Split Squat (bulgarian-split-squat) — Split Squats [unknown] | Suspended Split Squat [other] | Barbell Side Split Squat [barbell] | Split Squat with Dumbbells [dumbbell]
+- Dumbbell Split Squat (dumbbell-split-squat) — Dumbbell Squat [dumbbell] | Split Squats [unknown] | Plie Dumbbell Squat [dumbbell] | Split Squat with Dumbbells [dumbbell]
+- Step-Up (step-up) — Step-up with Knee Raise [body only] | Body-Up [body only] | Bottoms Up [body only] | Chin-Up [body only]
+- Wall Sit (wall-sit) — Sit-Up [body only] | Sit Squats [unknown] | Frog Sit-Ups [body only] | Jackknife Sit-Up [body only]
+- Spanish Squat (spanish-squat) — Barbell Squat [barbell] | Bodyweight Squat [body only] | Box Squat [barbell] | Chair Squat [machine]
+- Cyclist Squat (cyclist-squat) — Barbell Squat [barbell] | Bodyweight Squat [body only] | Box Squat [barbell] | Chair Squat [machine]
+- Heel-Elevated Goblet Squat (heel-elevated-goblet-squat) — Goblet Squat [kettlebells] | Barbell Squat [barbell] | Bodyweight Squat [body only] | Box Squat [barbell]
+- Single-Leg Leg Curl (single-leg-leg-curl) — Lying Leg Curls [machine] | Seated Leg Curl [machine] | Single-Leg Leg Extension [machine] | Standing Leg Curl [machine]
+- Single-Leg Romanian Deadlift (single-leg-romanian-deadlift) — Romanian Deadlift [barbell] | Single-Leg Leg Extension [machine] | Romanian Deadlift from Deficit [barbell] | Single-Leg Hop Progression [other]
+- Stiff-Leg Deadlift (stiff-leg-deadlift) — Stiff-Legged Barbell Deadlift [barbell] | Stiff-Legged Dumbbell Deadlift [dumbbell] | Smith Machine Stiff-Legged Deadlift [machine] | Stiff Leg Barbell Good Morning [barbell]
+- Smith Machine Hip Thrust (smith-machine-hip-thrust) — Smith Machine Hip Raise [machine] | Smith Machine Squat [machine] | Smith Machine Bench Press [machine] | Smith Machine Calf Raise [machine]
+- Dumbbell Hip Thrust (dumbbell-hip-thrust) — Dumbbell Clean [dumbbell] | Dumbbell Flyes [dumbbell] | Dumbbell Lunges [dumbbell] | Dumbbell Raise [dumbbell]
+- Machine Glute Drive (machine-glute-drive) — Dip Machine [machine] | Ab Crunch Machine [machine] | Glute Ham Raise [machine] | Lying Machine Squat [machine]
+- Cable Glute Kickback (cable-glute-kickback) — One-Legged Cable Kickback [cable] | Cable Crossover [cable] | Cable Crunch [cable] | Cable Deadlifts [cable]
+- Machine Glute Kickback (machine-glute-kickback) — Dip Machine [machine] | Ab Crunch Machine [machine] | Glute Ham Raise [machine] | Lying Machine Squat [machine]
+- Donkey Kick (donkey-kick) — Scissor Kick [body only] | Donkey Calf Raises [other] | Double Leg Butt Kick [body only] | Single Leg Butt Kick [body only]
+- Fire Hydrant (fire-hydrant) — 3/4 Sit-Up [body only] | 90/90 Hamstring [body only] | Ab Crunch Machine [machine] | Ab Roller [other]
+- Frog Pump (frog-pump) — Frog Hops [unknown] | Frog Sit-Ups [body only] | 3/4 Sit-Up [body only] | 90/90 Hamstring [body only]
+- Step-Down (step-down) — Step Mill [machine] | Barbell Step Ups [barbell] | Carioca Quick Step [unknown] | Dumbbell Step Ups [dumbbell]
+- Curtsy Lunge (curtsy-lunge) — Barbell Lunge [barbell] | Dumbbell Lunges [dumbbell] | Lunge Sprint [machine] | Barbell Walking Lunge [barbell]
+- Cable Hip Abduction (cable-hip-abduction) — Cable Hip Adduction [cable] | Cable Crossover [cable] | Cable Crunch [cable] | Cable Deadlifts [cable]
+- Band Hip Abduction (band-hip-abduction) — Band Hip Adductions [bands] | Hip Flexion with Band [bands] | Hip Lift with Band [bands] | Band Good Morning [bands]
+- Seated Hip Abduction (seated-hip-abduction) — Seated Biceps [body only] | Seated Glute [body only] | Seated Hamstring [unknown] | Band Hip Adductions [bands]
+- Standing Hip Abduction (standing-hip-abduction) — Standing Hip Circles [body only] | Standing Hip Flexors [unknown] | Band Hip Adductions [bands] | Barbell Hip Thrust [barbell]
+- Lateral Band Walk (lateral-band-walk) — Monster Walk [bands] | Band Good Morning [bands] | Band Hip Adductions [bands] | Band Pull Apart [bands]
+- Single-Leg Calf Raise (single-leg-calf-raise) — Dumbbell Seated One-Leg Calf Raise [dumbbell] | Donkey Calf Raises [other] | Front Leg Raises [body only] | Hanging Leg Raise [body only]
+- Tibialis Raise (tibialis-raise) — Dumbbell Raise [dumbbell] | Shoulder Raise [unknown] | Alternating Deltoid Raise [dumbbell] | Anterior Tibialis-SMR [other]
+- Bird Dog (bird-dog) — 3/4 Sit-Up [body only] | 90/90 Hamstring [body only] | Adductor/Groin [unknown] | Air Bike [body only]
+- Hollow Hold (hollow-hold) — 3/4 Sit-Up [body only] | 90/90 Hamstring [body only] | Ab Crunch Machine [machine] | Ab Roller [other]
+- Hollow Rock (hollow-rock) — 3/4 Sit-Up [body only] | 90/90 Hamstring [body only] | Ab Crunch Machine [machine] | Ab Roller [other]
+- Plank Shoulder Tap (plank-shoulder-tap) — Plank [body only] | Shoulder Circles [unknown] | Shoulder Raise [unknown] | Shoulder Stretch [unknown]
+- Swiss Ball Pike (swiss-ball-pike) — Hanging Pike [body only] | Ball Leg Curl [exercise ball] | Exercise Ball Crunch [exercise ball] | Hug A Ball [exercise ball]
+- V-Up (v-up) — V-Bar Pullup [body only] | Body-Up [body only] | Bottoms Up [body only] | Chin-Up [body only]
+- Toe Touch (toe-touch) — Toe Touchers [body only] | Standing Toe Touches [unknown] | 3/4 Sit-Up [body only] | 90/90 Hamstring [body only]
+- Cable Wood Chop (cable-wood-chop) — Standing Cable Wood Chop [cable] | Cable Crossover [cable] | Cable Crunch [cable] | Cable Deadlifts [cable]
+- Landmine Rotation (landmine-rotation) — External Rotation [dumbbell] | Torso Rotation [exercise ball] | Cable Internal Rotation [cable] | Landmine 180's [barbell]
+- Suitcase March (suitcase-march) — 3/4 Sit-Up [body only] | 90/90 Hamstring [body only] | Ab Crunch Machine [machine] | Ab Roller [other]
+- Dumbbell Thruster (dumbbell-thruster) — Dumbbell Clean [dumbbell] | Dumbbell Flyes [dumbbell] | Dumbbell Lunges [dumbbell] | Dumbbell Raise [dumbbell]
+- Kettlebell Goblet Thruster (kettlebell-goblet-thruster) — Kettlebell Thruster [kettlebells] | Goblet Squat [kettlebells] | Kettlebell Windmill [kettlebells] | Advanced Kettlebell Windmill [kettlebells]
+- Dumbbell Clean and Press (dumbbell-clean-and-press) — Dumbbell Clean [dumbbell] | Arnold Dumbbell Press [dumbbell] | Dumbbell Bench Press [dumbbell] | Dumbbell Floor Press [dumbbell]
+- Kettlebell Clean and Press (kettlebell-clean-and-press) — One-Arm Kettlebell Clean and Jerk [kettlebells] | Alternating Kettlebell Press [kettlebells] | Kettlebell Arnold Press [kettlebells] | Kettlebell Dead Clean [kettlebells]
+- Kettlebell Deadlift (kettlebell-deadlift) — Kettlebell One-Legged Deadlift [kettlebells] | Kettlebell Thruster [kettlebells] | Kettlebell Windmill [kettlebells] | Advanced Kettlebell Windmill [kettlebells]
+- Sled Pull (sled-pull) — Clean Pull [barbell] | Face Pull [cable] | Pull Through [cable] | Pullups [body only]
+- Battle Rope Waves (battle-rope-waves) — Rope Climb [other] | Rope Crunch [cable] | Rope Jumping [other] | Standing Rope Crunch [cable]
+- Medicine Ball Slam (medicine-ball-slam) — One-Arm Medicine Ball Slam [medicine ball] | Backward Medicine Ball Throw [medicine ball] | Medicine Ball Chest Pass [medicine ball] | Medicine Ball Full Twist [medicine ball]
+- Incline Treadmill Walk (incline-treadmill-walk) — Jogging, Treadmill [machine] | Monster Walk [bands] | Running, Treadmill [machine] | Walking, Treadmill [machine]
+- Stair Climber (stair-climber) — 3/4 Sit-Up [body only] | 90/90 Hamstring [body only] | Ab Crunch Machine [machine] | Ab Roller [other]
+- Ski Erg (ski-erg) — 3/4 Sit-Up [body only] | 90/90 Hamstring [body only] | Ab Crunch Machine [machine] | Ab Roller [other]
