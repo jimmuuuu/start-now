@@ -8,6 +8,16 @@ async function openFresh(page) {
   await expect(page.getByRole('button', { name: /Quick Workout/i })).toBeVisible();
 }
 
+async function assertRuntimeHealthy(page) {
+  await expect(page.locator('.sn77-error-boundary')).toHaveCount(0);
+  const audit = await page.evaluate(() => window.START_NOW_RUNTIME?.audit?.() || null);
+  expect(audit, 'runtime audit is available').not.toBeNull();
+  expect(audit.hasVisibleContent, 'main content is visible').toBe(true);
+  expect(audit.errorBoundaryVisible, 'error boundary is not visible').toBe(false);
+  expect(audit.duplicateIds, 'no duplicate element IDs').toEqual([]);
+  expect(audit.lastError, 'runtime did not capture an error').toBeNull();
+}
+
 async function assertHome(page) {
   await expect(page.locator('.plan-card')).toBeVisible();
   await expect(page.getByRole('button', { name: /Quick Workout/i })).toBeVisible();
@@ -16,6 +26,11 @@ async function assertHome(page) {
   await expect(page.getByRole('button', { name: /My Stats/i })).toBeVisible();
   await expect(page.getByText('Today', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Achievements', { exact: true })).toHaveCount(0);
+
+  const audit = await page.evaluate(() => window.START_NOW_RUNTIME?.audit?.() || null);
+  expect(audit?.quickActionCount).toBe(4);
+  expect(audit?.oldQuickActionLabels).toEqual([]);
+  await assertRuntimeHealthy(page);
 }
 
 test.describe('START/NOW navigation smoke', () => {
@@ -27,7 +42,8 @@ test.describe('START/NOW navigation smoke', () => {
     await openFresh(page);
   });
 
-  test.afterEach(async () => {
+  test.afterEach(async ({ page }) => {
+    await assertRuntimeHealthy(page);
     expect(pageErrors, `Uncaught page errors: ${pageErrors.join(' | ')}`).toEqual([]);
   });
 
@@ -42,6 +58,7 @@ test.describe('START/NOW navigation smoke', () => {
     await expect(page.getByRole('button', { name: /Choose existing/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /Surprise me/i })).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
+    await assertRuntimeHealthy(page);
 
     await page.locator('.sn66-back').click();
     await assertHome(page);
@@ -51,10 +68,11 @@ test.describe('START/NOW navigation smoke', () => {
     await page.getByRole('button', { name: /Exercise Library/i }).click();
     await expect(page.getByRole('heading', { name: /Find an exercise/i })).toBeVisible();
     await expect(page.locator('input[placeholder*="Search exercise"]')).toBeVisible();
-    await expect(page.locator('.sn-library-list, .sn75-library-list')).toBeVisible();
+    await expect(page.locator('.sn-library-list')).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
+    await assertRuntimeHealthy(page);
 
-    const back = page.locator('#sn75LibraryBack, #snBack').first();
+    const back = page.locator('#snBack');
     await expect(back).toBeVisible();
     await back.click();
     await assertHome(page);
@@ -65,6 +83,7 @@ test.describe('START/NOW navigation smoke', () => {
     await expect(page.getByRole('heading', { name: /Workout Calendar/i })).toBeVisible();
     await expect(page.locator('.sn63-month-grid')).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
+    await assertRuntimeHealthy(page);
 
     await page.locator('.sn63-back').click();
     await assertHome(page);
@@ -75,6 +94,7 @@ test.describe('START/NOW navigation smoke', () => {
     await expect(page.getByRole('heading', { name: /My Stats/i })).toBeVisible();
     await expect(page.getByText(/Workouts completed/i)).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
+    await assertRuntimeHealthy(page);
 
     await page.locator('#sn70Back').click();
     await assertHome(page);
@@ -83,12 +103,15 @@ test.describe('START/NOW navigation smoke', () => {
   test('Bottom navigation remains functional', async ({ page }) => {
     await page.getByRole('button', { name: 'Workouts', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Workouts', exact: true })).toBeVisible();
+    await assertRuntimeHealthy(page);
 
     await page.getByRole('button', { name: 'Progress', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible();
+    await assertRuntimeHealthy(page);
 
     await page.getByRole('button', { name: 'Profile', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Profile', exact: true })).toBeVisible();
+    await assertRuntimeHealthy(page);
 
     await page.getByRole('button', { name: 'Home', exact: true }).click();
     await assertHome(page);
