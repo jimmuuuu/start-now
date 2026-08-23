@@ -1,4 +1,4 @@
-# v43 audit branch trigger
+# v44 audit branch trigger
 name: Exercise media coverage
 
 on:
@@ -8,6 +8,7 @@ on:
       - 'app.js'
       - 'exercise-library-extra.js'
       - 'scripts/build-exercise-media-map.mjs'
+      - 'scripts/build-exercise-media-map-v44.mjs'
       - '.github/workflows/exercise-media-coverage.yml'
   pull_request:
     branches: [main]
@@ -15,6 +16,7 @@ on:
       - 'app.js'
       - 'exercise-library-extra.js'
       - 'scripts/build-exercise-media-map.mjs'
+      - 'scripts/build-exercise-media-map-v44.mjs'
       - '.github/workflows/exercise-media-coverage.yml'
   workflow_dispatch:
 
@@ -37,16 +39,16 @@ jobs:
           node-version: '20'
 
       - name: Build and verify complete exercise GIF map
-        run: node scripts/build-exercise-media-map.mjs
+        run: node scripts/build-exercise-media-map-v44.mjs
 
       - name: Commit generated deterministic media map
         run: |
-          if git diff --quiet -- exercise-media-map-v43.js EXERCISE_MEDIA_COVERAGE_V43.md; then
+          if git diff --quiet -- exercise-media-map-v44.js EXERCISE_MEDIA_COVERAGE_V44.md; then
             echo 'Generated media map already current.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add exercise-media-map-v43.js EXERCISE_MEDIA_COVERAGE_V43.md
+          git add exercise-media-map-v44.js EXERCISE_MEDIA_COVERAGE_V44.md
           git commit -m 'Generate verified exercise GIF map [skip ci]'
           git push origin HEAD
