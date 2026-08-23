@@ -1,86 +1,96 @@
-# START/NOW Exercise Visual Audit — v38
+# START/NOW Exercise Visual Audit — v39
 
 ## What was wrong
 
-The repository did **not** contain a library of exercise-specific photos. The only asset in `assets/` was the muscle-anatomy base image. The base app also had a generic `machineSvg()` and `visual-assets.js` replaced it with one chest-press-machine illustration. That global visual was useful on the Home plan card, but it was not a valid demonstration for every exercise.
+The app did not have a real exercise-image library. The repository only had a muscle-anatomy asset plus a generic machine illustration originally intended for the Home plan card. Reusing that machine inside workouts made unrelated movements look wrong.
 
-The v37 workout patch stopped using that generic machine inside workouts, but it still showed a muscle/equipment focus card rather than an actual movement demonstration.
+## v39 fix
 
-## v38 architecture
+`exercise-visual-system-v39.js` is now the active exercise-visual resolver.
 
-`exercise-visual-system-v38.js` is now the single exercise-visual resolver.
+The system is **ID-first** and keeps one stable reference per exercise:
 
-Every exercise in `exerciseLibrary` is given:
-
-- a stable `imageRef` based on its exercise ID (`exercise:<id>`)
-- an `image` field (null until a real exercise-specific asset exists)
-- a `visualKey`
-- inferred/verified equipment
+- `imageRef: exercise:<exercise-id>`
+- `image`: a real exercise-specific asset when one exists, otherwise `null`
+- `visualKey`: the verified movement illustration key, or `null`
+- `equipment`
 - `primaryMuscle`
 
-The resolver is **ID-first**. Conservative alias matching is only used for older/custom exercises that lack a matching stable ID.
+Legacy/custom exercises can use conservative name aliases, but uncertain exercises deliberately fall back instead of guessing.
 
 ## Visual priority
 
-1. Real exercise-specific image, when one is added to the map.
-2. Verified movement-specific inline illustration.
+1. Correct exercise-specific image, when available.
+2. Verified exercise-specific inline illustration.
 3. Equipment-specific neutral fallback.
-4. Neutral generic exercise fallback if equipment cannot be determined.
+4. Neutral generic fallback if equipment cannot be determined.
 
-A random or unrelated gym-machine image is never used as a fallback.
+A random machine image is never used as a fallback.
 
-External images use `loading="lazy"`, `decoding="async"`, `object-fit: contain`, and automatically fall back to the neutral card if loading fails. Broken-image icons should never be shown.
+If a future image fails to load, the image error handler automatically replaces it with the neutral fallback. Images use lazy loading and `object-fit: contain` so they are not stretched or cropped.
 
-## Verified movement-specific illustrations currently included
+## Movement-specific visuals currently verified
 
-The v38 resolver includes specific illustrations for these movement families/variations:
+The resolver currently includes dedicated visuals for common movement families including:
 
-- Barbell Bench Press (including incline/decline barbell variants)
-- Dumbbell Bench Press (including incline/decline dumbbell variants)
-- Smith Machine Bench Press / Smith incline press
-- Machine Chest Press / Chest Press
-- Romanian Deadlift / Barbell Romanian Deadlift
+- Barbell, dumbbell, Smith, and machine chest presses
+- Pec deck and dumbbell fly
+- Romanian Deadlift / Barbell RDL
 - Dumbbell Romanian Deadlift
 - Lat Pulldown
-- Triceps Pushdown
-- Leg Press
-- Seated Cable Row / Cable Row
+- Seated Cable Row
 - Barbell Row
-- One-Arm / Single-Arm Dumbbell Row
-- Dumbbell Curl
-- Push-Up variants
+- Dumbbell Row
+- Leg Press
+- Leg Extension
+- Leg Curl
+- Calf Raise
+- Machine, dumbbell, and barbell shoulder press
+- Dumbbell, cable, and machine lateral raise
+- Machine/cable reverse-fly family
+- Face Pull
+- Barbell Curl
+- Dumbbell/Hammer Curl family
+- Triceps Pushdown
+- Push-Up family
 - Plank
 - Pull-Up / Chin-Up family
 - Dips
 - Bodyweight Squat
 - Lunge family
 
-These are deliberately separate where equipment changes the movement/setup. For example, barbell bench, dumbbell bench, Smith bench, and machine chest press do not share the same visual.
+Different equipment/setup variants use different visual keys where the setup matters. Bench press, for example, does not reuse the machine chest-press illustration.
 
-## Romanian Deadlift check
+## Romanian Deadlift verification
 
-Romanian Deadlift no longer resolves to a seated/chest-press machine. The resolver chooses:
+Romanian Deadlift no longer resolves to the seated machine artwork.
 
-- `rdl-barbell` for Romanian Deadlift / Barbell Romanian Deadlift
-- `rdl-dumbbell` for Dumbbell Romanian Deadlift
+- Romanian Deadlift / Barbell Romanian Deadlift → `rdl-barbell`
+- Dumbbell Romanian Deadlift → `rdl-dumbbell`
 
-If an unrecognized RDL variation cannot be classified safely, it falls back to a neutral equipment card rather than an unrelated machine.
+If an unknown RDL variation cannot be classified safely, START/NOW shows the neutral equipment fallback instead of a false demonstration.
 
-## Full exercise audit
+## Complete exercise audit
 
-The app audits the complete current exercise library at startup. The exact list is exposed as:
+Every exercise in the current `exerciseLibrary` is audited at startup. The full synchronized list is exposed as:
 
 ```js
 window.START_NOW_EXERCISE_VISUAL_AUDIT
 ```
 
-Each row contains:
+The list of exercises that still need a proper movement-specific visual is exposed as:
 
-- exercise ID
-- exercise name
+```js
+window.START_NOW_EXERCISES_NEEDING_VISUALS
+```
+
+Each audit row includes:
+
+- ID
+- name
 - muscle
 - equipment
-- image path (if a real asset exists)
+- real image path, if present
 - visual key
 - status
 
@@ -89,18 +99,21 @@ Status is either:
 - `exercise-specific illustration`
 - `safe equipment fallback — proper demo still needed`
 
-This runtime list is intentional: it always stays synchronized with the current 250-exercise database as exercises are added, removed, or renamed.
+This runtime audit is used instead of pretending all 250 exercises already have verified demonstrations. It stays synchronized as the exercise library changes.
 
-To view only exercises that still need a proper movement visual:
+## User-facing behavior for missing visuals
 
-```js
-START_NOW_EXERCISE_VISUAL_AUDIT.filter(item => item.status.includes("still needed"))
-```
+Exercises without a verified demonstration now show a polished card containing:
 
-Until a movement has been verified and given a proper illustration/photo, START/NOW displays a polished equipment fallback with the exercise name and **Exercise demonstration coming soon**. It does not pretend that fallback is the movement itself.
+- a correct equipment icon
+- the exercise name
+- `No demonstration available yet`
+- equipment and muscle information
 
-## Remaining work
+No broken image icon is shown, no blank white box is shown, and no unrelated machine is substituted.
 
-The exercises reported by the runtime audit as `safe equipment fallback — proper demo still needed` still need individually reviewed visual assets. They are intentionally shown without misleading demonstrations in the meantime.
+## Reliability improvement from v38 to v39
 
-This means v38 prioritizes **accuracy over decoration**: a missing demonstration is allowed; a wrong demonstration is not.
+v39 removes the old workout-visual enhancer from the page and uses a single resolver/observer. It only redraws when the current exercise actually changes, avoiding competing visual patches and repeated DOM replacement.
+
+The rule is now simple: **accuracy over decoration**.
