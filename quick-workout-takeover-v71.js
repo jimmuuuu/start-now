@@ -6,27 +6,25 @@
     return window.START_NOW_QUICK_WORKOUT;
   }
 
+  function setText(node, value) {
+    if (node && node.textContent !== value) node.textContent = value;
+  }
+
   function patchCanonicalCopy() {
     const page = document.querySelector('.sn66-page');
     if (!page) return;
     const cards = [...page.querySelectorAll('.sn66-mode')];
     if (cards[0]) {
-      const title = cards[0].querySelector('strong');
-      const subtitle = cards[0].querySelector('span:last-child');
-      if (title) title.textContent = 'Build workout';
-      if (subtitle) subtitle.textContent = 'Create a one-off workout';
+      setText(cards[0].querySelector('strong'), 'Build workout');
+      setText(cards[0].querySelector('span:last-child'), 'Create a one-off workout');
     }
     if (cards[1]) {
-      const title = cards[1].querySelector('strong');
-      const subtitle = cards[1].querySelector('span:last-child');
-      if (title) title.textContent = 'Choose existing';
-      if (subtitle) subtitle.textContent = 'Train one of your saved workouts';
+      setText(cards[1].querySelector('strong'), 'Choose existing');
+      setText(cards[1].querySelector('span:last-child'), 'Train one of your saved workouts');
     }
     if (cards[2]) {
-      const title = cards[2].querySelector('strong');
-      const subtitle = cards[2].querySelector('span:last-child');
-      if (title) title.textContent = 'Surprise me';
-      if (subtitle) subtitle.textContent = 'Let START/NOW build one';
+      setText(cards[2].querySelector('strong'), 'Surprise me');
+      setText(cards[2].querySelector('span:last-child'), 'Let START/NOW build one');
     }
   }
 
@@ -73,7 +71,7 @@
     };
   }
 
-  // If any legacy Quick Workout UI appears, replace it immediately with the canonical renderer.
+  // If a legacy Quick Workout UI somehow appears, replace that exact screen only.
   const root = document.getElementById('app');
   if (root) {
     const observer = new MutationObserver(() => {
