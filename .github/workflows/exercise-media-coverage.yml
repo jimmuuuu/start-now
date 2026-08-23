@@ -9,6 +9,7 @@ on:
       - 'exercise-library-extra.js'
       - 'scripts/build-exercise-media-map.mjs'
       - 'scripts/build-exercise-media-map-v44.mjs'
+      - 'scripts/run-exercise-media-audit-v44.mjs'
       - '.github/workflows/exercise-media-coverage.yml'
   pull_request:
     branches: [main]
@@ -17,6 +18,7 @@ on:
       - 'exercise-library-extra.js'
       - 'scripts/build-exercise-media-map.mjs'
       - 'scripts/build-exercise-media-map-v44.mjs'
+      - 'scripts/run-exercise-media-audit-v44.mjs'
       - '.github/workflows/exercise-media-coverage.yml'
   workflow_dispatch:
 
@@ -39,7 +41,7 @@ jobs:
           node-version: '20'
 
       - name: Build and verify complete exercise GIF map
-        run: node scripts/build-exercise-media-map-v44.mjs
+        run: node scripts/run-exercise-media-audit-v44.mjs
 
       - name: Commit generated deterministic media map
         run: |
