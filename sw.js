@@ -1,6 +1,6 @@
-// START/NOW service worker — v83 profile-toggle precision alignment build.
+// START/NOW service worker — v84 home contrast build.
 // Development/release-safe strategy: network first, cache fallback, versioned by build.
-const CACHE_NAME = 'start-now-shell-v83';
+const CACHE_NAME = 'start-now-shell-v84';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', event => {
