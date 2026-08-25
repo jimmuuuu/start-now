@@ -1,6 +1,6 @@
-// START/NOW service worker — v78 modal-lock build.
+// START/NOW service worker — v79 onboarding-scroll build.
 // Development/release-safe strategy: network first, cache fallback, versioned by build.
-const CACHE_NAME = 'start-now-shell-v78';
+const CACHE_NAME = 'start-now-shell-v79';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', event => {
