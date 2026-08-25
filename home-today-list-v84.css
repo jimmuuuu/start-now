@@ -1,0 +1,29 @@
+/* START/NOW v84 — readable Today's Plan exercise preview in light and dark themes. */
+.sn-today-exercises{
+  background:rgba(248,249,250,.92);
+  border-color:var(--line);
+}
+
+.sn-today-exercises span{
+  color:#5f6670;
+  font-weight:650;
+}
+
+.sn-today-exercises strong{
+  color:var(--text);
+  font-weight:850;
+}
+
+.dark .sn-today-exercises{
+  background:#202327;
+  border-color:#34383f;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.dark .sn-today-exercises span{
+  color:#c6cad1;
+}
+
+.dark .sn-today-exercises strong{
+  color:#f7f8fa;
+}
