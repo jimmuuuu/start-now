@@ -1,0 +1,54 @@
+/* START/NOW v82 — polished, consistently aligned profile dark-mode toggle. */
+.profile-card .switch{
+  box-sizing:border-box;
+  width:50px;
+  height:28px;
+  min-width:50px;
+  flex:0 0 50px;
+  margin:0;
+  padding:3px;
+  border:1px solid #b8bcc2;
+  border-radius:999px;
+  background:#d9dadd;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  line-height:0;
+  appearance:none;
+  -webkit-appearance:none;
+  vertical-align:middle;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.08);
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+
+.profile-card .switch span{
+  box-sizing:border-box;
+  display:block;
+  width:20px;
+  height:20px;
+  flex:0 0 20px;
+  margin:0;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.22);
+  transform:translateX(0);
+  transition:transform .2s ease;
+}
+
+.profile-card .switch.on{
+  background:var(--coral);
+  border-color:var(--coral);
+}
+
+.profile-card .switch.on span{
+  transform:translateX(22px);
+}
+
+.profile-card .toggle-row > .switch{
+  align-self:center;
+}
+
+.dark .profile-card .switch:not(.on){
+  background:#34373c;
+  border-color:#50545a;
+}
