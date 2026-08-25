@@ -35,18 +35,32 @@
 .beginner-points{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px}
 .beginner-points span{font-size:11px;font-weight:800;color:#555;background:#f7f7f4;border:1px solid var(--line);padding:7px 9px;border-radius:999px}
 
-.beginner-modal-open{overflow:hidden}
+/* Lock the app behind the onboarding / beginner-plan modal. The document
+   element is the scroll container in some browsers, so locking only body
+   still allowed the app underneath the overlay to move. */
+html:has(body.beginner-modal-open),
+body.beginner-modal-open{
+  overflow:hidden!important;
+  overscroll-behavior:none;
+}
+body.beginner-modal-open{
+  height:100vh;
+  height:100dvh;
+}
 .beginner-modal-overlay{
   position:fixed;inset:0;z-index:1000;
   background:rgba(15,15,15,.46);
   backdrop-filter:blur(8px);
   display:flex;align-items:flex-end;justify-content:center;
   padding:18px;
+  overscroll-behavior:none;
 }
 .beginner-modal{
   width:min(520px,100%);
   max-height:88vh;
   overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
   background:var(--surface);
   border:1px solid var(--line);
   border-radius:28px 28px 22px 22px;
