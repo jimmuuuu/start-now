@@ -1,6 +1,10 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('fs');
+const path = require('path');
 
-const BUILD = 'exercise-notes-v85';
+const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const BUILD = indexHtml.match(/<meta\s+name="startnow-build"\s+content="([^"]+)"\s*\/?\s*>/i)?.[1];
+if (!BUILD) throw new Error('Could not read startnow-build from index.html');
 
 async function clearBrowserState(page) {
   await page.evaluate(async () => {
