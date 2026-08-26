@@ -1,8 +1,8 @@
 // START/NOW v51 — polished, data-driven front/back SVG muscle map.
 (() => {
   const MUSCLE_ORDER = [
-    "Chest", "Shoulders", "Rear Delts", "Back", "Traps", "Biceps", "Triceps",
-    "Core", "Lower Back", "Quads", "Hamstrings", "Glutes", "Calves"
+    "Chest", "Shoulders", "Rear Delts", "Back", "Traps", "Biceps", "Triceps", "Forearms",
+    "Core", "Lower Back", "Quads", "Adductors", "Hamstrings", "Glutes", "Calves"
   ];
 
   const ZONE_LABELS = {
@@ -15,8 +15,11 @@
     "lower-back": "Lower Back",
     biceps: "Biceps",
     triceps: "Triceps",
+    forearms: "Forearms",
     abs: "Core",
+    obliques: "Core",
     quads: "Quads",
+    adductors: "Adductors",
     hamstrings: "Hamstrings",
     glutes: "Glutes",
     calves: "Calves"
@@ -46,6 +49,7 @@
     if (raw.includes("core") || raw.includes("ab")) return "Core";
     if (raw.includes("lower back")) return "Lower Back";
     if (raw.includes("quad")) return "Quads";
+    if (raw.includes("adductor") || raw.includes("groin") || raw.includes("inner thigh")) return "Adductors";
     if (raw.includes("hamstring")) return "Hamstrings";
     if (raw.includes("glute")) return "Glutes";
     if (raw.includes("calf") || raw.includes("calves")) return "Calves";
@@ -59,6 +63,7 @@
     const base = canonicalMuscle(exercise?.muscle);
 
     if (/romanian deadlift|stiff[- ]leg|good morning|nordic|leg curl/.test(name)) return ["Hamstrings"];
+    if (/hip adduction|adductor|inner thigh|groin/.test(name)) return ["Adductors"];
     if (/hip thrust|glute bridge|glute drive|glute kickback|donkey kick|fire hydrant|frog pump|hip abduction|lateral band walk/.test(name)) return ["Glutes"];
     if (/leg press|hack squat|pendulum squat|front squat|goblet squat|split squat|bulgarian|step[- ]?up|step[- ]?down|lunge|squat/.test(name)) return ["Quads", "Glutes"];
     if (/calf raise|calf press/.test(name)) return ["Calves"];
