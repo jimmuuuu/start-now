@@ -32,6 +32,12 @@ jobs:
         run: |
           failed=0
           while IFS= read -r file; do
+            case "$file" in
+              http://*|https://*)
+                echo "Skipping external script $file"
+                continue
+                ;;
+            esac
             echo "Checking $file"
             node --check "$file" || failed=1
           done < <(sed -n 's/.*<script src="\([^"?]*\).*/\1/p' index.html)
@@ -65,7 +71,7 @@ jobs:
           if [ "$TEST_OUTCOME" = "success" ] && [ "$SYNTAX_OUTCOME" = "success" ] && [ "$NOTES_OUTCOME" = "success" ]; then STATUS="PASS"; else STATUS="FAIL"; fi
           printf '# START/NOW Navigation Smoke Status\n\n- Status: **%s**\n- Tested commit: `%s`\n- Workflow run: `%s`\n- Syntax check: **%s**\n- Exercise notes: **%s**\n- Playwright: **%s**\n- Recorded: `%s`\n' "$STATUS" "$TEST_COMMIT" "$GITHUB_RUN_ID" "$SYNTAX_OUTCOME" "$NOTES_OUTCOME" "$TEST_OUTCOME" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > NAVIGATION_SMOKE_STATUS.md
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "4189822+github-actions[bot]@users.noreply.github.com"
           git add NAVIGATION_SMOKE_STATUS.md
           git commit -m "test: record navigation smoke result [skip ci]" || true
           git push || true
