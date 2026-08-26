@@ -1,0 +1,34 @@
+/* START/NOW v87 — make the anatomical muscle map follow the app theme. */
+
+/* Light mode is the default. */
+.sn59-panel{
+  background:linear-gradient(180deg,#F8FAFC,#EEF3F8)!important;
+  border-color:#D7E0EA!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(15,23,42,.03)!important;
+}
+.sn59-view-label{fill:#64748B!important}
+.sn59-legend{color:#526172!important}
+.sn59-state-primary{fill:#3478F6!important;stroke:#76A7FF!important}
+.sn59-state-secondary{fill:#91B9FF!important;stroke:#6F9FF3!important}
+.sn59-state-inactive{fill:#C7D0DB!important;stroke:#8D99A8!important;opacity:.9!important}
+.sn59-structure{fill:#E2E8F0!important;stroke:#A5B0BE!important;opacity:1!important}
+.sn59-legend-dot{background:#C7D0DB!important;border-color:#8D99A8!important}
+.sn59-legend-primary .sn59-legend-dot{background:#3478F6!important;border-color:#76A7FF!important}
+.sn59-legend-secondary .sn59-legend-dot{background:#91B9FF!important;border-color:#6F9FF3!important}
+.sn59-tooltip{background:rgba(15,23,42,.96)!important;border-color:rgba(255,255,255,.12)!important}
+
+/* Dark mode restores the darker anatomy palette and panel automatically. */
+.dark .sn59-panel{
+  background:linear-gradient(180deg,#161C24,#0F141A)!important;
+  border-color:rgba(110,123,139,.34)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+.dark .sn59-view-label{fill:#94A3B8!important}
+.dark .sn59-legend{color:#AAB5C3!important}
+.dark .sn59-state-primary{fill:#3478F6!important;stroke:#76A7FF!important}
+.dark .sn59-state-secondary{fill:#91B9FF!important;stroke:#BDD3FF!important}
+.dark .sn59-state-inactive{fill:#303B48!important;stroke:#5D6A79!important;opacity:.93!important}
+.dark .sn59-structure{fill:#202935!important;stroke:#526070!important;opacity:.9!important}
+.dark .sn59-legend-dot{background:#303B48!important;border-color:#5D6A79!important}
+.dark .sn59-legend-primary .sn59-legend-dot{background:#3478F6!important;border-color:#76A7FF!important}
+.dark .sn59-legend-secondary .sn59-legend-dot{background:#91B9FF!important;border-color:#BDD3FF!important}
