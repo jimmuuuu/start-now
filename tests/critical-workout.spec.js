@@ -1,0 +1,78 @@
+const { test, expect } = require('@playwright/test');
+
+async function clearBrowserState(page) {
+  await page.goto('/?e2e=1', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(async () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(registration => registration.unregister()));
+    }
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+    }
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#app')).not.toBeEmpty();
+}
+
+test('critical workout flow saves a real completed session', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.stack || error.message));
+  await clearBrowserState(page);
+
+  await expect(page.locator('#startWorkout')).toBeVisible();
+  await page.locator('#startWorkout').click();
+
+  await expect.poll(() => page.evaluate(() => state.page)).toBe('activeWorkout');
+  await expect(page.locator('.sn-workout-screen')).toBeVisible();
+  await expect(page.locator('#snExerciseNote')).toBeVisible();
+
+  const weight = page.locator('input[aria-label="Weight for set 1"]');
+  const reps = page.locator('input[aria-label="Reps for set 1"]');
+  await weight.fill('55');
+  await reps.fill('10');
+  await page.locator('#snExerciseNote').fill('Critical flow persistence check');
+  await page.locator('[data-complete-set="0"]').click();
+
+  await expect(page.locator('.sn-set-row').first()).toHaveClass(/completed/);
+
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('#snFinishEarly').click();
+
+  await expect.poll(() => page.evaluate(() => state.page)).toBe('summary');
+  await expect(page.getByText('WORKOUT COMPLETE', { exact: true })).toBeVisible();
+  await expect(page.locator('.sn-grade-lockup')).toBeVisible();
+
+  const saved = await page.evaluate(() => {
+    const sessions = JSON.parse(localStorage.getItem('sn_progress_sessions') || '[]');
+    const active = localStorage.getItem('sn_active_workout_v36');
+    const latest = sessions.at(-1) || null;
+    const firstExercise = latest?.exercises?.[0] || null;
+    const firstSet = firstExercise?.sets?.[0] || null;
+    return {
+      count: sessions.length,
+      active,
+      completedSets: latest?.completedSets,
+      weight: firstSet?.weight,
+      reps: firstSet?.reps,
+      done: firstSet?.done,
+      note: firstExercise?.note
+    };
+  });
+
+  expect(saved.count).toBe(1);
+  expect(saved.active).toBeNull();
+  expect(saved.completedSets).toBeGreaterThanOrEqual(1);
+  expect(saved.weight).toBe(55);
+  expect(saved.reps).toBe(10);
+  expect(saved.done).toBe(true);
+  expect(saved.note).toBe('Critical flow persistence check');
+  expect(pageErrors).toEqual([]);
+
+  await page.locator('#snSummaryHome').click();
+  await expect.poll(() => page.evaluate(() => state.page)).toBe('home');
+  await expect(page.locator('[data-sn70-action="myStats"]')).toBeVisible();
+});
