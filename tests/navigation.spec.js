@@ -129,6 +129,12 @@ test.describe('START/NOW navigation smoke', () => {
     await assertRouteState(page, 'profile');
     await expect(page.getByRole('heading', { name: 'Profile', exact: true })).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
+    await expect(page.locator('#snAccountCard')).toBeVisible();
+    await expect(page.getByText('Protect your training data', { exact: true })).toBeVisible();
+    await expect(page.locator('#snSignIn')).toBeVisible();
+    await expect(page.locator('#snCreateAccount')).toBeVisible();
+    await expect(page.locator('a[href="privacy.html"]')).toBeVisible();
+    await expect(page.locator('a[href="support.html"]')).toBeVisible();
     await assertRuntimeHealthy(page);
   });
 
