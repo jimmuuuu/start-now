@@ -4,6 +4,27 @@ Target: first production-ready beta after stabilization.
 
 **Rule:** Do not check an item because the code looks correct. Check it only after the behavior has been exercised in the test/live build.
 
+## Current launch assessment — August 26, 2026
+
+The web build is suitable for continued beta testing, but it is not yet ready for a large public launch or App Store submission.
+
+### P0 launch blockers
+
+- [ ] Move the commercial production build away from GitHub Pages to supported application hosting.
+- [ ] Connect the active app to production authentication and Supabase sync; the current build stores user data only in browser localStorage.
+- [ ] Decide whether accounts are required. If they are, implement sign-in, sign-out, account deletion, session recovery, and cross-device conflict handling.
+- [ ] Create the iOS application target/wrapper, app icon set, launch assets, signing configuration, and TestFlight release flow.
+- [ ] Publish an in-app privacy policy and support page, then provide matching App Store metadata URLs.
+- [ ] Add production error reporting, availability monitoring, backup/restore validation, and a rollback procedure.
+- [ ] Complete device testing and pass the full automated critical-workout and rest-day flows.
+- [ ] Confirm distribution rights and attribution requirements for every exercise media asset.
+
+### Current strengths
+
+- Workout logging, active-session recovery, exercise history, rest timing, scheduling, and local progress storage are implemented.
+- Exercise notes are auto-saved with the active session, saved into completed history, and shown the next time the same exercise appears.
+- The connected Supabase schema already has row-level security and fields that can store per-exercise notes once cloud sync is wired into this client.
+
 ## Core navigation
 
 - [ ] Home works
@@ -31,6 +52,8 @@ Target: first production-ready beta after stabilization.
 - [ ] Workout summary renders
 - [ ] Workout history saves
 - [ ] Active workout can resume after refresh
+- [ ] Exercise note auto-saves during an active workout
+- [ ] Completed exercise note appears the next time that exercise is performed
 
 ## Schedule / recovery
 
@@ -109,6 +132,7 @@ Current active repository is local-first and does not contain a backend/auth imp
 - [ ] Production requirement for accounts/cross-device sync decided
 - [ ] Authentication implemented and tested if required for this release
 - [ ] Backend persistence implemented and tested if required for this release
+- [ ] Exercise notes sync across signed-in devices without overwriting newer data
 
 ## Automated regression tests
 
@@ -120,6 +144,8 @@ Current active repository is local-first and does not contain a backend/auth imp
 - [ ] Bottom navigation smoke test passes
 - [ ] Critical workout flow test added
 - [ ] Rest-day flow test added
+- [x] Exercise-note unit persistence test added
+- [x] Exercise-note browser flow test added
 
 ## Release gate
 

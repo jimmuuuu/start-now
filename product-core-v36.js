@@ -8,6 +8,7 @@
   SN.clamp = (v,min=0,max=100) => Math.max(min,Math.min(max,SN.num(v,min)));
   SN.round1 = v => Math.round(SN.num(v)*10)/10;
   SN.slug = v => String(v||"exercise").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  SN.normalizeExerciseNote = value => String(value??"").slice(0,500);
   SN.unique = a => [...new Set((a||[]).filter(Boolean))];
   SN.read = (key,fallback) => { try { const v=JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch { return fallback; } };
   SN.write = (key,value) => { try { localStorage.setItem(key,JSON.stringify(value)); return true; } catch(e) { console.error("START/NOW save failed",e); showToast?.("Couldn’t save. Check browser storage."); return false; } };
@@ -45,6 +46,14 @@
   SN.alternatives = (ex,limit=6) => exerciseLibrary.filter(c=>!SN.exerciseMatches(c,ex)&&c.muscle===ex.muscle).sort((a,b)=>(SN.equipment(b)===SN.equipment(ex))-(SN.equipment(a)===SN.equipment(ex))).slice(0,limit);
   SN.exerciseHistory = ex => SN.sessions().filter(s=>(s.exercises||[]).some(e=>SN.exerciseMatches(e,ex))).sort((a,b)=>b.timestamp-a.timestamp);
   SN.previousExercise = ex => { const s=SN.exerciseHistory(ex)[0]; const result=(s?.exercises||[]).find(e=>SN.exerciseMatches(e,ex)); return result?{session:s,result}:null; };
+  SN.previousExerciseNote = ex => {
+    for (const session of SN.exerciseHistory(ex)) {
+      const result=(session.exercises||[]).find(e=>SN.exerciseMatches(e,ex));
+      const note=SN.normalizeExerciseNote(result?.note).trim();
+      if(note) return {session,result,note};
+    }
+    return null;
+  };
   SN.previousWorkout = workout => SN.sessions().filter(s=>s.workoutId===workout?.id||s.workoutName===workout?.name).sort((a,b)=>b.timestamp-a.timestamp)[0]||null;
   SN.formatSets = result => (result?.sets||[]).filter(s=>s.done).slice(0,4).map(s=>SN.num(s.weight)>0?`${SN.round1(s.weight)} lb × ${SN.num(s.reps)}`:`${SN.num(s.reps)} reps`).join(" • ")||"No completed sets last time";
 

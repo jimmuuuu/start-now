@@ -2,7 +2,8 @@
   "name": "start-now-fitness",
   "private": true,
   "scripts": {
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:notes": "node tests/workout-notes.unit.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0"

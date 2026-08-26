@@ -36,6 +36,10 @@ jobs:
             node --check "$file" || failed=1
           done < <(sed -n 's/.*<script src="\([^"?]*\).*/\1/p' index.html)
           exit "$failed"
+      - name: Check exercise note persistence
+        id: notes
+        continue-on-error: true
+        run: npm run test:notes
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run navigation smoke tests
@@ -55,15 +59,16 @@ jobs:
         env:
           TEST_OUTCOME: ${{ steps.smoke.outcome }}
           SYNTAX_OUTCOME: ${{ steps.syntax.outcome }}
+          NOTES_OUTCOME: ${{ steps.notes.outcome }}
           TEST_COMMIT: ${{ github.sha }}
         run: |
-          if [ "$TEST_OUTCOME" = "success" ] && [ "$SYNTAX_OUTCOME" = "success" ]; then STATUS="PASS"; else STATUS="FAIL"; fi
-          printf '# START/NOW Navigation Smoke Status\n\n- Status: **%s**\n- Tested commit: `%s`\n- Workflow run: `%s`\n- Syntax check: **%s**\n- Playwright: **%s**\n- Recorded: `%s`\n' "$STATUS" "$TEST_COMMIT" "$GITHUB_RUN_ID" "$SYNTAX_OUTCOME" "$TEST_OUTCOME" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > NAVIGATION_SMOKE_STATUS.md
+          if [ "$TEST_OUTCOME" = "success" ] && [ "$SYNTAX_OUTCOME" = "success" ] && [ "$NOTES_OUTCOME" = "success" ]; then STATUS="PASS"; else STATUS="FAIL"; fi
+          printf '# START/NOW Navigation Smoke Status\n\n- Status: **%s**\n- Tested commit: `%s`\n- Workflow run: `%s`\n- Syntax check: **%s**\n- Exercise notes: **%s**\n- Playwright: **%s**\n- Recorded: `%s`\n' "$STATUS" "$TEST_COMMIT" "$GITHUB_RUN_ID" "$SYNTAX_OUTCOME" "$NOTES_OUTCOME" "$TEST_OUTCOME" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > NAVIGATION_SMOKE_STATUS.md
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add NAVIGATION_SMOKE_STATUS.md
           git commit -m "test: record navigation smoke result [skip ci]" || true
           git push || true
       - name: Fail workflow when release gate fails
-        if: steps.smoke.outcome != 'success' || steps.syntax.outcome != 'success'
+        if: steps.smoke.outcome != 'success' || steps.syntax.outcome != 'success' || steps.notes.outcome != 'success'
         run: exit 1
