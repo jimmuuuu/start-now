@@ -1,8 +1,8 @@
 # START/NOW Navigation Smoke Status
 
 - Status: **FAIL**
-- Tested commit: `9ad9e116964440d283afb65017a9a47ac6d92e6f`
-- Workflow run: `32894240874`
+- Tested commit: `d187891cd3babc7e230fe5eb11348e065e59f3f4`
+- Workflow run: `32917790272`
 - Syntax check: **success**
 - Playwright: **failure**
-- Recorded: `2026-08-25T20:16:46Z`
+- Recorded: `2026-08-26T01:09:30Z`
