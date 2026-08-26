@@ -1,6 +1,6 @@
-// START/NOW service worker — v84 home contrast build.
+// START/NOW service worker — v85 exercise notes build.
 // Development/release-safe strategy: network first, cache fallback, versioned by build.
-const CACHE_NAME = 'start-now-shell-v84';
+const CACHE_NAME = 'start-now-shell-v85';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', event => {

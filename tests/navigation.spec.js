@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const BUILD = 'dashboard-v77';
+const BUILD = 'exercise-notes-v85';
 
 async function clearBrowserState(page) {
   await page.evaluate(async () => {
