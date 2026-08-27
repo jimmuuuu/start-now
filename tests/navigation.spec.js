@@ -199,7 +199,7 @@ test.describe('START/NOW navigation smoke', () => {
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 
-    await page.locator('#sn70Back').click();
+    await page.locator('#sn86StatsBack').click();
     await assertHome(page);
   });
 });
