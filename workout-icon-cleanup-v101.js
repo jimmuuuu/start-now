@@ -1,4 +1,4 @@
-// START/NOW v103 - uses verified thumbnails for individual exercise rows only.
+// START/NOW v104 - uses verified thumbnails for exercise picker and library rows.
 (() => {
   function icon(name = "dumbbell", size = 22) {
     if (window.START_NOW_ICONS?.icon) {
@@ -14,6 +14,14 @@
   function exerciseByName(name) {
     const normalized = String(name || "").trim().toLowerCase();
     return library().find(exercise => String(exercise.name || "").trim().toLowerCase() === normalized) || null;
+  }
+
+  function exerciseById(id) {
+    const key = String(id || "");
+    return library().find(exercise => {
+      const exerciseId = window.SN36?.exerciseId?.(exercise) || exercise.id;
+      return String(exerciseId || "") === key;
+    }) || null;
   }
 
   function mediaFor(exercise) {
@@ -36,6 +44,10 @@
       .sn101-exercise-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
       .exercise-option-icon .sn101-icon{width:22px;height:22px;color:#4f8cff}
       .dark .exercise-option-icon.sn101-has-image{background:#23262a}
+      .sn-library-icon{display:grid!important;place-items:center;overflow:hidden}
+      .sn-library-icon.sn101-has-image{background:#f5f6f8}
+      .sn-library-icon .sn101-exercise-image{width:100%;height:100%;object-fit:cover}
+      .dark .sn-library-icon.sn101-has-image{background:#23262a}
       .tile .sn101-tile-icon{display:grid;place-items:center;width:25px;height:25px;margin:0!important;font-size:0!important;opacity:1;overflow:hidden;border-radius:6px;background:rgba(255,255,255,.18)}
       .tile .sn101-tile-icon .sn101-exercise-image{object-fit:cover}
       .tile .sn101-tile-icon .sn101-icon{width:18px;height:18px}
@@ -89,6 +101,11 @@
     document.querySelectorAll(".exercise-option-icon").forEach(node => {
       const name = node.closest(".exercise-option")?.querySelector(".exercise-option-copy strong")?.textContent;
       setVisual(node, exerciseByName(name));
+    });
+
+    document.querySelectorAll("[data-library-ex]").forEach(row => {
+      const iconSlot = row.querySelector(".sn-library-icon");
+      setVisual(iconSlot, exerciseById(row.dataset.libraryEx));
     });
 
     document.querySelectorAll(".streak-card .fire").forEach(node => {
