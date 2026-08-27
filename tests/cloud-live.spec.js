@@ -30,16 +30,17 @@ async function fresh(page) {
 }
 
 test('live account signup, cloud backup, restore, signout, and deletion', async ({ page }) => {
-  test.skip(process.env.RUN_LIVE_CLOUD !== '1', 'Live Supabase lifecycle is opt-in because production signup sends real confirmation email.');
+  const email = process.env.LIVE_CLOUD_EMAIL || '';
+  const password = process.env.LIVE_CLOUD_PASSWORD || '';
+  test.skip(
+    process.env.RUN_LIVE_CLOUD !== '1' || !email || !password,
+    'Live Supabase lifecycle is opt-in and requires a controlled confirmation inbox.'
+  );
   test.setTimeout(120000);
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.stack || error.message));
 
   const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-  // Reserved test domains such as example.com are rejected by Supabase Auth.
-  // This randomized address is used only for this disposable launch-gate account.
-  const email = `startnow.launch.e2e.${unique}@gmail.com`;
-  const password = `SN-${unique}-Aa1!`;
   const workoutId = `cloud-e2e-${unique}`;
   const sessionId = `cloud-session-${unique}`;
   const timestamp = Date.now() - 60000;
@@ -80,8 +81,8 @@ test('live account signup, cloud backup, restore, signout, and deletion', async 
     render();
   }, { profile: TEST_PROFILE, workoutId, sessionId, timestamp });
 
-  // Production signup requires email confirmation. The launch operator confirms only
-  // this disposable test identity in Supabase, while this test retries normal sign-in.
+  // Production signup requires email confirmation. The launch operator confirms this
+  // controlled disposable inbox while this test retries normal sign-in.
   await page.evaluate(() => window.START_NOW_CLOUD.openSignUp());
   await page.locator('#snAuthName').fill('STARTNOW Launch Test');
   await page.locator('#snAuthEmail').fill(email);
