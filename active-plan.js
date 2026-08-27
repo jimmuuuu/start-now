@@ -58,14 +58,6 @@
     return muscles.slice(0, 4).join(", ") || "Balanced training";
   }
 
-  function activePlanDays(plan) {
-    return plan.workouts
-      .map(workout => (workout.days || [])[0])
-      .filter(Boolean)
-      .map(shortDay)
-      .join(" • ");
-  }
-
   renderHome = function () {
     const plan = getActivePlan();
     if (!plan) {
@@ -86,7 +78,6 @@
       <section class="hero-copy">
         <div class="eyebrow">Good morning 👋</div>
         <h1>Let’s get stronger today.</h1>
-        <p>${escapeHtml(plan.name)} • ${escapeHtml(activePlanDays(plan))}</p>
       </section>
 
       <section class="card plan-card active-main-plan ${todayWorkout ? "" : "rest-plan-card"}">
@@ -176,7 +167,7 @@
 
     const banner = document.createElement("div");
     banner.className = "active-plan-banner";
-    banner.innerHTML = `<span>✓</span><div><strong>Current plan</strong><small>${escapeHtml(plan.name)} • ${escapeHtml(activePlanDays(plan))}</small></div>`;
+    banner.innerHTML = `<span>✓</span><div><strong>Current plan</strong></div>`;
     schedule.insertAdjacentElement("beforebegin", banner);
   };
 })();
