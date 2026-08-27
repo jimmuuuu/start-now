@@ -1,4 +1,4 @@
-// START/NOW v102 - uses verified exercise thumbnails instead of generic workout emoji.
+// START/NOW v103 - uses verified thumbnails for individual exercise rows only.
 (() => {
   function icon(name = "dumbbell", size = 22) {
     if (window.START_NOW_ICONS?.icon) {
@@ -31,12 +31,11 @@
     style.id = "snWorkoutIconCleanupStyles";
     style.textContent = `
       .sn101-icon{display:block;flex:0 0 auto}
-      .exercise-option-icon,.workout-icon{display:grid;place-items:center;overflow:hidden}
-      .exercise-option-icon.sn101-has-image,.workout-icon.sn101-has-image{background:#f5f6f8}
+      .exercise-option-icon{display:grid;place-items:center;overflow:hidden}
+      .exercise-option-icon.sn101-has-image{background:#f5f6f8}
       .sn101-exercise-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
       .exercise-option-icon .sn101-icon{width:22px;height:22px;color:#4f8cff}
-      .workout-icon .sn101-icon{width:22px;height:22px}
-      .dark .exercise-option-icon.sn101-has-image,.dark .workout-icon.sn101-has-image{background:#23262a}
+      .dark .exercise-option-icon.sn101-has-image{background:#23262a}
       .tile .sn101-tile-icon{display:grid;place-items:center;width:25px;height:25px;margin:0!important;font-size:0!important;opacity:1;overflow:hidden;border-radius:6px;background:rgba(255,255,255,.18)}
       .tile .sn101-tile-icon .sn101-exercise-image{object-fit:cover}
       .tile .sn101-tile-icon .sn101-icon{width:18px;height:18px}
@@ -84,43 +83,12 @@
     node.insertBefore(holder, node.firstChild);
   }
 
-  function workoutForRow(node) {
-    const name = node.closest(".custom-workout-row")?.querySelector("h3")?.textContent;
-    if (!name) return null;
-    if (typeof defaultWorkout !== "undefined" && defaultWorkout.name === name) return defaultWorkout;
-    return (typeof state !== "undefined" ? state.customWorkouts || [] : []).find(workout => workout.name === name) || null;
-  }
-
-  function tileWorkout() {
-    try {
-      return typeof getTodayWorkout === "function" ? getTodayWorkout() : null;
-    } catch (_) {
-      return null;
-    }
-  }
-
   function decorateWorkoutVisuals() {
     installStyles();
 
     document.querySelectorAll(".exercise-option-icon").forEach(node => {
       const name = node.closest(".exercise-option")?.querySelector(".exercise-option-copy strong")?.textContent;
       setVisual(node, exerciseByName(name));
-    });
-
-    document.querySelectorAll(".workout-icon").forEach(node => {
-      const exercise = workoutForRow(node)?.exercises?.[0] || null;
-      setVisual(node, exercise);
-    });
-
-    document.querySelectorAll(".tile").forEach(tile => {
-      if (!/workouts/i.test(tile.querySelector("strong")?.textContent || "") || tile.querySelector(".sn101-tile-icon")) return;
-      const firstText = [...tile.childNodes].find(child => child.nodeType === Node.TEXT_NODE && /[\u{1F300}-\u{1FAFF}]/u.test(child.textContent));
-      if (!firstText) return;
-      firstText.remove();
-      const holder = document.createElement("span");
-      holder.className = "sn101-tile-icon";
-      tile.insertBefore(holder, tile.firstChild);
-      setVisual(holder, tileWorkout()?.exercises?.[0] || null, "calendarDays");
     });
 
     document.querySelectorAll(".streak-card .fire").forEach(node => {
