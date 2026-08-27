@@ -30,14 +30,13 @@ async function fresh(page) {
 }
 
 test('live account signup, cloud backup, restore, signout, and deletion', async ({ page }) => {
-  test.setTimeout(90000);
+  test.setTimeout(120000);
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.stack || error.message));
 
   const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-  // Supabase Auth rejects reserved test domains such as example.com.
-  // Use an extremely unlikely randomized address on a normal domain; this project's
-  // email auth is configured for immediate confirmation, so no message is delivered.
+  // Reserved test domains such as example.com are rejected by Supabase Auth.
+  // This randomized address is used only for this disposable launch-gate account.
   const email = `startnow.launch.e2e.${unique}@gmail.com`;
   const password = `SN-${unique}-Aa1!`;
   const workoutId = `cloud-e2e-${unique}`;
@@ -73,20 +72,30 @@ test('live account signup, cloud backup, restore, signout, and deletion', async 
       }]
     };
     localStorage.setItem('sn_user_profile_v36', JSON.stringify(profile));
-    localStorage.setItem('sn_custom_workouts', JSON.stringify([workout]));
+    localStorage.setItem('sn_custom_workouts_v36', JSON.stringify([workout]));
     localStorage.setItem('sn_progress_sessions', JSON.stringify([session]));
     state.customWorkouts = [workout];
     window.SN36?.syncStats?.();
     render();
   }, { profile: TEST_PROFILE, workoutId, sessionId, timestamp });
 
+  // Production signup requires email confirmation. The launch operator confirms only
+  // this disposable test identity in Supabase, while this test retries normal sign-in.
   await page.evaluate(() => window.START_NOW_CLOUD.openSignUp());
   await page.locator('#snAuthName').fill('STARTNOW Launch Test');
   await page.locator('#snAuthEmail').fill(email);
   await page.locator('#snAuthPassword').fill(password);
   await page.locator('#snAuthSubmit').click();
+  await expect(page.locator('#snAuthModal')).not.toHaveClass(/open/);
 
-  await expect.poll(() => page.evaluate(() => window.SN_CLOUD_USER?.email || null), { timeout: 20000 }).toBe(email);
+  await expect.poll(async () => page.evaluate(async ({ email, password }) => {
+    const { data, error } = await window.SN_SUPABASE.auth.signInWithPassword({ email, password });
+    if (data?.session) return 'signed-in';
+    if (error?.message?.toLowerCase().includes('email not confirmed')) return 'pending-confirmation';
+    return `error:${error?.message || 'unknown'}`;
+  }, { email, password }), { timeout: 60000, intervals: [5000] }).toBe('signed-in');
+
+  await expect.poll(() => page.evaluate(() => window.SN_CLOUD_USER?.email || null), { timeout: 15000 }).toBe(email);
   await expect.poll(() => page.evaluate(() => localStorage.getItem('sn_cloud_sync_meta_v88') !== null), { timeout: 20000 }).toBe(true);
   await expect.poll(async () => page.evaluate(async ({ sessionId }) => {
     const user = window.SN_CLOUD_USER;
@@ -120,7 +129,7 @@ test('live account signup, cloud backup, restore, signout, and deletion', async 
     return sessions.some(session => session.id === sessionId && session.exercises?.[0]?.note === 'Live cloud restore check');
   }, { sessionId }), { timeout: 25000 }).toBe(true);
   await expect.poll(() => page.evaluate(({ workoutId }) => {
-    const workouts = JSON.parse(localStorage.getItem('sn_custom_workouts') || '[]');
+    const workouts = JSON.parse(localStorage.getItem('sn_custom_workouts_v36') || '[]');
     return workouts.some(workout => workout.id === workoutId && workout.name === 'Cloud Launch Test Workout');
   }, { workoutId }), { timeout: 25000 }).toBe(true);
 
