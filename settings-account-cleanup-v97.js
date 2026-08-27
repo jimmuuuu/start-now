@@ -1,14 +1,17 @@
-// Keeps Settings/Profile quieter for signed-in users while cloud backup continues in the background.
+// Keeps Settings/Profile quiet without interrupting the cloud account renderer.
 (() => {
-  function removeSignedInBackupCard() {
-    if (!window.SN_CLOUD_USER) return;
-    document.getElementById("snAccountCard")?.remove();
+  const style = document.createElement("style");
+  style.textContent = "#snAccountCard, .sn-legal-links { display: none !important; }";
+  document.head.appendChild(style);
+
+  // Clear the duplicate nodes produced by the previous cleanup script once.
+  function clearLegacyDuplicates() {
+    document.querySelectorAll("#snAccountCard, .sn-legal-links").forEach(node => node.remove());
   }
 
-  const appRoot = document.getElementById("app");
-  if (appRoot) {
-    new MutationObserver(removeSignedInBackupCard).observe(appRoot, { childList: true, subtree: true });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", clearLegacyDuplicates, { once: true });
+  } else {
+    clearLegacyDuplicates();
   }
-
-  removeSignedInBackupCard();
 })();
