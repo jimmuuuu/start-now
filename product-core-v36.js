@@ -22,7 +22,7 @@
   SN.todayName = () => SN.days[new Date().getDay()];
   SN.formatDate = ts => new Date(ts).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
   SN.formatShortDate = ts => new Date(ts).toLocaleDateString(undefined,{month:"short",day:"numeric"});
-  SN.greeting = () => { const h=new Date().getHours(); return h<12?"Good morning":h<18?"Good afternoon":"Good evening"; };
+  SN.greeting = () => { const h=new Date().getHours(); return h<12?"Good morning":h<18?"Good afternoon":h<21?"Good evening":"Good night"; };
   SN.exerciseId = ex => ex?.id || SN.slug(ex?.name);
   SN.exerciseMatches = (a,b) => !!a&&!!b&&(SN.exerciseId(a)===SN.exerciseId(b)||String(a.name||"").toLowerCase()===String(b.name||"").toLowerCase());
   SN.repRange = ex => { const max=Math.max(1,SN.num(ex?.repMax ?? ex?.reps,10)); const min=Math.max(1,SN.num(ex?.repMin,max>=20?max:Math.max(1,max-2))); return {min:Math.min(min,max),max:Math.max(min,max)}; };
