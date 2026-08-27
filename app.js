@@ -98,6 +98,13 @@ function dayName(){
   return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][new Date().getDay()];
 }
 
+function greetingForTime(date=new Date()){
+  const hour = date.getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+}
+
 function shortDay(day){
   return day.slice(0,3);
 }
@@ -144,7 +151,7 @@ function renderHome(){
     </div>
 
     <section class="hero-copy">
-      <div class="eyebrow">Good morning 👋</div>
+      <div class="eyebrow">${escapeHtml(greetingForTime())}</div>
       <h1>Let’s get stronger today.</h1>
       <p>${isCustom?`${escapeHtml(dayName())} • Your schedule`:"Consistency &gt; Motivation."}</p>
     </section>
