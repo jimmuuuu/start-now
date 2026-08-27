@@ -76,7 +76,7 @@
       </div>
 
       <section class="hero-copy">
-        <div class="eyebrow">Good morning 👋</div>
+        <div class="eyebrow">${escapeHtml(greetingForTime())}</div>
         <h1>Let’s get stronger today.</h1>
       </section>
 
