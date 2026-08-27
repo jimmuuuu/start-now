@@ -28,7 +28,7 @@
     style.textContent = `
       .avatar.sn-has-photo,.profile-avatar.sn-has-photo{background-size:cover!important;background-position:center!important;color:transparent!important}
       .sn-profile-photo-action{display:inline-flex;align-items:center;justify-content:center;min-height:34px;margin:10px 0 4px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:12px;font-weight:800;cursor:pointer}
-      .sn-profile-level{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box;margin-top:16px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:transparent;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+      .sn-profile-level{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box;margin-top:12px;padding:15px 0;border:0;border-top:1px solid var(--line);appearance:none;background:transparent;color:var(--text);font:inherit;text-align:left;cursor:pointer}
       .sn-profile-level span{display:grid;gap:3px}.sn-profile-level small{color:var(--muted);font-size:12px}.sn-profile-level b{color:#ff5a5f;font-size:13px}
       .sn-level-modal{position:fixed;inset:0;z-index:10020;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(8,10,13,.68);backdrop-filter:blur(5px)}
       .sn-level-sheet{width:min(100%,430px);box-sizing:border-box;padding:22px;border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:0 24px 80px rgba(0,0,0,.32)}
