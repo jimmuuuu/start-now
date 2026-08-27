@@ -6,10 +6,20 @@ const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf
 const BUILD = indexHtml.match(/<meta\s+name="startnow-build"\s+content="([^"]+)"\s*\/?\s*>/i)?.[1];
 if (!BUILD) throw new Error('Could not read startnow-build from index.html');
 
+const TEST_PROFILE = {
+  experience: 'Beginner',
+  goal: 'Build muscle',
+  days: ['Monday', 'Wednesday', 'Friday'],
+  location: 'Gym',
+  duration: 45,
+  avoid: ''
+};
+
 async function clearBrowserState(page) {
-  await page.evaluate(async () => {
+  await page.evaluate(async profile => {
     localStorage.clear();
     sessionStorage.clear();
+    localStorage.setItem('sn_user_profile_v36', JSON.stringify(profile));
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(registration => registration.unregister()));
@@ -18,7 +28,7 @@ async function clearBrowserState(page) {
       const keys = await caches.keys();
       await Promise.all(keys.map(key => caches.delete(key)));
     }
-  });
+  }, TEST_PROFILE);
 }
 
 async function openFresh(page) {
@@ -28,6 +38,7 @@ async function openFresh(page) {
   await expect(page.locator('meta[name="startnow-build"]')).toHaveAttribute('content', BUILD);
   await expect(page.locator('#app')).not.toBeEmpty();
   await expect(page.locator('#quickStart')).toBeVisible();
+  await expect(page.locator('#snProductModal')).toHaveCount(0);
 }
 
 async function assertRuntimeHealthy(page) {
@@ -130,26 +141,25 @@ test.describe('START/NOW navigation smoke', () => {
     await assertRouteState(page, 'profile');
     await expect(page.getByRole('heading', { name: 'Profile', exact: true })).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
-    await expect(page.locator('#snAccountCard')).toBeVisible();
-    await expect(page.getByText('Protect your training data', { exact: true })).toBeVisible();
-    await expect(page.locator('#snSignIn')).toBeVisible();
-    await expect(page.locator('#snCreateAccount')).toBeVisible();
-    await expect(page.locator('a[href="privacy.html"]')).toBeVisible();
-    await expect(page.locator('a[href="support.html"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: /Training level/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Training preferences/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Exercise library/i })).toBeVisible();
+    // v97 intentionally keeps account/legal cards out of the visible Profile UI.
+    await expect(page.locator('#snAccountCard')).toBeHidden();
     await assertRuntimeHealthy(page);
   });
 
   test('Quick Workout', async ({ page }) => {
     await page.locator('#quickStart').click();
     await assertRouteState(page, 'quickWorkout');
-    await expect(page.getByRole('heading', { name: 'Quick Workout' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Build workout/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Choose existing/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Surprise me/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Start Workout' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Create workout/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Saved workouts/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Quick pick/i })).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 
-    await page.locator('.sn66-back').click();
+    await page.getByRole('button', { name: 'Back', exact: true }).click();
     await assertHome(page);
   });
 
@@ -160,6 +170,7 @@ test.describe('START/NOW navigation smoke', () => {
     await expect(page.locator('input[placeholder*="Search exercise"]')).toBeVisible();
     await expect(page.locator('.sn-library-list')).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
+    await expect(page.locator('#snProductModal')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 
     await page.locator('#snBack').click();
@@ -182,7 +193,9 @@ test.describe('START/NOW navigation smoke', () => {
     await page.locator('[data-sn70-action="myStats"]').click();
     await assertRouteState(page, 'myStats');
     await expect(page.getByRole('heading', { name: /My Stats/i })).toBeVisible();
-    await expect(page.getByText(/Workouts completed/i)).toBeVisible();
+    await expect(page.getByText('Total workouts', { exact: true })).toBeVisible();
+    await expect(page.getByText('Total training time', { exact: true })).toBeVisible();
+    await expect(page.getByText('Longest streak', { exact: true })).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 
