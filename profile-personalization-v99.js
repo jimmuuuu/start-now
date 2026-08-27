@@ -1,0 +1,211 @@
+// START/NOW v99 - editable training level with meaningful plan updates and a local profile photo.
+(() => {
+  const SN = window.SN36;
+  if (!SN || typeof window.renderProfile !== "function") return;
+
+  const levels = {
+    Beginner: { sets: 2, reps: 10, label: "2 sets x 8-12 reps" },
+    Intermediate: { sets: 3, reps: 10, label: "3 sets x 8-12 reps" },
+    Advanced: { sets: 4, reps: 8, label: "4 sets x 6-10 reps" }
+  };
+
+  function profile() {
+    return {
+      experience: "Beginner",
+      goal: "Build muscle",
+      days: ["Monday", "Wednesday", "Friday"],
+      location: "Gym",
+      duration: 45,
+      avoid: "",
+      ...(SN.profile?.() || {})
+    };
+  }
+
+  function installStyles() {
+    if (document.getElementById("snProfilePersonalizationStyles")) return;
+    const style = document.createElement("style");
+    style.id = "snProfilePersonalizationStyles";
+    style.textContent = `
+      .avatar.sn-has-photo,.profile-avatar.sn-has-photo{background-size:cover!important;background-position:center!important;color:transparent!important}
+      .sn-profile-photo-action{display:inline-flex;align-items:center;justify-content:center;min-height:34px;margin:10px 0 4px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+      .sn-profile-level{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box;margin-top:16px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:transparent;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+      .sn-profile-level span{display:grid;gap:3px}.sn-profile-level small{color:var(--muted);font-size:12px}.sn-profile-level b{color:#ff5a5f;font-size:13px}
+      .sn-level-modal{position:fixed;inset:0;z-index:10020;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(8,10,13,.68);backdrop-filter:blur(5px)}
+      .sn-level-sheet{width:min(100%,430px);box-sizing:border-box;padding:22px;border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:0 24px 80px rgba(0,0,0,.32)}
+      .sn-level-sheet header{display:flex;align-items:start;justify-content:space-between;gap:12px}.sn-level-sheet h2{margin:3px 0 0;font-size:24px}.sn-level-sheet header span{color:var(--muted);font-size:11px;font-weight:800}.sn-level-close{width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--text);font:inherit;font-size:22px;cursor:pointer}
+      .sn-level-field{display:grid;gap:7px;margin-top:20px;text-align:left}.sn-level-field span{font-size:12px;font-weight:800}.sn-level-field select{min-height:48px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);font:inherit}
+      .sn-level-summary{margin:12px 0 0;color:var(--muted);font-size:13px;line-height:1.45}.sn-level-check{display:flex;align-items:flex-start;gap:9px;margin:20px 0;color:var(--text);font-size:13px;line-height:1.35;text-align:left}.sn-level-check input{margin-top:2px;accent-color:#ff5a5f}
+      .sn-level-save{width:100%;min-height:50px;border:0;border-radius:8px;background:#ff5a5f;color:white;font:inherit;font-size:15px;font-weight:900;cursor:pointer}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function applyPhoto() {
+    const photo = profile().photo;
+    document.querySelectorAll(".avatar, .profile-avatar").forEach(node => {
+      if (photo) {
+        node.style.backgroundImage = `url("${photo}")`;
+        node.classList.add("sn-has-photo");
+      } else {
+        node.style.removeProperty("background-image");
+        node.classList.remove("sn-has-photo");
+      }
+    });
+  }
+
+  function updateCurrentPlan(level) {
+    const prescription = levels[level];
+    if (!prescription) return 0;
+    let changed = 0;
+    const tune = workout => {
+      if (!(workout.days || []).length) return workout;
+      changed++;
+      return {
+        ...workout,
+        exercises: (workout.exercises || []).map(exercise => ({
+          ...exercise,
+          sets: prescription.sets,
+          reps: prescription.reps,
+          repMin: level === "Advanced" ? 6 : 8,
+          repMax: level === "Advanced" ? 10 : 12
+        }))
+      };
+    };
+
+    state.customWorkouts = (state.customWorkouts || []).map(tune);
+    (defaultWorkout.exercises || []).forEach(exercise => {
+      exercise.sets = prescription.sets;
+      exercise.reps = prescription.reps;
+      exercise.repMin = level === "Advanced" ? 6 : 8;
+      exercise.repMax = level === "Advanced" ? 10 : 12;
+    });
+    saveCustomWorkouts();
+    return changed;
+  }
+
+  function closeModal() {
+    document.getElementById("snLevelModal")?.remove();
+  }
+
+  function openLevelModal() {
+    closeModal();
+    const current = profile();
+    const modal = document.createElement("div");
+    modal.className = "sn-level-modal";
+    modal.id = "snLevelModal";
+    modal.innerHTML = `
+      <section class="sn-level-sheet" role="dialog" aria-modal="true" aria-labelledby="snLevelTitle">
+        <header><div><span>TRAINING PROFILE</span><h2 id="snLevelTitle">Training level</h2></div><button class="sn-level-close" type="button" aria-label="Close">x</button></header>
+        <label class="sn-level-field"><span>Experience</span><select id="snLevelSelect"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></label>
+        <p class="sn-level-summary" id="snLevelSummary"></p>
+        <label class="sn-level-check"><input id="snLevelApplyPlan" type="checkbox" checked><span>Update my current scheduled workouts to match this level.</span></label>
+        <button class="sn-level-save" id="snLevelSave" type="button">Save training level</button>
+      </section>
+    `;
+    document.body.appendChild(modal);
+
+    const select = modal.querySelector("#snLevelSelect");
+    const summary = modal.querySelector("#snLevelSummary");
+    select.value = levels[current.experience] ? current.experience : "Beginner";
+    const describe = () => {
+      summary.textContent = `${select.value} training uses ${levels[select.value].label} across your scheduled workouts.`;
+    };
+    describe();
+    select.addEventListener("change", describe);
+    modal.querySelector(".sn-level-close").addEventListener("click", closeModal);
+    modal.addEventListener("click", event => { if (event.target === modal) closeModal(); });
+    modal.querySelector("#snLevelSave").addEventListener("click", () => {
+      const level = select.value;
+      const next = { ...current, experience: level };
+      SN.saveProfile(next);
+      const updated = modal.querySelector("#snLevelApplyPlan").checked ? updateCurrentPlan(level) : 0;
+      closeModal();
+      render();
+      showToast(updated ? `${level} level saved. ${updated} scheduled workout${updated === 1 ? "" : "s"} updated.` : `${level} level saved.`);
+    });
+  }
+
+  function savePhoto(file) {
+    if (!file?.type?.startsWith("image/")) {
+      showToast("Choose an image file");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = event => {
+      const image = new Image();
+      image.onload = () => {
+        const size = 240;
+        const scale = Math.max(size / image.width, size / image.height);
+        const width = Math.max(1, Math.round(image.width * scale));
+        const height = Math.max(1, Math.round(image.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext("2d");
+        context.drawImage(image, Math.round((size - width) / 2), Math.round((size - height) / 2), width, height);
+        SN.saveProfile({ ...profile(), photo: canvas.toDataURL("image/jpeg", 0.82) });
+        applyPhoto();
+        showToast("Profile photo updated");
+      };
+      image.onerror = () => showToast("That image could not be used");
+      image.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addProfileControls() {
+    installStyles();
+    const card = document.querySelector(".profile-card");
+    if (!card) return;
+
+    const avatar = card.querySelector(".profile-avatar");
+    if (avatar && !card.querySelector("#snProfilePhotoInput")) {
+      const photoInput = document.createElement("input");
+      photoInput.id = "snProfilePhotoInput";
+      photoInput.type = "file";
+      photoInput.accept = "image/png,image/jpeg,image/webp";
+      photoInput.hidden = true;
+      const photoButton = document.createElement("button");
+      photoButton.className = "sn-profile-photo-action";
+      photoButton.type = "button";
+      photoButton.textContent = "Change photo";
+      avatar.insertAdjacentElement("afterend", photoButton);
+      photoButton.insertAdjacentElement("afterend", photoInput);
+      photoButton.addEventListener("click", () => photoInput.click());
+      photoInput.addEventListener("change", event => savePhoto(event.target.files?.[0]));
+    }
+
+    if (!card.querySelector("#snProfileLevel")) {
+      const current = profile();
+      const level = document.createElement("button");
+      level.id = "snProfileLevel";
+      level.className = "sn-profile-level";
+      level.type = "button";
+      level.innerHTML = `<span><strong>Training level</strong><small>${current.experience}</small></span><b>Change</b>`;
+      const marker = card.querySelector(".toggle-row");
+      if (marker) marker.insertAdjacentElement("beforebegin", level);
+      else card.appendChild(level);
+      level.addEventListener("click", openLevelModal);
+    }
+    applyPhoto();
+  }
+
+  const priorProfile = window.renderProfile;
+  window.renderProfile = function (...args) {
+    const result = priorProfile.apply(this, args);
+    addProfileControls();
+    return result;
+  };
+
+  if (typeof window.render === "function") {
+    const priorRender = window.render;
+    window.render = function (...args) {
+      const result = priorRender.apply(this, args);
+      applyPhoto();
+      return result;
+    };
+  }
+
+  installStyles();
+  applyPhoto();
+})();
