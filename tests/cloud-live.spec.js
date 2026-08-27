@@ -35,7 +35,10 @@ test('live account signup, cloud backup, restore, signout, and deletion', async 
   page.on('pageerror', error => pageErrors.push(error.stack || error.message));
 
   const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-  const email = `startnow.launch.e2e.${unique}@example.com`;
+  // Supabase Auth rejects reserved test domains such as example.com.
+  // Use an extremely unlikely randomized address on a normal domain; this project's
+  // email auth is configured for immediate confirmation, so no message is delivered.
+  const email = `startnow.launch.e2e.${unique}@gmail.com`;
   const password = `SN-${unique}-Aa1!`;
   const workoutId = `cloud-e2e-${unique}`;
   const sessionId = `cloud-session-${unique}`;
