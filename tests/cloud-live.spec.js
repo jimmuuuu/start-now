@@ -30,6 +30,7 @@ async function fresh(page) {
 }
 
 test('live account signup, cloud backup, restore, signout, and deletion', async ({ page }) => {
+  test.skip(process.env.RUN_LIVE_CLOUD !== '1', 'Live Supabase lifecycle is opt-in because production signup sends real confirmation email.');
   test.setTimeout(120000);
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.stack || error.message));
