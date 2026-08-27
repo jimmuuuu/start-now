@@ -102,7 +102,8 @@ function greetingForTime(date=new Date()){
   const hour = date.getHours();
   if (hour < 12) return "Good morning";
   if (hour < 18) return "Good afternoon";
-  return "Good evening";
+  if (hour < 21) return "Good evening";
+  return "Good night";
 }
 
 function shortDay(day){
