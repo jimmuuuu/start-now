@@ -1,4 +1,4 @@
-// START/NOW v104 - uses verified thumbnails for exercise picker and library rows.
+// START/NOW v105 - uses exercise-specific image pairs for picker and library rows.
 (() => {
   function icon(name = "dumbbell", size = 22) {
     if (window.START_NOW_ICONS?.icon) {
@@ -27,7 +27,10 @@
   function mediaFor(exercise) {
     try {
       const result = window.START_NOW_EXERCISE_MEDIA?.resolve(exercise, { quiet: true });
-      return result?.status === "ready" ? result.entry?.media?.[0] || null : null;
+      const media = result?.status === "ready" ? result.entry?.media : null;
+      return Array.isArray(media) && media[0]
+        ? { still: media[0], finish: media[1] || media[0] }
+        : null;
     } catch (_) {
       return null;
     }
@@ -41,7 +44,11 @@
       .sn101-icon{display:block;flex:0 0 auto}
       .exercise-option-icon{display:grid;place-items:center;overflow:hidden}
       .exercise-option-icon.sn101-has-image{background:#f5f6f8}
+      .sn101-exercise-media{position:relative;display:block;width:100%;height:100%;overflow:hidden}
       .sn101-exercise-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+      .sn101-exercise-image.finish{position:absolute;inset:0;opacity:0;animation:sn105-frame-swap 1.8s steps(1,end) infinite}
+      @keyframes sn105-frame-swap{0%,44%{opacity:0}50%,94%{opacity:1}100%{opacity:0}}
+      @media (prefers-reduced-motion:reduce){.sn101-exercise-image.finish{animation:none;opacity:0}}
       .exercise-option-icon .sn101-icon{width:22px;height:22px;color:#4f8cff}
       .dark .exercise-option-icon.sn101-has-image{background:#23262a}
       .sn-library-icon{display:grid!important;place-items:center;overflow:hidden}
@@ -62,18 +69,20 @@
 
   function setVisual(node, exercise, fallback = "dumbbell") {
     if (!node) return;
-    const source = mediaFor(exercise);
+    const media = mediaFor(exercise);
     node.classList.remove("sn101-has-image");
     node.innerHTML = "";
 
-    if (!source) {
+    if (!media) {
       node.innerHTML = icon(fallback, 22);
       return;
     }
 
+    const mediaFrame = document.createElement("span");
+    mediaFrame.className = "sn101-exercise-media";
     const image = document.createElement("img");
     image.className = "sn101-exercise-image";
-    image.src = source;
+    image.src = media.still;
     image.alt = "";
     image.decoding = "async";
     image.loading = "lazy";
@@ -81,8 +90,16 @@
       node.classList.remove("sn101-has-image");
       node.innerHTML = icon(fallback, 22);
     }, { once: true });
+    const finish = document.createElement("img");
+    finish.className = "sn101-exercise-image finish";
+    finish.src = media.finish;
+    finish.alt = "";
+    finish.decoding = "async";
+    finish.loading = "lazy";
+    finish.addEventListener("error", () => finish.remove(), { once: true });
     node.classList.add("sn101-has-image");
-    node.appendChild(image);
+    mediaFrame.append(image, finish);
+    node.appendChild(mediaFrame);
   }
 
   function replaceLeadingEmoji(node, markup) {
@@ -141,3 +158,4 @@
   ["render", "renderHome", "renderWorkouts", "renderBuilder", "renderWorkout", "renderSummary"].forEach(wrap);
   decorateWorkoutVisuals();
 })();
+
