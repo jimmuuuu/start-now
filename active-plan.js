@@ -159,15 +159,5 @@
 
   renderWorkouts = function () {
     originalRenderWorkouts();
-    const plan = getActivePlan();
-    if (!plan) return;
-
-    const schedule = document.querySelector(".schedule-card");
-    if (!schedule || document.querySelector(".active-plan-banner")) return;
-
-    const banner = document.createElement("div");
-    banner.className = "active-plan-banner";
-    banner.innerHTML = `<span>✓</span><div><strong>Current plan</strong></div>`;
-    schedule.insertAdjacentElement("beforebegin", banner);
   };
 })();
