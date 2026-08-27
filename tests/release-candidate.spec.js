@@ -30,13 +30,35 @@ async function fresh(page) {
 }
 
 async function expectNoHorizontalOverflow(page) {
-  const metrics = await page.evaluate(() => ({
-    innerWidth,
-    htmlWidth: document.documentElement.scrollWidth,
-    bodyWidth: document.body.scrollWidth
-  }));
-  expect(metrics.htmlWidth, `html width at ${metrics.innerWidth}px`).toBeLessThanOrEqual(metrics.innerWidth + 1);
-  expect(metrics.bodyWidth, `body width at ${metrics.innerWidth}px`).toBeLessThanOrEqual(metrics.innerWidth + 1);
+  const metrics = await page.evaluate(() => {
+    const offenders = [...document.querySelectorAll('body *')]
+      .map(node => {
+        const rect = node.getBoundingClientRect();
+        const style = getComputedStyle(node);
+        return {
+          tag: node.tagName,
+          id: node.id || '',
+          className: typeof node.className === 'string' ? node.className : '',
+          left: Math.round(rect.left),
+          right: Math.round(rect.right),
+          width: Math.round(rect.width),
+          display: style.display,
+          position: style.position,
+          overflowX: style.overflowX
+        };
+      })
+      .filter(item => item.display !== 'none' && (item.left < -1 || item.right > innerWidth + 1 || item.width > innerWidth + 1))
+      .slice(0, 20);
+    return {
+      innerWidth,
+      htmlWidth: document.documentElement.scrollWidth,
+      bodyWidth: document.body.scrollWidth,
+      offenders
+    };
+  });
+  const detail = JSON.stringify(metrics.offenders);
+  expect(metrics.htmlWidth, `html width at ${metrics.innerWidth}px; offenders=${detail}`).toBeLessThanOrEqual(metrics.innerWidth + 1);
+  expect(metrics.bodyWidth, `body width at ${metrics.innerWidth}px; offenders=${detail}`).toBeLessThanOrEqual(metrics.innerWidth + 1);
 }
 
 test('refreshing mid-workout preserves and resumes the active session', async ({ page }) => {
@@ -153,7 +175,8 @@ test('scheduled rest days do not break streak and completed days appear on calen
 
   await page.locator('[data-sn70-action="calendar"]').click();
   await expect(page.getByRole('heading', { name: /Workout Calendar/i })).toBeVisible();
-  await expect(page.locator('.sn63-activity-row').filter({ hasText: 'E2E Streak Workout' })).toHaveCount(3);
+  const completedRows = page.locator('.sn63-activity-row').filter({ has: page.locator('.sn63-activity-icon.completed') }).filter({ hasText: 'E2E Streak Workout' });
+  await expect(completedRows).toHaveCount(3);
   await expect(page.getByText('Completed', { exact: true }).first()).toBeVisible();
 });
 
