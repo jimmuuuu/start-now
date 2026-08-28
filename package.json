@@ -6,7 +6,8 @@
     "test:notes": "node tests/workout-notes.unit.js",
     "native:prepare": "node scripts/prepare-native-assets.js",
     "native:sync": "npm run native:prepare && npx cap sync android",
-    "android:open": "npx cap open android"
+    "android:open": "npx cap open android",
+    "pretest:e2e": "npm run native:prepare"
   },
   "devDependencies": {
     "@capacitor/android": "8.4.2",
