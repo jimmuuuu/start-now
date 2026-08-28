@@ -1,10 +1,23 @@
 const { test, expect } = require('@playwright/test');
 
+const TEST_PROFILE = {
+  experience: 'Beginner',
+  goal: 'Build muscle',
+  days: ['Monday', 'Wednesday', 'Friday'],
+  location: 'Gym',
+  duration: 45,
+  avoid: ''
+};
+
 async function clearBrowserState(page) {
   await page.goto('/?e2e=1', { waitUntil: 'domcontentloaded' });
-  await page.evaluate(async () => {
+  await page.evaluate(async profile => {
     localStorage.clear();
     sessionStorage.clear();
+    // This test verifies the workout lifecycle, not first-run onboarding.
+    // Seed the same valid profile used by the release-candidate tests so the
+    // intentional preferences modal does not cover the Start Workout control.
+    localStorage.setItem('sn_user_profile_v36', JSON.stringify(profile));
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(registration => registration.unregister()));
@@ -13,9 +26,10 @@ async function clearBrowserState(page) {
       const keys = await caches.keys();
       await Promise.all(keys.map(key => caches.delete(key)));
     }
-  });
+  }, TEST_PROFILE);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('#app')).not.toBeEmpty();
+  await expect(page.locator('#snProductModal')).toHaveCount(0);
 }
 
 test('critical workout flow saves a real completed session', async ({ page }) => {
