@@ -9,14 +9,14 @@
     style.id = STYLE_ID;
     style.textContent = `
       .${SUMMARY_CLASS}{display:none;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 8px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--text)}
-      .${SUMMARY_CLASS} strong,.${SUMMARY_CLASS} small{display:block}. ${SUMMARY_CLASS} strong{font-size:12px}. ${SUMMARY_CLASS} small{margin-top:2px;font-size:10px;color:var(--muted)}
+      .${SUMMARY_CLASS} strong,.${SUMMARY_CLASS} small{display:block}.${SUMMARY_CLASS} strong{font-size:12px}.${SUMMARY_CLASS} small{margin-top:2px;font-size:10px;color:var(--muted)}
       .sn115-view-selected{min-height:38px;border:1px solid var(--line);border-radius:10px;padding:0 11px;background:var(--surface);color:var(--text);font-size:11px;font-weight:800}
       .sn66-panel.sn115-searching .sn66-selected-list{display:none}
       .sn66-panel.sn115-searching .${SUMMARY_CLASS}{display:flex}
       .sn66-panel.sn115-searching.sn115-show-selected .sn66-selected-list{display:grid}
       .sn66-panel.sn115-searching .sn66-results{max-height:430px}
-      @media(max-width:620px){.sn66-panel.sn115-searching .sn66-results{max-height:none}. ${SUMMARY_CLASS}{position:sticky;top:0;z-index:2}}
-    `.replaceAll('. sn115', '.sn115');
+      @media(max-width:620px){.sn66-panel.sn115-searching .sn66-results{max-height:none}.${SUMMARY_CLASS}{position:sticky;top:0;z-index:2}}
+    `;
     document.head.appendChild(style);
   }
 
@@ -51,11 +51,12 @@
 
     if (!summary) return;
     const copy = summary.querySelector('.sn115-selected-copy');
-    if (copy) {
-      copy.innerHTML = `<strong>${count} exercise${count === 1 ? '' : 's'} selected</strong><small>Keep searching and add as many exercises as you need.</small>`;
-    }
+    const copyHtml = `<strong>${count} exercise${count === 1 ? '' : 's'} selected</strong><small>Keep searching and add as many exercises as you need.</small>`;
+    if (copy && copy.innerHTML !== copyHtml) copy.innerHTML = copyHtml;
+
     const view = summary.querySelector('.sn115-view-selected');
-    if (view) view.textContent = panel.classList.contains('sn115-show-selected') ? 'Hide' : 'View';
+    const viewLabel = panel.classList.contains('sn115-show-selected') ? 'Hide' : 'View';
+    if (view && view.textContent !== viewLabel) view.textContent = viewLabel;
   }
 
   function enhanceAll() {
