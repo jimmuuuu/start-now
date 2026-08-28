@@ -11,6 +11,13 @@ async function resetApp(page) {
   });
 }
 
+async function dismissStartupModal(page) {
+  await page.evaluate(() => {
+    document.getElementById('snProductModal')?.remove();
+  });
+  await expect(page.locator('#snProductModal')).toHaveCount(0);
+}
+
 async function seedWorkout(page) {
   await page.evaluate(() => {
     const today = typeof dayName === 'function'
@@ -33,6 +40,7 @@ async function seedWorkout(page) {
 test('swap search stays focused while typing and uses an iOS-safe font size', async ({ page }) => {
   await resetApp(page);
   await seedWorkout(page);
+  await dismissStartupModal(page);
 
   await page.locator('#startWorkout').click();
   await expect(page.locator('.sn-workout-screen')).toBeVisible();
@@ -61,6 +69,7 @@ test('workout builder inputs remain focused and mobile-sized while typing', asyn
     state.page = 'workouts';
     render();
   });
+  await dismissStartupModal(page);
   await page.locator('#createWorkout').click();
 
   const name = page.locator('#workoutName');
