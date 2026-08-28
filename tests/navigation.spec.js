@@ -10,6 +10,15 @@ async function clearBrowserState(page) {
   await page.evaluate(async () => {
     localStorage.clear();
     sessionStorage.clear();
+    localStorage.setItem('sn_user_profile_v36', JSON.stringify({
+      experience: 'Beginner',
+      goal: 'Build muscle',
+      days: ['Monday', 'Wednesday', 'Friday'],
+      location: 'Gym',
+      duration: 45,
+      avoid: ''
+    }));
+    sessionStorage.setItem('sn_onboarding_seen_v36', '1');
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(registration => registration.unregister()));
@@ -21,14 +30,6 @@ async function clearBrowserState(page) {
   });
 }
 
-async function completePersonalizationIfNeeded(page) {
-  const save = page.getByRole('button', { name: 'Save preferences', exact: true });
-  if (await save.isVisible().catch(() => false)) {
-    await save.click();
-    await expect(page.locator('#snProductModal')).toHaveCount(0);
-  }
-}
-
 async function openFresh(page) {
   await page.goto('/?e2e=1', { waitUntil: 'domcontentloaded' });
   await clearBrowserState(page);
@@ -36,7 +37,7 @@ async function openFresh(page) {
   await expect(page.locator('meta[name="startnow-build"]')).toHaveAttribute('content', BUILD);
   await expect(page.locator('#app')).not.toBeEmpty();
   await expect(page.locator('#quickStart')).toBeVisible();
-  await completePersonalizationIfNeeded(page);
+  await expect(page.locator('#snProductModal')).toHaveCount(0);
 }
 
 async function assertRuntimeHealthy(page) {
@@ -192,7 +193,7 @@ test.describe('START/NOW navigation smoke', () => {
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 
-    await page.locator('#sn70Back').click();
+    await page.locator('#sn86StatsBack').click();
     await assertHome(page);
   });
 });
