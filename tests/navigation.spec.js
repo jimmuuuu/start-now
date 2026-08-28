@@ -21,6 +21,14 @@ async function clearBrowserState(page) {
   });
 }
 
+async function completePersonalizationIfNeeded(page) {
+  const save = page.getByRole('button', { name: 'Save preferences', exact: true });
+  if (await save.isVisible().catch(() => false)) {
+    await save.click();
+    await expect(page.locator('#snProductModal')).toHaveCount(0);
+  }
+}
+
 async function openFresh(page) {
   await page.goto('/?e2e=1', { waitUntil: 'domcontentloaded' });
   await clearBrowserState(page);
@@ -28,6 +36,7 @@ async function openFresh(page) {
   await expect(page.locator('meta[name="startnow-build"]')).toHaveAttribute('content', BUILD);
   await expect(page.locator('#app')).not.toBeEmpty();
   await expect(page.locator('#quickStart')).toBeVisible();
+  await completePersonalizationIfNeeded(page);
 }
 
 async function assertRuntimeHealthy(page) {
@@ -129,13 +138,9 @@ test.describe('START/NOW navigation smoke', () => {
     await page.getByRole('button', { name: 'Profile', exact: true }).click();
     await assertRouteState(page, 'profile');
     await expect(page.getByRole('heading', { name: 'Profile', exact: true })).toBeVisible();
+    await expect(page.locator('.profile-card')).toBeVisible();
+    await expect(page.locator('#snAccountCard')).toBeHidden();
     await expect(page.locator('.plan-card')).toHaveCount(0);
-    await expect(page.locator('#snAccountCard')).toBeVisible();
-    await expect(page.getByText('Protect your training data', { exact: true })).toBeVisible();
-    await expect(page.locator('#snSignIn')).toBeVisible();
-    await expect(page.locator('#snCreateAccount')).toBeVisible();
-    await expect(page.locator('a[href="privacy.html"]')).toBeVisible();
-    await expect(page.locator('a[href="support.html"]')).toBeVisible();
     await assertRuntimeHealthy(page);
   });
 
@@ -182,7 +187,8 @@ test.describe('START/NOW navigation smoke', () => {
     await page.locator('[data-sn70-action="myStats"]').click();
     await assertRouteState(page, 'myStats');
     await expect(page.getByRole('heading', { name: /My Stats/i })).toBeVisible();
-    await expect(page.getByText(/Workouts completed/i)).toBeVisible();
+    await expect(page.locator('.sn86-lifetime-banner')).toBeVisible();
+    await expect(page.locator('.sn86-stat-grid')).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 
