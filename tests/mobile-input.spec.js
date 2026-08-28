@@ -71,6 +71,7 @@ test('workout builder inputs remain focused and mobile-sized while typing', asyn
   });
   await dismissStartupModal(page);
   await page.locator('#createWorkout').click();
+  await dismissStartupModal(page);
 
   const name = page.locator('#workoutName');
   const exerciseSearch = page.locator('#exerciseSearch');
