@@ -1,4 +1,4 @@
-// START/NOW v66 — distinct Quick Workout flows: Build, Choose Existing, Surprise Me.
+// START/NOW v114 — distinct Quick Workout flows with stable mobile text entry.
 (() => {
   const SN = window.SN36;
   const MEDIA = window.START_NOW_EXERCISE_MEDIA;
@@ -42,7 +42,7 @@
       .sn66-page{padding-bottom:28px}.sn66-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}.sn66-back{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--text);display:grid;place-items:center}.sn66-top .eyebrow{margin:0}.sn66-top h1{font-size:30px;line-height:1.05;margin:4px 0 0;letter-spacing:-1px}
       .sn66-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.sn66-mode{border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:16px;text-align:left;color:var(--text);cursor:pointer;min-height:138px;transition:transform .15s ease,border-color .15s ease,background .15s ease}.sn66-mode:hover{transform:translateY(-1px)}.sn66-mode.active{border-color:#BFD6FF;background:#F7FAFF}.sn66-mode-icon{width:42px;height:42px;border-radius:13px;background:#EEF4FF;color:#2F6DF6;display:grid;place-items:center;margin-bottom:14px}.sn66-mode strong,.sn66-mode span{display:block}.sn66-mode strong{font-size:15px}.sn66-mode span{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.35}
       .sn66-panel{padding:16px;margin-top:12px}.sn66-panel h2{font-size:20px;margin:0 0 5px}.sn66-panel>p{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.45}
-      .sn66-tools{display:grid;grid-template-columns:1fr 132px 150px;gap:8px;margin-bottom:10px}.sn66-search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:13px;padding:0 11px;background:var(--surface)}.sn66-search input,.sn66-tools select{width:100%;height:42px;border:0;background:transparent;color:var(--text);outline:0;font:inherit;font-size:12px}.sn66-tools select{border:1px solid var(--line);border-radius:13px;padding:0 9px;background:var(--surface)}
+      .sn66-tools{display:grid;grid-template-columns:1fr 132px 150px;gap:8px;margin-bottom:10px}.sn66-search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:13px;padding:0 11px;background:var(--surface)}.sn66-search input,.sn66-tools select{width:100%;height:42px;border:0;background:transparent;color:var(--text);outline:0;font:inherit;font-size:16px;-webkit-text-size-adjust:100%}.sn66-tools select{border:1px solid var(--line);border-radius:13px;padding:0 9px;background:var(--surface)}
       .sn66-selected-list{display:grid;gap:7px;margin:12px 0}.sn66-selected-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px 11px;background:var(--surface)}.sn66-selected-row strong,.sn66-selected-row small{display:block}.sn66-selected-row strong{font-size:12px}.sn66-selected-row small{font-size:9px;color:var(--muted);margin-top:3px}.sn66-order{display:flex;gap:5px}.sn66-order button{width:31px;height:31px;border-radius:9px;border:1px solid var(--line);background:#F7F9FB;color:#64748B;display:grid;place-items:center}.sn66-order button:disabled{opacity:.3}
       .sn66-results{display:grid;gap:6px;max-height:330px;overflow:auto}.sn66-ex-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 2px;border-bottom:1px solid var(--line)}.sn66-ex-row strong,.sn66-ex-row small{display:block}.sn66-ex-row strong{font-size:12px}.sn66-ex-row small{font-size:9px;color:var(--muted);margin-top:3px}.sn66-add{width:34px;height:34px;border-radius:10px;border:1px solid #D5E3FA;background:#F4F8FF;color:#2F6DF6;display:grid;place-items:center}.sn66-add.added{background:#EEF7D9;border-color:#D7E9AD;color:#6E981C}
       .sn66-existing{display:grid;gap:9px}.sn66-existing-row{display:grid;grid-template-columns:40px 1fr auto;gap:11px;align-items:center;border:1px solid var(--line);border-radius:15px;background:var(--surface);padding:12px;text-align:left;color:var(--text)}.sn66-existing-icon{width:38px;height:38px;border-radius:12px;background:#F2F6FF;color:#2F6DF6;display:grid;place-items:center}.sn66-existing-row strong,.sn66-existing-row small{display:block}.sn66-existing-row strong{font-size:13px}.sn66-existing-row small{font-size:10px;color:var(--muted);margin-top:3px}.sn66-existing-row b{font-size:11px;color:#2F6DF6}
@@ -154,13 +154,40 @@
     return qw.selected.map(id => exerciseLibrary.find(ex => String(ex.id || SN.exerciseId(ex)) === id)).filter(Boolean);
   }
 
+  function filteredBuildExercises() {
+    const q = qw.query.trim().toLowerCase();
+    return exerciseLibrary.filter(ex => (!q || `${ex.name} ${ex.muscle} ${equipment(ex)}`.toLowerCase().includes(q)) && (qw.muscle === 'All' || ex.muscle === qw.muscle) && (qw.equipment === 'All' || equipment(ex) === qw.equipment));
+  }
+
+  function renderBuildResults(filtered = filteredBuildExercises()) {
+    return filtered.slice(0,120).map(ex => {
+      const id = String(ex.id || SN.exerciseId(ex));
+      const added = qw.selected.includes(id);
+      return `<div class="sn66-ex-row"><div><strong>${esc(ex.name)}</strong><small>${esc(ex.muscle)} • ${esc(equipment(ex))}</small></div><button class="sn66-add ${added?'added':''}" data-add="${esc(id)}" aria-label="${added?'Added':'Add'} ${esc(ex.name)}">${added?icon('check',16,2.5):icon('plus',16)}</button></div>`;
+    }).join('');
+  }
+
+  function bindBuildAddButtons() {
+    document.querySelectorAll('.sn66-results [data-add]').forEach(btn => btn.addEventListener('click', () => {
+      const id = btn.dataset.add;
+      if (!qw.selected.includes(id)) qw.selected.push(id);
+      renderQuickWorkout();
+    }));
+  }
+
+  function refreshBuildResults() {
+    const results = document.querySelector('.sn66-results');
+    if (!results) return;
+    results.innerHTML = renderBuildResults();
+    bindBuildAddButtons();
+  }
+
   function renderBuild() {
     const muscles = ['All', ...[...new Set(exerciseLibrary.map(ex => ex.muscle).filter(Boolean))].sort()];
     const equipments = ['All', ...[...new Set(exerciseLibrary.map(equipment).filter(Boolean))].sort()];
-    const q = qw.query.trim().toLowerCase();
-    const filtered = exerciseLibrary.filter(ex => (!q || `${ex.name} ${ex.muscle} ${equipment(ex)}`.toLowerCase().includes(q)) && (qw.muscle === 'All' || ex.muscle === qw.muscle) && (qw.equipment === 'All' || equipment(ex) === qw.equipment));
+    const filtered = filteredBuildExercises();
     const selected = selectedExercises();
-    return `<section class="card sn66-panel"><h2>Build your workout</h2><p>Add the exercises you want, reorder them, then start when you're ready. This workout stays separate from your weekly schedule.</p><div class="sn66-tools"><label class="sn66-search">${icon('search',17)}<input id="sn66Search" placeholder="Search exercises" value="${esc(qw.query)}"></label><select id="sn66Muscle">${muscles.map(m=>`<option ${m===qw.muscle?'selected':''}>${esc(m)}</option>`).join('')}</select><select id="sn66Equipment">${equipments.map(v=>`<option ${v===qw.equipment?'selected':''}>${esc(v)}</option>`).join('')}</select></div>${selected.length?`<div class="sn66-selected-list">${selected.map((ex,i)=>`<div class="sn66-selected-row"><div><strong>${i+1}. ${esc(ex.name)}</strong><small>${esc(ex.muscle)} • ${esc(equipment(ex))}</small></div><div class="sn66-order"><button data-move="up" data-id="${esc(String(ex.id || SN.exerciseId(ex)))}" ${i===0?'disabled':''} aria-label="Move ${esc(ex.name)} up">${icon('chevronUp',15)}</button><button data-move="down" data-id="${esc(String(ex.id || SN.exerciseId(ex)))}" ${i===selected.length-1?'disabled':''} aria-label="Move ${esc(ex.name)} down">${icon('chevronDown',15)}</button><button data-remove="${esc(String(ex.id || SN.exerciseId(ex)))}" aria-label="Remove ${esc(ex.name)}">${icon('x',15)}</button></div></div>`).join('')}</div>`:''}<div class="sn66-results">${filtered.slice(0,120).map(ex=>{const id=String(ex.id || SN.exerciseId(ex)),added=qw.selected.includes(id);return`<div class="sn66-ex-row"><div><strong>${esc(ex.name)}</strong><small>${esc(ex.muscle)} • ${esc(equipment(ex))}</small></div><button class="sn66-add ${added?'added':''}" data-add="${esc(id)}" aria-label="${added?'Added':'Add'} ${esc(ex.name)}">${added?icon('check',16,2.5):icon('plus',16)}</button></div>`}).join('')}</div><button class="sn66-start" id="sn66StartBuild" ${selected.length?'':'disabled'}>Start Workout</button></section>`;
+    return `<section class="card sn66-panel"><h2>Build your workout</h2><p>Add the exercises you want, reorder them, then start when you're ready. This workout stays separate from your weekly schedule.</p><div class="sn66-tools"><label class="sn66-search">${icon('search',17)}<input id="sn66Search" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search exercises" value="${esc(qw.query)}"></label><select id="sn66Muscle">${muscles.map(m=>`<option ${m===qw.muscle?'selected':''}>${esc(m)}</option>`).join('')}</select><select id="sn66Equipment">${equipments.map(v=>`<option ${v===qw.equipment?'selected':''}>${esc(v)}</option>`).join('')}</select></div>${selected.length?`<div class="sn66-selected-list">${selected.map((ex,i)=>`<div class="sn66-selected-row"><div><strong>${i+1}. ${esc(ex.name)}</strong><small>${esc(ex.muscle)} • ${esc(equipment(ex))}</small></div><div class="sn66-order"><button data-move="up" data-id="${esc(String(ex.id || SN.exerciseId(ex)))}" ${i===0?'disabled':''} aria-label="Move ${esc(ex.name)} up">${icon('chevronUp',15)}</button><button data-move="down" data-id="${esc(String(ex.id || SN.exerciseId(ex)))}" ${i===selected.length-1?'disabled':''} aria-label="Move ${esc(ex.name)} down">${icon('chevronDown',15)}</button><button data-remove="${esc(String(ex.id || SN.exerciseId(ex)))}" aria-label="Remove ${esc(ex.name)}">${icon('x',15)}</button></div></div>`).join('')}</div>`:''}<div class="sn66-results">${renderBuildResults(filtered)}</div><button class="sn66-start" id="sn66StartBuild" ${selected.length?'':'disabled'}>Start Workout</button></section>`;
   }
 
   function renderExisting() {
@@ -186,10 +213,10 @@
 
     if (qw.mode === 'build') {
       const search = document.getElementById('sn66Search');
-      if (search) search.addEventListener('input',()=>{ qw.query=search.value; renderQuickWorkout(); });
+      if (search) search.addEventListener('input',()=>{ qw.query=search.value; refreshBuildResults(); });
       document.getElementById('sn66Muscle')?.addEventListener('change',e=>{ qw.muscle=e.target.value; renderQuickWorkout(); });
       document.getElementById('sn66Equipment')?.addEventListener('change',e=>{ qw.equipment=e.target.value; renderQuickWorkout(); });
-      document.querySelectorAll('[data-add]').forEach(btn=>btn.addEventListener('click',()=>{ const id=btn.dataset.add; if(!qw.selected.includes(id)) qw.selected.push(id); renderQuickWorkout(); }));
+      bindBuildAddButtons();
       document.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click',()=>{ qw.selected=qw.selected.filter(id=>id!==btn.dataset.remove); renderQuickWorkout(); }));
       document.querySelectorAll('[data-move]').forEach(btn=>btn.addEventListener('click',()=>{ const id=btn.dataset.id,index=qw.selected.indexOf(id),delta=btn.dataset.move==='up'?-1:1,next=index+delta;if(index<0||next<0||next>=qw.selected.length)return;[qw.selected[index],qw.selected[next]]=[qw.selected[next],qw.selected[index]];renderQuickWorkout(); }));
       document.getElementById('sn66StartBuild')?.addEventListener('click',()=>{ const exercises=selectedExercises().map(ex=>({...ex})); if(exercises.length) startQuick({name:'Quick Workout',exercises},'manual'); });
@@ -251,5 +278,5 @@
   };
 
   if (state.page === 'quickWorkout') renderQuickWorkout();
-  window.START_NOW_QUICK_WORKOUT = { version:'v66', render:renderQuickWorkout, generate:generatedWorkout };
+  window.START_NOW_QUICK_WORKOUT = { version:'v114', render:renderQuickWorkout, generate:generatedWorkout };
 })();
