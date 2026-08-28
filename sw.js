@@ -1,23 +1,43 @@
-// START/NOW service worker — v111 fresh-build delivery.
-// Network first, cache fallback. Navigations bypass the browser HTTP cache so a
-// newly deployed index.html is picked up promptly instead of showing an older UI.
-const CACHE_NAME = 'start-now-shell-v111';
-const SHELL = ['./', './index.html', './manifest.webmanifest'];
+// START/NOW service worker — v112 PWA delivery.
+// Network-first keeps deployed builds fresh; the cache is an offline fallback.
+const CACHE_NAME = 'start-now-shell-v112';
+const APP_SHELL = [
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './assets/pwa/icon-192.png',
+  './assets/pwa/icon-512.png',
+  './assets/pwa/icon-maskable-512.png',
+  './assets/pwa/apple-touch-icon.png'
+];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(SHELL))
+      .then(cache => cache.addAll(APP_SHELL))
       .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
-      .then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter(key => key.startsWith('start-now-shell-') && key !== CACHE_NAME)
+        .map(key => caches.delete(key))
+    );
+    if (self.registration.navigationPreload) {
+      try {
+        await self.registration.navigationPreload.enable();
+      } catch (_) {}
+    }
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('fetch', event => {
@@ -26,24 +46,33 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.endsWith('/sw.js')) return;
 
   event.respondWith((async () => {
     try {
-      const networkRequest = request.mode === 'navigate'
-        ? new Request(request, { cache: 'no-store' })
-        : request;
-      const response = await fetch(networkRequest);
-      if (response && response.ok) {
+      let response;
+
+      if (request.mode === 'navigate') {
+        const preload = await event.preloadResponse;
+        response = preload || await fetch(new Request(request, { cache: 'no-store' }));
+      } else {
+        response = await fetch(request);
+      }
+
+      if (response?.ok && response.status !== 206) {
         const cache = await caches.open(CACHE_NAME);
         cache.put(request, response.clone()).catch(() => {});
       }
+
       return response;
     } catch (error) {
       const cached = await caches.match(request);
       if (cached) return cached;
+
       if (request.mode === 'navigate') {
         return (await caches.match('./index.html')) || (await caches.match('./'));
       }
+
       throw error;
     }
   })());

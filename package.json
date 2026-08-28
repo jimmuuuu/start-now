@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "test:e2e": "playwright test",
-    "test:notes": "node tests/workout-notes.unit.js"
+    "test:notes": "node tests/workout-notes.unit.js",
+    "test:pwa": "node tests/pwa-readiness.unit.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0"

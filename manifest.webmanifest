@@ -1,9 +1,41 @@
 {
+  "id": "./",
   "name": "START/NOW Fitness",
   "short_name": "START/NOW",
+  "description": "Plan workouts, train, track progress, and stay consistent with START/NOW.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "background_color": "#FAFAF7",
   "theme_color": "#FF5A5F",
-  "icons": []
+  "categories": [
+    "fitness",
+    "health",
+    "lifestyle"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "./assets/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
 }
