@@ -106,8 +106,11 @@ test('Train create-workout search keeps the same input focused while filtering',
     state.page = 'quickWorkout';
     render();
   });
+  await dismissStartupModal(page);
 
   await page.locator('[data-mode="build"]').click();
+  await dismissStartupModal(page);
+
   const search = page.locator('#sn66Search');
   await expect(search).toBeVisible();
   await search.click();
