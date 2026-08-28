@@ -18,13 +18,14 @@
 
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
-body{min-height:100vh}
+body{min-height:100vh;min-height:100dvh}
 button,input{font:inherit}
 button{cursor:pointer}
 
 .app-shell{
   max-width:520px;
   min-height:100vh;
+  min-height:100dvh;
   margin:0 auto;
   position:relative;
   background:
@@ -33,7 +34,7 @@ button{cursor:pointer}
   padding-bottom:104px;
 }
 
-#app{padding:20px 18px 24px}
+#app{padding:calc(20px + env(safe-area-inset-top)) 18px 24px}
 
 .topbar{
   display:flex;justify-content:space-between;align-items:center;
