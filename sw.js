@@ -1,6 +1,7 @@
-// START/NOW service worker — v85 exercise notes build.
-// Development/release-safe strategy: network first, cache fallback, versioned by build.
-const CACHE_NAME = 'start-now-shell-v85';
+// START/NOW service worker — v111 fresh-build delivery.
+// Network first, cache fallback. Navigations bypass the browser HTTP cache so a
+// newly deployed index.html is picked up promptly instead of showing an older UI.
+const CACHE_NAME = 'start-now-shell-v111';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', event => {
@@ -28,7 +29,10 @@ self.addEventListener('fetch', event => {
 
   event.respondWith((async () => {
     try {
-      const response = await fetch(request);
+      const networkRequest = request.mode === 'navigate'
+        ? new Request(request, { cache: 'no-store' })
+        : request;
+      const response = await fetch(networkRequest);
       if (response && response.ok) {
         const cache = await caches.open(CACHE_NAME);
         cache.put(request, response.clone()).catch(() => {});

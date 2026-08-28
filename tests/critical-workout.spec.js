@@ -18,10 +18,30 @@ async function clearBrowserState(page) {
   await expect(page.locator('#app')).not.toBeEmpty();
 }
 
+async function seedTodayWorkout(page) {
+  await page.evaluate(() => {
+    const today = typeof dayName === 'function'
+      ? dayName()
+      : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+    const base = exerciseLibrary.find(ex => ex.id === 'chest-press') || exerciseLibrary[0];
+    state.customWorkouts = [{
+      id: 'e2e-critical-workout',
+      name: 'Critical Test Workout',
+      builtIn: false,
+      days: [today],
+      exercises: [{ ...base, sets: 1, reps: 10, weight: 50 }]
+    }];
+    saveCustomWorkouts();
+    state.page = 'home';
+    render();
+  });
+}
+
 test('critical workout flow saves a real completed session', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.stack || error.message));
   await clearBrowserState(page);
+  await seedTodayWorkout(page);
 
   await expect(page.locator('#startWorkout')).toBeVisible();
   await page.locator('#startWorkout').click();
@@ -74,5 +94,6 @@ test('critical workout flow saves a real completed session', async ({ page }) =>
 
   await page.locator('#snSummaryHome').click();
   await expect.poll(() => page.evaluate(() => state.page)).toBe('home');
+  await expect(page.locator('#quickStart')).toBeVisible();
   await expect(page.locator('[data-sn70-action="myStats"]')).toBeVisible();
 });

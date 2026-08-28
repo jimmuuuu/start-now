@@ -27,7 +27,7 @@ async function openFresh(page) {
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('meta[name="startnow-build"]')).toHaveAttribute('content', BUILD);
   await expect(page.locator('#app')).not.toBeEmpty();
-  await expect(page.locator('[data-sn70-action="quickWorkout"]')).toBeVisible();
+  await expect(page.locator('#quickStart')).toBeVisible();
 }
 
 async function assertRuntimeHealthy(page) {
@@ -48,7 +48,8 @@ async function assertRouteState(page, expected) {
 async function assertHome(page) {
   await assertRouteState(page, 'home');
   await expect(page.locator('.plan-card')).toBeVisible();
-  await expect(page.locator('[data-sn70-action="quickWorkout"]')).toBeVisible();
+  await expect(page.locator('#quickStart')).toBeVisible();
+  await expect(page.locator('[data-sn70-action="quickWorkout"]')).toHaveCount(0);
   await expect(page.locator('[data-sn70-action="exerciseLibrary"]')).toBeVisible();
   await expect(page.locator('[data-sn70-action="calendar"]')).toBeVisible();
   await expect(page.locator('[data-sn70-action="myStats"]')).toBeVisible();
@@ -56,7 +57,7 @@ async function assertHome(page) {
   await expect(page.getByText('Achievements', { exact: true })).toHaveCount(0);
 
   const audit = await page.evaluate(() => window.START_NOW_RUNTIME?.audit?.() || null);
-  expect(audit?.quickActionCount).toBe(4);
+  expect(audit?.quickActionCount).toBe(3);
   expect(audit?.oldQuickActionLabels).toEqual([]);
   await assertRuntimeHealthy(page);
 }
@@ -138,13 +139,13 @@ test.describe('START/NOW navigation smoke', () => {
     await assertRuntimeHealthy(page);
   });
 
-  test('Quick Workout', async ({ page }) => {
-    await page.locator('[data-sn70-action="quickWorkout"]').click();
+  test('Train entry', async ({ page }) => {
+    await page.locator('#quickStart').click();
     await assertRouteState(page, 'quickWorkout');
-    await expect(page.getByRole('heading', { name: 'Quick Workout' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Build workout/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Choose existing/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Surprise me/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Start Workout' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Create workout/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Saved workouts/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Quick pick/i })).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 
