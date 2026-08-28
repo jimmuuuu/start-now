@@ -97,3 +97,32 @@ test('workout builder inputs remain focused and mobile-sized while typing', asyn
   }
   await expect(exerciseSearch).toHaveValue('curl');
 });
+
+test('Train create-workout search keeps the same input focused while filtering', async ({ page }) => {
+  await resetApp(page);
+  await dismissStartupModal(page);
+
+  await page.evaluate(() => {
+    state.page = 'quickWorkout';
+    render();
+  });
+
+  await page.locator('[data-mode="build"]').click();
+  const search = page.locator('#sn66Search');
+  await expect(search).toBeVisible();
+  await search.click();
+
+  const fontSize = await search.evaluate(node => parseFloat(getComputedStyle(node).fontSize));
+  expect(fontSize).toBeGreaterThanOrEqual(16);
+
+  await search.evaluate(node => node.dataset.e2eStableInput = 'yes');
+
+  for (const character of 'curl') {
+    await page.keyboard.type(character);
+    await expect(search).toBeFocused();
+    await expect(search).toHaveAttribute('data-e2e-stable-input', 'yes');
+  }
+
+  await expect(search).toHaveValue('curl');
+  await expect(page.locator('.sn66-results .sn66-ex-row').first()).toBeVisible();
+});
