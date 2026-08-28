@@ -1,4 +1,4 @@
-// START/NOW v79 — hard-lock the app behind onboarding/product modals.
+// START/NOW v113 — hard-lock the app behind modals without fighting mobile text entry.
 (() => {
   const root = document.documentElement;
   const body = document.body;
@@ -6,13 +6,19 @@
 
   const modalSelector = "#snProductModal, #beginnerWizard, .sn-modal-backdrop, .beginner-modal-overlay";
   const scrollableModalSelector = ".sn-modal, .beginner-modal";
-  const backgroundSelector = ".app-shell";
 
   let locked = false;
   let scrollY = 0;
   let previous = null;
   let lastTouchY = null;
   let restoringScroll = false;
+
+  function isFormEntryTarget(target = document.activeElement) {
+    return Boolean(target && (
+      target.matches?.("input, textarea, select") ||
+      target.isContentEditable
+    ));
+  }
 
   const style = document.createElement("style");
   style.id = "snModalScrollLockStyles";
@@ -36,6 +42,13 @@
     .beginner-modal {
       overscroll-behavior: contain !important;
       -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 768px) {
+      input,
+      textarea,
+      select {
+        font-size: 16px !important;
+      }
     }
   `;
   document.head.appendChild(style);
@@ -159,7 +172,10 @@
   }
 
   function enforceScrollPosition() {
-    if (!locked || restoringScroll) return;
+    // Mobile browsers move the visual viewport to keep the focused field above
+    // the software keyboard. Fighting that scroll can blur the field and close
+    // the keyboard, so leave the viewport alone while the user is typing.
+    if (!locked || restoringScroll || isFormEntryTarget()) return;
     const current = window.scrollY || window.pageYOffset || 0;
     if (Math.abs(current - scrollY) > 1) {
       restoringScroll = true;
@@ -172,6 +188,9 @@
   document.addEventListener("touchstart", handleTouchStart, { passive: true, capture: true });
   document.addEventListener("touchmove", handleTouchMove, { passive: false, capture: true });
   document.addEventListener("keydown", handleKeydown, { capture: true });
+  document.addEventListener("focusin", event => {
+    if (locked && isFormEntryTarget(event.target)) lastTouchY = null;
+  }, { capture: true });
   window.addEventListener("scroll", enforceScrollPosition, { passive: true });
 
   const observer = new MutationObserver(syncLock);
