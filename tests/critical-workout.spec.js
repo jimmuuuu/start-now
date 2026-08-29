@@ -141,7 +141,7 @@ test('Last Time expands inline and keeps the user inside the workout', async ({ 
   await expect(page.getByText('115 lb × 8 reps', { exact: true })).toBeVisible();
   await expect(page.getByText('125 lb × 8 reps', { exact: true })).toBeVisible();
   await expect(page.getByText('135 lb × 8 reps', { exact: true })).toBeVisible();
-  await expect(page.getByText('Keep the seat one notch lower next time.', { exact: true })).toBeVisible();
+  await expect(page.locator('[data-sn131-details]').getByText('Keep the seat one notch lower next time.', { exact: true })).toBeVisible();
   await expect.poll(() => page.evaluate(() => state.page)).toBe('activeWorkout');
 
   await lastTime.click();
