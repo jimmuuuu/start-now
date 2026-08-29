@@ -98,6 +98,57 @@ test('critical workout flow saves a real completed session', async ({ page }) =>
   await expect(page.locator('[data-sn70-action="myStats"]')).toBeVisible();
 });
 
+test('Last Time expands inline and keeps the user inside the workout', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.stack || error.message));
+  await clearBrowserState(page);
+
+  await page.evaluate(() => {
+    const base = exerciseLibrary.find(ex => ex.id === 'chest-press') || exerciseLibrary[0];
+    const exercise = { ...base, id: base.id || 'chest-press', name: base.name || 'Chest Press', muscle: base.muscle || 'Chest' };
+    const prior = {
+      id: 'e2e-prior-session',
+      workoutId: 'e2e-inline-history',
+      workoutName: 'Inline History Test',
+      timestamp: Date.now() - 86400000,
+      exercises: [{
+        ...exercise,
+        note: 'Keep the seat one notch lower next time.',
+        sets: [
+          { weight: 115, reps: 8, done: true },
+          { weight: 125, reps: 8, done: true },
+          { weight: 135, reps: 8, done: true }
+        ]
+      }]
+    };
+    localStorage.setItem('sn_progress_sessions', JSON.stringify([prior]));
+    startWorkout({
+      id: 'e2e-inline-history',
+      name: 'Inline History Test',
+      days: [],
+      exercises: [{ ...exercise, sets: 3, reps: 10, weight: 115 }]
+    });
+  });
+
+  await expect.poll(() => page.evaluate(() => state.page)).toBe('activeWorkout');
+  const lastTime = page.locator('[data-sn131-toggle]');
+  await expect(lastTime).toBeVisible();
+  await expect(page.getByText('3 completed sets', { exact: true })).toBeVisible();
+
+  await lastTime.click();
+
+  await expect(lastTime).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByText('115 lb × 8 reps', { exact: true })).toBeVisible();
+  await expect(page.getByText('125 lb × 8 reps', { exact: true })).toBeVisible();
+  await expect(page.getByText('135 lb × 8 reps', { exact: true })).toBeVisible();
+  await expect(page.getByText('Keep the seat one notch lower next time.', { exact: true })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => state.page)).toBe('activeWorkout');
+
+  await lastTime.click();
+  await expect(lastTime).toHaveAttribute('aria-expanded', 'false');
+  expect(pageErrors).toEqual([]);
+});
+
 test('home does not show a duplicate resume card when no workout is scheduled', async ({ page }) => {
   await clearBrowserState(page);
   await page.evaluate(() => {
