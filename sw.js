@@ -1,6 +1,6 @@
-// START/NOW service worker — v130 rest-card cleanup.
+// START/NOW service worker — v131 stable Last Time interaction.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v130';
+const CACHE_NAME = 'start-now-shell-v131';
 const APP_SHELL = [
   './',
   './index.html',
