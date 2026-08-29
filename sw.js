@@ -1,6 +1,6 @@
-// START/NOW service worker — v124 selected quick-workout tray delivery.
+// START/NOW service worker — v125 selected quick-workout tray cleanup.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v124';
+const CACHE_NAME = 'start-now-shell-v125';
 const APP_SHELL = [
   './',
   './index.html',
