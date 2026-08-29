@@ -1,6 +1,6 @@
-// START/NOW service worker — v121 quick-workout prescription delivery.
+// START/NOW service worker — v122 native quick-workout prescription delivery.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v121';
+const CACHE_NAME = 'start-now-shell-v122';
 const APP_SHELL = [
   './',
   './index.html',
