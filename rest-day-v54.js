@@ -1,6 +1,9 @@
 // START/NOW v54 — blue rest-day theme + larger detailed moon illustration.
 (() => {
   const WEEK = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const DAILY_MOTIVATION_STORAGE = "startnow.dailyMotivation.v1";
+  const DAILY_MOTIVATION_ENDPOINT = "https://dummyjson.com/quotes/random";
+  let motivationRequest = null;
 
   function esc(value) {
     if (typeof escapeHtml === "function") return escapeHtml(value);
@@ -26,6 +29,52 @@
 
   function isRestToday() {
     return hasRealSchedule() && !todayScheduledWorkout();
+  }
+
+  function localDateKey() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  }
+
+  function storedDailyMotivation() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(DAILY_MOTIVATION_STORAGE) || "null");
+      return stored?.date === localDateKey() && stored?.quote ? stored : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function motivationMarkup(motivation) {
+    if (!motivation) {
+      return `<span>DAILY MOTIVATION</span><p class="sn54-motivation-loading" aria-live="polite">Finding today’s motivation…</p>`;
+    }
+    return `<span>DAILY MOTIVATION</span><p>${esc(motivation.quote)}</p>${motivation.author ? `<small>— ${esc(motivation.author)}</small>` : ""}`;
+  }
+
+  function renderDailyMotivation() {
+    const card = document.querySelector(".sn54-daily-motivation");
+    if (card) card.innerHTML = motivationMarkup(storedDailyMotivation());
+  }
+
+  function loadDailyMotivation() {
+    if (storedDailyMotivation() || motivationRequest) return;
+    motivationRequest = fetch(DAILY_MOTIVATION_ENDPOINT, { cache: "no-store" })
+      .then(response => {
+        if (!response.ok) throw new Error(`Quote request failed: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        const motivation = { date: localDateKey(), quote: String(data?.quote || "").trim(), author: String(data?.author || "").trim() };
+        if (!motivation.quote) throw new Error("Quote response was empty");
+        localStorage.setItem(DAILY_MOTIVATION_STORAGE, JSON.stringify(motivation));
+        renderDailyMotivation();
+      })
+      .catch(() => {
+        const card = document.querySelector(".sn54-daily-motivation");
+        if (card) card.innerHTML = motivationMarkup({ quote: "Small steps, repeated consistently, create lasting change.", author: "START/NOW" });
+      })
+      .finally(() => { motivationRequest = null; });
   }
 
   function nextScheduledWorkout() {
@@ -124,7 +173,8 @@
       .sn54-activity-list i{width:8px;height:8px;border-radius:50%;background:#60A5FA;flex:0 0 auto}
       .sn54-coach{margin-top:14px;padding:16px 18px;border-radius:18px;background:#EFF6FF;border:1px solid #D7E6FF}
       .sn54-coach span{font-size:11px;font-weight:800;letter-spacing:.1em;color:#2563EB}
-      .sn54-coach p{margin:6px 0 0;font-weight:700;line-height:1.45}
+      .sn54-coach p{margin:6px 0 0;color:#173B72!important;font-weight:700;line-height:1.45}
+      .sn54-coach small{display:block;margin-top:8px;color:#285EA8;font-size:12px;font-weight:700}
 
       @media(max-width:640px){
         .sn54-rest-card .plan-grid{grid-template-columns:minmax(0,1fr) 150px}
@@ -207,9 +257,8 @@
           </div>
         </section>
 
-        <div class="sn54-coach">
-          <span>COACH CUE</span>
-          <p>Consistency includes rest. Recover well so you can return ready for your next session.</p>
+        <div class="sn54-coach sn54-daily-motivation">
+          ${motivationMarkup(storedDailyMotivation())}
         </div>
       </section>
     `;
@@ -218,6 +267,7 @@
       state.page = "home";
       render();
     });
+    loadDailyMotivation();
   }
 
   installStyles();
