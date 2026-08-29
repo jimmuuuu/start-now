@@ -144,3 +144,33 @@ test('prefilled history values select as a unit and zero-set finishes stay incom
   await expect(page.getByText('Complete at least one set before finishing')).toBeVisible();
   expect(await page.evaluate(() => SN36.sessions().length)).toBe(1);
 });
+
+test('home plan and muscle focus always use the same scheduled workout', async ({ page }) => {
+  await reset(page);
+
+  await expect(page.getByRole('heading', { name: 'No workout scheduled' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'No muscle focus today' })).toBeVisible();
+  await expect(page.getByText('There is no workout scheduled for today.')).toBeVisible();
+  await expect(page.getByText('Primary muscles trained in today’s workout')).toHaveCount(0);
+
+  await page.evaluate(() => {
+    const exercise = exerciseLibrary.find(item => item.id === 'leg-press') || exerciseLibrary[0];
+    SN36.upsertWorkout({
+      id: 'today-source-test',
+      name: 'Today Source Test',
+      days: [SN36.todayName()],
+      exercises: [{ ...exercise, sets: 2, reps: 8 }]
+    });
+    state.page = 'home';
+    render();
+  });
+
+  await expect(page.getByRole('heading', { name: 'Today Source Test' })).toBeVisible();
+  await expect(page.getByText('Primary muscles trained in today’s workout')).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Legs|Quads/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'No muscle focus today' })).toHaveCount(0);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: 'Today Source Test' })).toBeVisible();
+  await expect(page.getByText('Primary muscles trained in today’s workout')).toBeVisible();
+});

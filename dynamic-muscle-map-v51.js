@@ -59,9 +59,10 @@
   }
 
   function directMuscles(exercise) {
-    if (exercise?.muscleGroups?.primary) return [canonicalMuscle(exercise.muscleGroups.primary)].filter(Boolean);
+    const declared = canonicalMuscle(exercise?.muscleGroups?.primary);
+    if (declared && declared !== "Legs" && declared !== "Full Body") return [declared];
     const name = String(exercise?.name || "").toLowerCase();
-    const base = canonicalMuscle(exercise?.muscle);
+    const base = declared || canonicalMuscle(exercise?.muscle);
 
     if (/romanian deadlift|stiff[- ]leg|good morning|nordic|leg curl/.test(name)) return ["Hamstrings"];
     if (/hip adduction|adductor|inner thigh|groin/.test(name)) return ["Adductors"];
@@ -338,11 +339,11 @@
 
   function enhanceMuscleFocus() {
     installStyles();
-    if (typeof getTodayWorkout !== "function") return;
     const card = findMuscleCard();
     if (!card) return;
 
-    const workout = getTodayWorkout();
+    const workout = window.SN36?.scheduledWorkout?.()
+      || (typeof getScheduledWorkout === "function" ? getScheduledWorkout() : null);
     if (!workout) return;
     const focus = buildFocus(workout);
     const title = formatMuscles(focus.all);

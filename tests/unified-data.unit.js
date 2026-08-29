@@ -31,7 +31,8 @@ function boot(localStorage) {
     state: { customWorkouts: [], streak: 0, completedWorkouts: 0 },
     exerciseLibrary: [
       { id: 'bench-press', name: 'Bench Press', muscle: 'Chest', sets: 3, reps: 10, cue: 'Control the bar.' },
-      { id: 'row', name: 'Row', muscle: 'Back', sets: 3, reps: 10, cue: 'Pull with the back.' }
+      { id: 'row', name: 'Row', muscle: 'Back', sets: 3, reps: 10, cue: 'Pull with the back.' },
+      { id: 'leg-press', name: 'Leg Press', muscle: 'Legs', sets: 3, reps: 10, cue: 'Control the depth.' }
     ],
     CustomEvent: class CustomEvent { constructor(type, options = {}) { this.type = type; this.detail = options.detail; } },
     addEventListener(type, handler) { const rows = listeners.get(type) || []; rows.push(handler); listeners.set(type, rows); },
@@ -83,6 +84,9 @@ let sessions = SN.sessions();
 assert.equal(workouts.length, 1, 'one workout migrates');
 assert.equal(workouts[0].id, 'legacy-push-day-100', 'missing workout ID receives a persisted stable ID');
 assert.deepEqual([...workouts[0].days], ['Monday'], 'invalid schedule days are removed');
+assert.equal(SN.scheduledWorkout('Monday').id, workouts[0].id, 'today displays use the canonical schedule selector');
+assert.equal(SN.scheduledWorkout('Saturday'), null, 'the schedule selector never falls back to a default workout');
+assert.equal(SN.normalizeExercise({ id: 'leg-press', name: 'Leg Press', muscle: 'Legs' }).muscleGroups.primary, 'Quads', 'broad legacy leg labels normalize to the exercise’s specific primary muscle');
 assert.equal(workouts[0].exercises[0].exerciseId, 'bench-press', 'library identity replaces name matching');
 assert.equal(workouts[0].exercises[0].muscle, 'Chest', 'library muscle metadata repairs copied display text');
 assert.notEqual(workouts[0].exercises[0].workoutExerciseId, workouts[0].exercises[1].workoutExerciseId, 'repeated exercises keep unique workout instance IDs');

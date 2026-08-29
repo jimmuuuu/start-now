@@ -6,7 +6,7 @@
   const esc=v=>escapeHtml(String(v??""));
   function weekly(){const sessions=SN.sessions(),cut=Date.now()-7*86400000,week=sessions.filter(s=>s.timestamp>=cut),target=Math.max(1,SN.scheduleDays().size||3);return{count:week.length,target,minutes:week.reduce((a,s)=>a+SN.num(s.durationMinutes),0),sets:week.reduce((a,s)=>a+SN.num(s.completedSets),0)}}
   function latestPR(){for(const s of [...SN.sessions()].sort((a,b)=>b.timestamp-a.timestamp)){if(s.prs?.length)return{...s.prs[0],timestamp:s.timestamp}}return null}
-  function todayWorkout(){return getScheduledWorkout?.(SN.todayName())||getTodayWorkout?.()||null}
+  function todayWorkout(){return SN.scheduledWorkout?.(SN.todayName())||null}
 
   renderHome=function(){SN.syncStats();priorHome();const hero=document.querySelector(".hero-copy .eyebrow");if(hero)hero.textContent=SN.greeting();const active=SN.restoreActive?.();const plan=document.querySelector(".plan-card");const workout=todayWorkout();
     if(active&&plan&&workout){const startButton=plan.querySelector("#startWorkout,#startActivePlanWorkout");if(startButton){const resumeButton=startButton.cloneNode(true);resumeButton.textContent="Resume Workout →";resumeButton.addEventListener("click",event=>{event.preventDefault();state.page="activeWorkout";render()});startButton.replaceWith(resumeButton)}}

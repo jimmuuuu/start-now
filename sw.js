@@ -1,6 +1,6 @@
-// START/NOW service worker — v117 PWA delivery.
+// START/NOW service worker — v118 PWA delivery.
 // Network-first keeps deployed builds fresh; the cache is an offline fallback.
-const CACHE_NAME = 'start-now-shell-v117';
+const CACHE_NAME = 'start-now-shell-v118';
 const APP_SHELL = [
   './',
   './index.html',

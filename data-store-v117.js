@@ -28,10 +28,21 @@
     return text(value?.exerciseId || value?.id || match?.id) || `exercise-${SN.slug(value?.name || "unknown")}`;
   }
 
+  function specificPrimaryMuscle(value, fallback) {
+    const primary = text(fallback) || "Other";
+    if (primary !== "Legs") return primary;
+    const name = text(value?.name).toLowerCase();
+    if (/leg curl|romanian deadlift|stiff[- ]leg|good morning|nordic/.test(name)) return "Hamstrings";
+    if (/calf|tibialis/.test(name)) return "Calves";
+    if (/hip thrust|glute bridge|glute drive|kickback|hip abduction/.test(name)) return "Glutes";
+    if (/leg press|hack squat|pendulum squat|front squat|goblet squat|split squat|bulgarian|step[- ]?up|step[- ]?down|lunge|squat|leg extension/.test(name)) return "Quads";
+    return primary;
+  }
+
   function muscleGroups(value) {
     const match = libraryExercise(value);
     const groups = value?.muscleGroups && typeof value.muscleGroups === "object" ? value.muscleGroups : {};
-    const primary = text(groups.primary || value?.primaryMuscle || match?.muscle || value?.muscle) || "Other";
+    const primary = specificPrimaryMuscle(value, groups.primary || value?.primaryMuscle || match?.muscle || value?.muscle);
     const secondary = unique(groups.secondary || value?.secondaryMuscles || SN.secondary(primary));
     return { primary, secondary: secondary.filter(muscle => muscle !== primary) };
   }
@@ -202,6 +213,10 @@
     return result;
   }
 
+  function scheduledWorkout(day = SN.todayName()) {
+    return scheduleMap().get(day) || null;
+  }
+
   function dayKey(value) {
     const date = new Date(value);
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -315,6 +330,7 @@
     return saveWorkouts(workouts().filter(workout => workout.id !== id));
   };
   SN.scheduleMap = scheduleMap;
+  SN.scheduledWorkout = scheduledWorkout;
   SN.streaks = streaks;
   SN.streak = rows => streaks(rows || completedSessions()).current;
   SN.muscleActivity = muscleActivity;
@@ -370,7 +386,7 @@
   });
 
   window.START_NOW_DATA = {
-    version: "v117",
+    version: "v118",
     schemaVersion: SCHEMA_VERSION,
     deletedSessionsKey: DELETED_SESSIONS_KEY,
     normalizeExercise,
@@ -382,6 +398,7 @@
     saveWorkouts,
     saveSessions,
     scheduleMap,
+    scheduledWorkout,
     streaks,
     muscleActivity,
     summary,

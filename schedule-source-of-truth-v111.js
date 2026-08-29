@@ -12,6 +12,7 @@
   }
 
   function scheduledToday() {
+    if (window.SN36?.scheduledWorkout) return window.SN36.scheduledWorkout(todayName());
     if (typeof getScheduledWorkout === "function") return getScheduledWorkout(todayName());
     return (state?.customWorkouts || []).find(workout => (workout.days || []).includes(todayName())) || null;
   }
