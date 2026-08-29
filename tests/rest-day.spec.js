@@ -13,7 +13,7 @@ async function fresh(page) {
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
 
-test('scheduled rest day shows recovery plan and next workout', async ({ page }) => {
+test('scheduled rest day stays concise and shows the next workout', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.stack || error.message));
   await fresh(page);
@@ -38,16 +38,8 @@ test('scheduled rest day shows recovery plan and next workout', async ({ page })
   await expect(page.getByRole('heading', { name: 'Rest Day', exact: true })).toBeVisible();
   await expect(page.getByText('No workout scheduled', { exact: true })).toBeVisible();
   await expect(page.getByText(`Next: Next Test Workout • ${setup.tomorrow}`, { exact: true })).toBeVisible();
-  await expect(page.locator('#sn54ViewRecovery')).toBeVisible();
-
-  await page.locator('#sn54ViewRecovery').click();
-  await expect.poll(() => page.evaluate(() => state.page)).toBe('restDay');
-  await expect(page.getByRole('heading', { name: 'Rest Day', exact: true })).toBeVisible();
-  await expect(page.getByText(`Next workout: Next Test Workout • ${setup.tomorrow}`, { exact: true })).toBeVisible();
-  await expect(page.getByText('Recovery focus', { exact: true })).toBeVisible();
-
-  await page.locator('#sn54Back').click();
+  await expect(page.locator('#sn54ViewRecovery')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /View Recovery Plan/i })).toHaveCount(0);
   await expect.poll(() => page.evaluate(() => state.page)).toBe('home');
-  await expect(page.getByRole('heading', { name: 'Rest Day', exact: true })).toBeVisible();
   expect(pageErrors).toEqual([]);
 });
