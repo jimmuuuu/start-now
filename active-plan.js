@@ -53,11 +53,6 @@
     return best;
   }
 
-  function planMuscles(plan) {
-    const muscles = [...new Set(plan.workouts.flatMap(workout => (workout.exercises || []).map(ex => ex.muscle)).filter(Boolean))];
-    return muscles.slice(0, 4).join(", ") || "Balanced training";
-  }
-
   renderHome = function () {
     const plan = getActivePlan();
     if (!plan) {
@@ -85,7 +80,7 @@
         <div class="card-label">${todayWorkout ? "🏋 TODAY’S WORKOUT" : "✓ TODAY’S PLAN"}</div>
         <div class="plan-grid">
           <div>
-            <h2>${todayWorkout ? escapeHtml(todayWorkout.name) : "Rest Day"}</h2>
+            <h2>${todayWorkout ? escapeHtml(todayWorkout.name) : "No workout today"}</h2>
             <div class="meta">${todayWorkout
               ? `${todayWorkout.exercises.length} exercises • ~${estimateMinutes(todayWorkout)} min`
               : next
@@ -98,28 +93,6 @@
         ${todayWorkout
           ? `<button class="primary" id="startActivePlanWorkout">Start Workout →</button>`
           : `<button class="secondary active-plan-schedule-btn" id="viewActivePlanSchedule">View my schedule →</button>`}
-      </section>
-
-      <section class="card section-card">
-        <div class="section-head">
-          <strong class="blue">◎ ${todayWorkout ? "Muscle focus" : "Current plan"}</strong>
-          <a href="#" data-go="workouts">Manage plan →</a>
-        </div>
-        <div class="focus-wrap">
-          <div class="body-visual">${bodySvg()}</div>
-          <div class="focus-copy">
-            <h3>${escapeHtml(todayWorkout ? workoutMuscles(todayWorkout) : planMuscles(plan))}</h3>
-            <p>${todayWorkout
-              ? "This is the workout scheduled for today in your current START/NOW plan."
-              : "No workout is scheduled today. Your current plan is still active, and your next workout is ready when its day arrives."}</p>
-            <div class="muscle-list">
-              ${(todayWorkout
-                ? [...new Set(todayWorkout.exercises.map(ex => ex.muscle))].slice(0, 3)
-                : [...new Set(plan.workouts.flatMap(workout => workout.exercises.map(ex => ex.muscle)))].slice(0, 3)
-              ).map((muscle, i) => `<div class="muscle-row"><span><i class="dot"></i>${escapeHtml(muscle)}</span><span>${i === 0 ? "Primary" : "Focus"}</span></div>`).join("")}
-            </div>
-          </div>
-        </div>
       </section>
 
       <section class="tiles">
@@ -145,7 +118,7 @@
         <strong>☆ Daily Tip</strong>
         <p>${todayWorkout
           ? "Focus on controlled reps and a weight you can move with good form."
-          : "Rest days are part of the plan too. Recovery helps you come back ready for your next session."}</p>
+          : "Your plan is still active. Recovery today helps you come back ready for your next scheduled session."}</p>
       </section>
     `;
 
