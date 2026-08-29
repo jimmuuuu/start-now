@@ -1,6 +1,6 @@
-// START/NOW service worker — v126 quick-workout browse continuity.
+// START/NOW service worker — v127 quick-workout selected-row visibility fix.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v126';
+const CACHE_NAME = 'start-now-shell-v127';
 const APP_SHELL = [
   './',
   './index.html',
