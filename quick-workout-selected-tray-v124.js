@@ -1,4 +1,4 @@
-// START/NOW v124 — compact, accessible selected-exercise tray for Quick Workout.
+// START/NOW v125 — compact, accessible selected-exercise tray for Quick Workout.
 (() => {
   let trayOpen = false;
 
@@ -76,14 +76,7 @@
         background:color-mix(in srgb, var(--surface) 96%, #2F6DF6 4%);
       }
       .sn124-selected-tray.open .sn124-selected-panel{display:block}
-      .sn124-selected-help{
-        margin:1px 3px 7px;
-        color:var(--muted);
-        font-size:9px;
-        line-height:1.35;
-      }
 
-      /* Replace the v123 chip treatment with a compact vertical review list. */
       .sn124-selected-panel .sn66-selected-list,
       .sn66-panel.sn115-searching .sn124-selected-panel .sn66-selected-list,
       .sn66-panel.sn115-searching.sn115-show-selected .sn124-selected-panel .sn66-selected-list{
@@ -214,9 +207,7 @@
           <span class="sn124-selected-count" aria-hidden="true"></span>
           <span class="sn124-selected-chevron" aria-hidden="true">⌄</span>
         </button>
-        <div class="sn124-selected-panel">
-          <p class="sn124-selected-help">Tap an exercise to edit sets and reps. Use the arrows to reorder or × to remove it.</p>
-        </div>`;
+        <div class="sn124-selected-panel"></div>`;
 
       list.parentNode.insertBefore(tray, list);
       tray.querySelector('.sn124-selected-panel')?.appendChild(list);
@@ -232,7 +223,6 @@
     if (countEl && countEl.textContent !== countText) countEl.textContent = countText;
     if (subtitleEl && subtitleEl.textContent !== subtitle) subtitleEl.textContent = subtitle;
 
-    // If the user is editing a prescription, keep the tray open after v122 rerenders.
     const editing = Boolean(list.querySelector('.sn66-selected-row.editing'));
     setOpen(tray, editing || trayOpen);
   }
@@ -245,7 +235,7 @@
   enhanceSelectedTray();
 
   window.START_NOW_SELECTED_TRAY = {
-    version:'v124',
+    version:'v125',
     open:() => {
       const tray = document.querySelector('.sn124-selected-tray');
       if (tray) setOpen(tray, true);
