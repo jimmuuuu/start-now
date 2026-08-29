@@ -97,3 +97,18 @@ test('critical workout flow saves a real completed session', async ({ page }) =>
   await expect(page.locator('#quickStart')).toBeVisible();
   await expect(page.locator('[data-sn70-action="myStats"]')).toBeVisible();
 });
+
+test('home does not show a duplicate resume card when no workout is scheduled', async ({ page }) => {
+  await clearBrowserState(page);
+  await page.evaluate(() => {
+    startWorkout(defaultWorkout);
+    state.customWorkouts = [];
+    saveCustomWorkouts();
+    state.page = 'home';
+    render();
+  });
+
+  await expect(page.locator('.sn-resume-card')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'No workout scheduled' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Set up my schedule →' })).toBeVisible();
+});
