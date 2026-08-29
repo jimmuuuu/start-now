@@ -1,6 +1,6 @@
-// START/NOW service worker — v119 fresh-build delivery.
+// START/NOW service worker — v120 single-muscle-map delivery.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v119';
+const CACHE_NAME = 'start-now-shell-v120';
 const APP_SHELL = [
   './',
   './index.html',
@@ -56,8 +56,6 @@ self.addEventListener('fetch', event => {
         const preload = await event.preloadResponse;
         response = preload || await fetch(new Request(request, { cache: 'no-store' }));
       } else {
-        // Always ask the network for the current deployment. Query-versioned assets
-        // still cache offline below, but Chrome's HTTP cache cannot serve old JS here.
         response = await fetch(new Request(request, { cache: 'no-store' }));
       }
 
