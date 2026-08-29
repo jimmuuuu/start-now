@@ -1,4 +1,4 @@
-// START/NOW v54 — blue rest-day theme + larger detailed moon illustration.
+// START/NOW v130 — streamlined rest-day card without recovery-plan CTA.
 (() => {
   const WEEK = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
@@ -100,8 +100,6 @@
       .sn54-rest-copy{margin:8px 0 4px;color:var(--muted);font-size:14px;line-height:1.45}
       .sn54-rest-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
       .sn54-rest-meta span{padding:8px 10px;border-radius:999px;background:#EFF6FF;color:#285EA8;font-size:12px;font-weight:750;border:1px solid #DBEAFE}
-      .sn54-rest-button{margin-top:16px!important;background:linear-gradient(135deg,#2F6DF6 0%,#2563EB 100%)!important;border-color:#2563EB!important;color:#fff!important;box-shadow:0 9px 20px rgba(37,99,235,.2)!important}
-      .sn54-rest-button:hover{filter:brightness(.98)}
 
       .sn54-rest-page{padding:8px 0 40px}
       .sn54-rest-page .primary{background:linear-gradient(135deg,#2F6DF6 0%,#2563EB 100%)!important;border-color:#2563EB!important}
@@ -158,13 +156,7 @@
         </div>
         <div class="sn54-rest-art">${moonSvg()}</div>
       </div>
-      <button class="primary sn54-rest-button" id="sn54ViewRecovery">View Recovery Plan →</button>
     `;
-
-    document.getElementById("sn54ViewRecovery")?.addEventListener("click", () => {
-      state.page = "restDay";
-      render();
-    });
 
     const muscleCard = document.querySelector(".sn52-muscle-card") || [...document.querySelectorAll(".section-card,.card")].find(card => /muscle focus/i.test(card.textContent || ""));
     if (muscleCard) muscleCard.style.display = "none";
@@ -240,7 +232,7 @@
   }
 
   window.START_NOW_REST_DAY = {
-    version: "v54",
+    version: "v130",
     isRestToday,
     todayScheduledWorkout,
     nextScheduledWorkout,
