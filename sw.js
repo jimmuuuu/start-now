@@ -1,6 +1,6 @@
-// START/NOW service worker — v128 active workout declutter.
+// START/NOW service worker — v129 inline active-workout history.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v128';
+const CACHE_NAME = 'start-now-shell-v129';
 const APP_SHELL = [
   './',
   './index.html',
