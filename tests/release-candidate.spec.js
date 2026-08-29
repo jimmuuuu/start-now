@@ -76,8 +76,9 @@ test('refreshing mid-workout preserves and resumes the active session', async ({
   await expect(page.locator('.sn-set-row').first()).toHaveClass(/completed/);
 
   await page.reload({ waitUntil: 'domcontentloaded' });
-  await expect(page.locator('.sn-resume-card')).toBeVisible();
-  await page.locator('.sn-resume-card').click();
+  await expect(page.locator('.sn-resume-card')).toHaveCount(0);
+  await expect(page.locator('.plan-card .primary')).toHaveText('Resume Workout →');
+  await page.locator('.plan-card .primary').click();
 
   await expect(page.locator('.sn-workout-screen')).toBeVisible();
   await expect(page.locator('input[aria-label="Weight for set 1"]')).toHaveValue('77');
