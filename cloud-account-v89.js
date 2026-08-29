@@ -52,6 +52,7 @@
   }
 
   function mergeById(remote=[], local=[]){
+    if (window.SN36?.mergeWorkouts) return window.SN36.mergeWorkouts(remote, local);
     const map = new Map();
     [...(Array.isArray(remote)?remote:[]), ...(Array.isArray(local)?local:[])].forEach(item => {
       if (!item || typeof item !== "object") return;
@@ -62,6 +63,7 @@
   }
 
   function mergeSessions(remote=[], local=[]){
+    if (window.SN36?.mergeSessions) return window.SN36.mergeSessions(remote, local);
     return mergeById(remote, local)
       .filter(session => Number(session?.timestamp) > 0)
       .sort((a,b) => Number(a.timestamp)-Number(b.timestamp))
@@ -80,8 +82,9 @@
     } else {
       const remoteWorkouts = safeJSON(remoteStorage.sn_custom_workouts, []);
       const localWorkouts = safeJSON(localStorage.getItem("sn_custom_workouts"), []);
-      const mergedWorkouts = mergeById(remoteWorkouts, localWorkouts);
-      if (mergedWorkouts.length) localStorage.setItem("sn_custom_workouts", JSON.stringify(mergedWorkouts));
+      const deletedIds = new Set(safeJSON(localStorage.getItem("sn_deleted_workout_ids"), []));
+      const mergedWorkouts = mergeById(remoteWorkouts, localWorkouts).filter(workout => !deletedIds.has(workout.id));
+      window.SN36?.saveWorkouts ? window.SN36.saveWorkouts(mergedWorkouts, {silent:true}) : localStorage.setItem("sn_custom_workouts", JSON.stringify(mergedWorkouts));
     }
 
     const localSessions = safeJSON(localStorage.getItem("sn_progress_sessions"), []);
@@ -89,11 +92,14 @@
     const mergedSessions = mergeSessions(
       [...(Array.isArray(backupSessions)?backupSessions:[]), ...(Array.isArray(remoteSessions)?remoteSessions:[])],
       localSessions
-    );
-    if (mergedSessions.length) localStorage.setItem("sn_progress_sessions", JSON.stringify(mergedSessions));
+    ).filter(session => !new Set(safeJSON(localStorage.getItem("sn_deleted_session_ids"), [])).has(session.id));
+    if (mergedSessions.length) {
+      window.SN36?.saveSessions ? window.SN36.saveSessions(mergedSessions, {silent:true}) : localStorage.setItem("sn_progress_sessions", JSON.stringify(mergedSessions));
+    }
 
     try {
       if (typeof state !== "undefined") {
+        if (window.SN36?.saveWorkouts) window.SN36.saveWorkouts(window.SN36.workouts(), {silent:true});
         state.customWorkouts = safeJSON(localStorage.getItem("sn_custom_workouts"), state.customWorkouts || []);
       }
       window.SN36?.syncStats?.();
@@ -116,7 +122,7 @@
     const completedAt = new Date(timestamp);
     const startedAt = new Date(Number(session?.startedAt) || (timestamp - duration*60000));
     const exercises = Array.isArray(session?.exercises) ? session.exercises : [];
-    const muscles = [...new Set(exercises.map(ex => ex?.muscle).filter(Boolean))];
+    const muscles = [...new Set(exercises.flatMap(ex => [ex?.muscleGroups?.primary || ex?.primaryMuscle || ex?.muscle, ...(ex?.muscleGroups?.secondary || ex?.secondaryMuscles || [])]).filter(Boolean))];
     const notes = {};
     exercises.forEach(ex => {
       const note = String(ex?.note || "").trim();
@@ -186,6 +192,12 @@
       const rows = sessions.slice(-365).map(session => sessionRow(session, user.id));
       const sessionResult = await client.from("workout_sessions").upsert(rows, {onConflict:"id"});
       if (sessionResult.error) throw sessionResult.error;
+    }
+
+    const deletedSessionIds = safeJSON(storage.sn_deleted_session_ids, []);
+    if (Array.isArray(deletedSessionIds) && deletedSessionIds.length) {
+      const deleteResult = await client.from("workout_sessions").delete().eq("user_id", user.id).in("id", deletedSessionIds.slice(-500));
+      if (deleteResult.error) throw deleteResult.error;
     }
 
     localStorage.setItem(SYNC_META_KEY, JSON.stringify({lastSyncedAt:now, userId:user.id}));

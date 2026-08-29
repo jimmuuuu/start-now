@@ -5,6 +5,7 @@
   const MAX_HISTORY = 180;
 
   function loadProgressSessions(){
+    if(window.SN36?.sessions) return window.SN36.sessions();
     try{
       const value = JSON.parse(localStorage.getItem(PROGRESS_KEY));
       return Array.isArray(value) ? value : [];
@@ -14,6 +15,7 @@
   }
 
   function saveProgressSessions(sessions){
+    if(window.SN36?.saveSessions) return window.SN36.saveSessions(sessions);
     localStorage.setItem(PROGRESS_KEY, JSON.stringify(sessions.slice(-MAX_HISTORY)));
   }
 
@@ -195,6 +197,7 @@
   }
 
   function muscleSetTotals(sessions){
+    if(window.SN36?.muscleActivity) return window.SN36.muscleActivity(sessions).map(item => [item.muscle, item.activity]);
     const totals = new Map();
     sessions.forEach(session => {
       (session.exercises || []).forEach(exercise => {

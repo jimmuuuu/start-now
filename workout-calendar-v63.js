@@ -27,6 +27,7 @@
   }
 
   function loadSessions() {
+    if (window.SN36?.sessions) return window.SN36.sessions();
     try {
       const rows = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "[]");
       return Array.isArray(rows) ? rows.filter(row => Number(row?.timestamp) > 0) : [];
@@ -46,6 +47,7 @@
   function sameDay(a, b) { return dayKey(a) === dayKey(b); }
 
   function scheduleMap() {
+    if (window.SN36?.scheduleMap) return window.SN36.scheduleMap();
     const map = new Map();
     (state.customWorkouts || []).forEach(workout => {
       (workout.days || []).forEach(day => {
@@ -83,6 +85,7 @@
   }
 
   function calculateStreaks() {
+    if (window.SN36?.streaks) return window.SN36.streaks(loadSessions(), window.SN36.workouts?.());
     const sessions = loadSessions();
     const completed = new Set(sessions.map(s => dayKey(Number(s.timestamp))));
     const schedule = scheduleMap();

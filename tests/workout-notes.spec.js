@@ -17,6 +17,10 @@ test('exercise notes save with a session and return next time', async ({ page })
   const activeNote = await page.evaluate(() => JSON.parse(localStorage.getItem('sn_active_workout_v36')).exercises[0].note);
   expect(activeNote).toBe('Seat 4, neutral grip, slow lowering.');
 
+  await page.locator('input[aria-label="Weight for set 1"]').fill('40');
+  await page.locator('input[aria-label="Reps for set 1"]').fill('10');
+  await page.locator('[data-complete-set="0"]').click();
+
   const exerciseCount = await page.evaluate(() => window.SN36.active.exercises.length);
   for (let index = 0; index < exerciseCount; index += 1) {
     await page.locator('#snNextExercise').click();

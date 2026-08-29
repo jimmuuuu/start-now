@@ -5,6 +5,7 @@ async function resetApp(page) {
   await page.evaluate(() => {
     localStorage.clear();
     sessionStorage.clear();
+    sessionStorage.setItem('sn_onboarding_seen_v36', '1');
     state.customWorkouts = [];
     state.page = 'home';
     render();

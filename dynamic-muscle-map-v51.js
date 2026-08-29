@@ -59,6 +59,7 @@
   }
 
   function directMuscles(exercise) {
+    if (exercise?.muscleGroups?.primary) return [canonicalMuscle(exercise.muscleGroups.primary)].filter(Boolean);
     const name = String(exercise?.name || "").toLowerCase();
     const base = canonicalMuscle(exercise?.muscle);
 
@@ -78,6 +79,9 @@
   }
 
   function secondaryMuscles(exercise, direct) {
+    if (Array.isArray(exercise?.muscleGroups?.secondary)) {
+      return exercise.muscleGroups.secondary.map(canonicalMuscle).filter(muscle => muscle && !direct.includes(muscle));
+    }
     const name = String(exercise?.name || "").toLowerCase();
     const out = new Set();
     const has = value => direct.includes(value);

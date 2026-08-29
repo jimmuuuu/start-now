@@ -4,6 +4,7 @@
   const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   function loadSessions(){
+    if(window.SN36?.sessions) return window.SN36.sessions();
     try{
       const value = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "[]");
       return Array.isArray(value) ? value.filter(session => Number(session?.timestamp) > 0) : [];
@@ -94,6 +95,10 @@
   function calculateRealStats(){
     const sessions = loadSessions();
     const completedDays = sessionDaySet(sessions);
+    if(window.SN36?.streaks){
+      const result = window.SN36.streaks(sessions, window.SN36.workouts?.());
+      return { sessions, completedDays, streak:result.current, completedWorkouts:sessions.length };
+    }
     const schedule = scheduledDaySet();
     const streak = schedule.size
       ? scheduledStreak(completedDays, schedule)

@@ -12,6 +12,7 @@
     : String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
   function loadSessions() {
+    if (window.SN36?.sessions) return window.SN36.sessions().sort((a, b) => Number(a.timestamp) - Number(b.timestamp));
     try {
       const rows = JSON.parse(localStorage.getItem(PROGRESS_KEY));
       return (Array.isArray(rows) ? rows : [])
@@ -119,6 +120,9 @@
   }
 
   function muscleTotals(rows) {
+    if (window.SN36?.muscleActivity) {
+      return window.SN36.muscleActivity(rows).map(item => [item.muscle, item.activity]);
+    }
     const totals = new Map();
     rows.forEach(session => (session.exercises || []).forEach(exercise => {
       const muscle = exercise.muscle || 'Other';
@@ -371,7 +375,7 @@
 
         <section class="card sn86-section">
           <h2>Most trained muscle groups — all time</h2>
-          ${muscles.length ? muscles.map(([muscle, sets]) => `<div class="sn86-record-row"><div><strong>${esc(muscle)}</strong><small>completed sets across all history</small></div><b>${fmt(sets)} sets</b></div>`).join('') : '<div class="sn86-empty">Complete workouts to build your lifetime muscle-group totals.</div>'}
+          ${muscles.length ? muscles.map(([muscle, activity]) => `<div class="sn86-record-row"><div><strong>${esc(muscle)}</strong><small>primary and secondary work from completed sets</small></div><b>${fmt(activity)} pts</b></div>`).join('') : '<div class="sn86-empty">Complete workouts to build your lifetime muscle-group totals.</div>'}
         </section>
       </section>
     `;
