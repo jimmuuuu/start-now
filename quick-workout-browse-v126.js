@@ -1,6 +1,6 @@
-// START/NOW v126 — keep Quick Workout exercise browsing continuous while selecting.
+// START/NOW v127 — keep Quick Workout exercise browsing continuous while selecting.
 (() => {
-  const VERSION = 'v126';
+  const VERSION = 'v127';
   let pendingPosition = null;
   let restoreQueued = false;
 
@@ -17,8 +17,19 @@
     document.querySelectorAll('.sn66-results .sn66-ex-row').forEach(row => {
       const button = row.querySelector('[data-add]');
       const id = String(button?.dataset.add || '');
-      row.hidden = Boolean(id && selected.has(id));
-      row.classList.toggle('sn126-selected-hidden', Boolean(id && selected.has(id)));
+      const shouldHide = Boolean(id && selected.has(id));
+
+      row.hidden = shouldHide;
+      row.classList.toggle('sn126-selected-hidden', shouldHide);
+      row.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
+
+      // The base app explicitly sets .sn66-ex-row { display:grid }, which overrides
+      // the browser's normal [hidden] rule. Force selected rows out of layout.
+      if (shouldHide) {
+        row.style.setProperty('display', 'none', 'important');
+      } else {
+        row.style.removeProperty('display');
+      }
     });
   }
 
@@ -68,7 +79,7 @@
     const selectorId = typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(saved.anchorId) : saved.anchorId.replace(/["\\]/g, '\\$&');
     const anchorButton = results.querySelector(`[data-add="${selectorId}"]`);
     const anchorRow = anchorButton?.closest('.sn66-ex-row');
-    if (!anchorRow || anchorRow.hidden) return;
+    if (!anchorRow || anchorRow.classList.contains('sn126-selected-hidden')) return;
 
     const delta = anchorRow.getBoundingClientRect().top - saved.anchorTop;
     if (Math.abs(delta) < 1) return;
@@ -94,7 +105,7 @@
   // Capture the user's exact browse position before the v122 add handler rebuilds the page.
   document.addEventListener('click', event => {
     const button = event.target.closest?.('.sn66-results [data-add]');
-    if (!button || button.closest('.sn66-ex-row')?.hidden) return;
+    if (!button || button.closest('.sn66-ex-row')?.classList.contains('sn126-selected-hidden')) return;
     pendingPosition = capturePosition(button);
   }, true);
 
