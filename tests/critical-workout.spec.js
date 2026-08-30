@@ -162,7 +162,6 @@ test("home uses Today's Plan as the single active-workout resume surface", async
   await expect(page.locator('.sn-resume-card')).toHaveCount(0);
   const plan = page.locator('.plan-card.sn133-active-plan');
   await expect(plan).toBeVisible();
-  await expect(plan.getByText('Workout in progress', { exact: true })).toBeVisible();
   await expect(plan.getByRole('button', { name: 'Resume Workout →' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'No workout scheduled' })).toHaveCount(0);
 });

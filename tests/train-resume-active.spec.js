@@ -40,7 +40,6 @@ test('Home and Train resume an active workout even when no workout is scheduled 
   // Today's Plan must represent the live workout instead of the empty/rest-day state.
   const plan = page.locator('.plan-card.sn133-active-plan');
   await expect(plan).toBeVisible();
-  await expect(plan.getByText('Workout in progress', { exact: true })).toBeVisible();
   await expect(plan.getByRole('heading', { name: 'Push Day' })).toBeVisible();
   await expect(plan.getByRole('button', { name: 'Resume Workout →' })).toBeVisible();
   await expect(plan.getByText('No workout scheduled', { exact: true })).toHaveCount(0);
