@@ -149,7 +149,7 @@ test('Last Time expands inline and keeps the user inside the workout', async ({ 
   expect(pageErrors).toEqual([]);
 });
 
-test('home does not show a duplicate resume card when no workout is scheduled', async ({ page }) => {
+test("home uses Today's Plan as the single active-workout resume surface", async ({ page }) => {
   await clearBrowserState(page);
   await page.evaluate(() => {
     startWorkout(defaultWorkout);
@@ -160,6 +160,9 @@ test('home does not show a duplicate resume card when no workout is scheduled', 
   });
 
   await expect(page.locator('.sn-resume-card')).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: 'No workout scheduled' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Set up my schedule →' })).toBeVisible();
+  const plan = page.locator('.plan-card.sn133-active-plan');
+  await expect(plan).toBeVisible();
+  await expect(plan.getByText('Workout in progress', { exact: true })).toBeVisible();
+  await expect(plan.getByRole('button', { name: 'Resume Workout →' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'No workout scheduled' })).toHaveCount(0);
 });
