@@ -1,10 +1,11 @@
-// START/NOW v112 — installable PWA bootstrap and install guidance.
+// START/NOW v137 — installable PWA bootstrap, updates, and install guidance.
 (() => {
-  const VERSION = 'v112';
-  const SW_URL = './sw.js?v=pwa-v112';
+  const VERSION = 'v137';
+  const SW_URL = './sw.js?v=pwa-v137';
   const DISMISS_KEY = 'sn_pwa_install_dismissed_until';
   let deferredPrompt = null;
   let installBanner = null;
+  let reloadingForUpdate = false;
 
   const isStandalone = () =>
     window.matchMedia?.('(display-mode: standalone)').matches ||
@@ -196,11 +197,19 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
       try {
+        const hadController = Boolean(navigator.serviceWorker.controller);
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!hadController || reloadingForUpdate) return;
+          reloadingForUpdate = true;
+          window.location.reload();
+        }, { once: true });
+
         const registration = await navigator.serviceWorker.register(SW_URL, {
           scope: './',
           updateViaCache: 'none'
         });
-        registration.update().catch(() => {});
+        registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
+        await registration.update();
       } catch (error) {
         console.warn('START/NOW service worker registration failed', error);
       }

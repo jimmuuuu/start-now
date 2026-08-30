@@ -1,6 +1,6 @@
-// START/NOW service worker — v136 active Home machine illustration restored.
+// START/NOW service worker — v137 profile photo persistence release.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v136';
+const CACHE_NAME = 'start-now-shell-v137';
 const APP_SHELL = [
   './',
   './index.html',

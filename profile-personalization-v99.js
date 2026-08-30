@@ -1,7 +1,10 @@
-// START/NOW v99 - editable training level with meaningful plan updates and a local profile photo.
+// START/NOW v137 - editable training level and a persistent profile photo.
 (() => {
   const SN = window.SN36;
   if (!SN || typeof window.renderProfile !== "function") return;
+
+  const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
+  const PHOTO_SIZE = 320;
 
   const levels = {
     Beginner: { sets: 2, reps: 10, label: "2 sets x 8-12 reps" },
@@ -27,7 +30,12 @@
     style.id = "snProfilePersonalizationStyles";
     style.textContent = `
       .avatar.sn-has-photo,.profile-avatar.sn-has-photo{background-size:cover!important;background-position:center!important;color:transparent!important}
-      .sn-profile-photo-action{display:inline-flex;align-items:center;justify-content:center;min-height:34px;margin:10px 0 4px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+      .profile-avatar.sn-profile-photo-trigger{box-sizing:border-box;border:2px solid transparent;cursor:pointer;transition:border-color .16s ease,transform .16s ease}
+      .profile-avatar.sn-profile-photo-trigger:hover{border-color:rgba(255,90,95,.5)}
+      .profile-avatar.sn-profile-photo-trigger:active{transform:scale(.98)}
+      .profile-avatar.sn-profile-photo-trigger:focus-visible{outline:3px solid rgba(255,90,95,.28);outline-offset:3px}
+      .sn-profile-photo-action{display:inline-flex;align-items:center;justify-content:center;min-height:38px;margin:8px 0 4px;padding:0 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+      .sn-profile-photo-action:hover{border-color:rgba(255,90,95,.5)}.sn-profile-photo-action:disabled{opacity:.55;cursor:wait}
       .sn-profile-level{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box;margin-top:12px;padding:15px 0;border:0;border-top:1px solid var(--line);appearance:none;background:transparent;color:var(--text);font:inherit;text-align:left;cursor:pointer}
       .sn-profile-level span{display:grid;gap:3px}.sn-profile-level small{color:var(--muted);font-size:12px}.sn-profile-level b{color:#ff5a5f;font-size:13px}
       .sn-level-modal{position:fixed;inset:0;z-index:10020;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(8,10,13,.68);backdrop-filter:blur(5px)}
@@ -50,6 +58,39 @@
         node.style.removeProperty("background-image");
         node.classList.remove("sn-has-photo");
       }
+    });
+    const profileAvatar = document.querySelector(".profile-avatar");
+    profileAvatar?.setAttribute("aria-label", photo ? "Change profile photo" : "Add profile photo");
+    document.querySelectorAll(".sn-profile-photo-action").forEach(button => {
+      if (!button.disabled) button.textContent = photo ? "Change photo" : "Add photo";
+    });
+  }
+
+  function setPhotoBusy(busy) {
+    const button = document.querySelector(".sn-profile-photo-action");
+    const avatar = document.querySelector(".profile-avatar");
+    if (button) {
+      button.disabled = busy;
+      button.textContent = busy ? "Updating..." : (profile().photo ? "Change photo" : "Add photo");
+    }
+    avatar?.setAttribute("aria-busy", String(busy));
+  }
+
+  function readPhoto(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = event => resolve(event.target.result);
+      reader.onerror = () => reject(new Error("read-failed"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function decodePhoto(source) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error("decode-failed"));
+      image.src = source;
     });
   }
 
@@ -125,32 +166,55 @@
     });
   }
 
-  function savePhoto(file) {
-    if (!file?.type?.startsWith("image/")) {
+  async function savePhoto(file) {
+    if (!file) return;
+    const looksLikeImage = file.type?.startsWith("image/") || /\.(heic|heif|jpe?g|png|webp)$/i.test(file.name || "");
+    if (!looksLikeImage) {
       showToast("Choose an image file");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = event => {
-      const image = new Image();
-      image.onload = () => {
-        const size = 240;
-        const scale = Math.max(size / image.width, size / image.height);
-        const width = Math.max(1, Math.round(image.width * scale));
-        const height = Math.max(1, Math.round(image.height * scale));
-        const canvas = document.createElement("canvas");
-        canvas.width = size;
-        canvas.height = size;
-        const context = canvas.getContext("2d");
-        context.drawImage(image, Math.round((size - width) / 2), Math.round((size - height) / 2), width, height);
-        SN.saveProfile({ ...profile(), photo: canvas.toDataURL("image/jpeg", 0.82) });
-        applyPhoto();
-        showToast("Profile photo updated");
+    if (file.size > MAX_PHOTO_BYTES) {
+      showToast("Choose an image smaller than 15 MB");
+      return;
+    }
+
+    setPhotoBusy(true);
+    try {
+      const source = await readPhoto(file);
+      const image = await decodePhoto(source);
+      const scale = Math.max(PHOTO_SIZE / image.width, PHOTO_SIZE / image.height);
+      const width = Math.max(1, Math.round(image.width * scale));
+      const height = Math.max(1, Math.round(image.height * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = PHOTO_SIZE;
+      canvas.height = PHOTO_SIZE;
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("canvas-unavailable");
+      context.drawImage(
+        image,
+        Math.round((PHOTO_SIZE - width) / 2),
+        Math.round((PHOTO_SIZE - height) / 2),
+        width,
+        height
+      );
+
+      const next = {
+        ...profile(),
+        photo: canvas.toDataURL("image/jpeg", 0.82),
+        photoUpdatedAt: Date.now()
       };
-      image.onerror = () => showToast("That image could not be used");
-      image.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
+      if (!SN.saveProfile(next)) throw new Error("save-failed");
+      applyPhoto();
+      showToast("Profile photo updated");
+      Promise.resolve(window.SN_AUTH?.syncNow?.()).catch(error => {
+        console.warn("START/NOW profile photo cloud sync deferred", error);
+      });
+    } catch (error) {
+      console.error("START/NOW profile photo update failed", error);
+      showToast(error?.message === "decode-failed" ? "Choose a JPEG, PNG, or WebP image" : "Couldn’t update the profile photo");
+    } finally {
+      setPhotoBusy(false);
+    }
   }
 
   function addProfileControls() {
@@ -163,16 +227,30 @@
       const photoInput = document.createElement("input");
       photoInput.id = "snProfilePhotoInput";
       photoInput.type = "file";
-      photoInput.accept = "image/png,image/jpeg,image/webp";
+      photoInput.accept = "image/*";
       photoInput.hidden = true;
       const photoButton = document.createElement("button");
       photoButton.className = "sn-profile-photo-action";
       photoButton.type = "button";
-      photoButton.textContent = "Change photo";
+      photoButton.textContent = profile().photo ? "Change photo" : "Add photo";
       avatar.insertAdjacentElement("afterend", photoButton);
       photoButton.insertAdjacentElement("afterend", photoInput);
-      photoButton.addEventListener("click", () => photoInput.click());
-      photoInput.addEventListener("change", event => savePhoto(event.target.files?.[0]));
+      const choosePhoto = () => { if (!photoButton.disabled) photoInput.click(); };
+      avatar.classList.add("sn-profile-photo-trigger");
+      avatar.setAttribute("role", "button");
+      avatar.setAttribute("tabindex", "0");
+      avatar.setAttribute("aria-label", profile().photo ? "Change profile photo" : "Add profile photo");
+      avatar.addEventListener("click", choosePhoto);
+      avatar.addEventListener("keydown", event => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        choosePhoto();
+      });
+      photoButton.addEventListener("click", choosePhoto);
+      photoInput.addEventListener("change", async event => {
+        await savePhoto(event.target.files?.[0]);
+        event.target.value = "";
+      });
     }
 
     if (!card.querySelector("#snProfileLevel")) {

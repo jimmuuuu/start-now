@@ -4,6 +4,7 @@
   const SUPABASE_KEY = "sb_publishable_iptY9q73dl1gKeM18zcwZA_Vz8d-Lu0";
   const SYNC_META_KEY = "sn_cloud_sync_meta_v88";
   const ERROR_LOG_KEY = "sn_error_log_v88";
+  const PROFILE_KEY = "sn_user_profile_v36";
   const EXCLUDED_KEYS = new Set(["sn_runtime_version", SYNC_META_KEY, ERROR_LOG_KEY]);
   const PRESERVE_ON_SIGNOUT = new Set(["sn_runtime_version", "sn_dark"]);
 
@@ -70,13 +71,44 @@
       .slice(-365);
   }
 
+  function hasOwn(object, key){
+    return Object.prototype.hasOwnProperty.call(object || {}, key);
+  }
+
+  function mergeProfile(remoteStorage, localProfile, hadLocalData, backupUpdatedAt){
+    const remoteProfile = safeJSON(remoteStorage?.[PROFILE_KEY], {}) || {};
+    if (!Object.keys(remoteProfile).length && !Object.keys(localProfile).length) return;
+
+    const merged = hadLocalData
+      ? { ...remoteProfile, ...localProfile }
+      : { ...localProfile, ...remoteProfile };
+    const localPhotoStamp = Number(localProfile.photoUpdatedAt) || 0;
+    const remotePhotoStamp = Number(remoteProfile.photoUpdatedAt) ||
+      (remoteProfile.photo ? Date.parse(backupUpdatedAt || "") || 0 : 0);
+    const localHasPhotoState = hasOwn(localProfile, "photo") || localPhotoStamp > 0;
+    const remoteHasPhotoState = hasOwn(remoteProfile, "photo") || remotePhotoStamp > 0;
+    const useLocalPhoto = localHasPhotoState && (!remoteHasPhotoState || localPhotoStamp >= remotePhotoStamp);
+    const photoSource = useLocalPhoto ? localProfile : remoteProfile;
+
+    if (localHasPhotoState || remoteHasPhotoState) {
+      if (photoSource.photo) merged.photo = photoSource.photo;
+      else delete merged.photo;
+      if (photoSource.photoUpdatedAt) merged.photoUpdatedAt = photoSource.photoUpdatedAt;
+      else delete merged.photoUpdatedAt;
+    }
+
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(merged));
+  }
+
   function applyRemoteBackup(backup, remoteSessions){
     const remoteStorage = backup?.storage && typeof backup.storage === "object" ? backup.storage : {};
     const hadLocalData = localHasMeaningfulData();
+    const localProfile = safeJSON(localStorage.getItem(PROFILE_KEY), {}) || {};
 
     if (!hadLocalData && Object.keys(remoteStorage).length) {
       Object.entries(remoteStorage).forEach(([key,value]) => {
         if (!key.startsWith("sn_") || EXCLUDED_KEYS.has(key) || key.startsWith("sn_cloud_")) return;
+        if (key === PROFILE_KEY) return;
         if (typeof value === "string") localStorage.setItem(key, value);
       });
     } else {
@@ -86,6 +118,8 @@
       const mergedWorkouts = mergeById(remoteWorkouts, localWorkouts).filter(workout => !deletedIds.has(workout.id));
       window.SN36?.saveWorkouts ? window.SN36.saveWorkouts(mergedWorkouts, {silent:true}) : localStorage.setItem("sn_custom_workouts", JSON.stringify(mergedWorkouts));
     }
+
+    mergeProfile(remoteStorage, localProfile, hadLocalData, backup?.updated_at);
 
     const localSessions = safeJSON(localStorage.getItem("sn_progress_sessions"), []);
     const backupSessions = safeJSON(remoteStorage.sn_progress_sessions, []);
