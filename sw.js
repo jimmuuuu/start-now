@@ -1,6 +1,6 @@
-// START/NOW service worker — v134 required user naming for new quick workouts.
+// START/NOW service worker — v136 active Home machine illustration restored.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v134';
+const CACHE_NAME = 'start-now-shell-v136';
 const APP_SHELL = [
   './',
   './index.html',
