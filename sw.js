@@ -1,6 +1,6 @@
-// START/NOW service worker — v133 active workout on Today's Plan.
+// START/NOW service worker — v134 required user naming for new quick workouts.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v133';
+const CACHE_NAME = 'start-now-shell-v134';
 const APP_SHELL = [
   './',
   './index.html',
