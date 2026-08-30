@@ -1,6 +1,6 @@
-// START/NOW service worker — v132 Train resumes active workout.
+// START/NOW service worker — v133 active workout on Today's Plan.
 // Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v132';
+const CACHE_NAME = 'start-now-shell-v133';
 const APP_SHELL = [
   './',
   './index.html',
