@@ -1,10 +1,10 @@
 # START/NOW Navigation Smoke Status
 
 - Status: **FAIL**
-- Tested commit: `b7c10bd185cbfeab05f9f673dfabb45a78385449`
-- Workflow run: `33290556757`
+- Tested commit: `a1bdfb646af2b6ff12a1d9d271433d75826dd5c8`
+- Workflow run: `33290616291`
 - Syntax check: **success**
 - Exercise notes: **success**
 - PWA readiness: **success**
 - Playwright: **failure**
-- Recorded: `2026-08-30T03:34:52Z`
+- Recorded: `2026-08-30T03:36:35Z`
