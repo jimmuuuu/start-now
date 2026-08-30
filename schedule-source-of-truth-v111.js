@@ -1,4 +1,4 @@
-// START/NOW v133 — active workout wins over schedule/rest state on Home.
+// START/NOW v135 — active workout wins over schedule/rest state on Home.
 (() => {
   function esc(value = "") {
     if (typeof escapeHtml === "function") return escapeHtml(String(value));
@@ -57,14 +57,11 @@
       .sn111-empty-plan p,.sn133-active-plan p{margin:0;color:var(--muted,#7B7D83);font-size:14px;line-height:1.5}
       .sn111-empty-plan .sn111-day{display:inline-flex;margin-top:12px;padding:7px 10px;border-radius:999px;background:#F3F7FF;border:1px solid #E0EAFE;color:#3564A8;font-size:11px;font-weight:750}
       .sn111-empty-plan .sn111-action,.sn133-active-plan .sn133-action{position:relative;z-index:1;width:100%;border:0;border-radius:16px;padding:15px 18px;background:linear-gradient(135deg,var(--coral,#FF5A5F),var(--coral-2,#FF3D44));color:#fff;font-weight:800;font-size:15px;box-shadow:0 10px 20px rgba(255,90,95,.2)}
-      .sn133-active-plan .sn133-status{display:inline-flex;align-items:center;gap:7px;margin-bottom:10px;padding:6px 9px;border-radius:999px;background:#EEF7D9;color:#5F8616;font-size:10px;font-weight:850;letter-spacing:.03em;text-transform:uppercase}
-      .sn133-active-plan .sn133-status::before{content:"";width:7px;height:7px;border-radius:50%;background:#78A91C}
       .sn133-active-plan .sn133-current{margin-top:7px;font-weight:750;color:var(--text,#171717)}
       .sn133-active-plan .sn133-progress-copy{display:flex;justify-content:space-between;gap:12px;margin-top:14px;font-size:10px;font-weight:800;color:var(--muted,#7B7D83)}
       .sn133-active-plan .sn133-progress{height:7px;margin-top:7px;border-radius:999px;background:rgba(59,130,246,.12);overflow:hidden}
       .sn133-active-plan .sn133-progress span{display:block;height:100%;border-radius:inherit;background:#3B82F6}
       .dark .sn111-empty-plan .sn111-day{background:#182235;border-color:#263A5A;color:#9CC0FF}
-      .dark .sn133-active-plan .sn133-status{background:#263418;color:#B9D97E}
     `;
     document.head.appendChild(style);
   }
@@ -85,7 +82,6 @@
     plan.innerHTML = `
       <div class="sn133-kicker">TODAY'S PLAN</div>
       <div class="sn133-body">
-        <span class="sn133-status">Workout in progress</span>
         <h2>${esc(active.workoutName || "Workout")}</h2>
         <p class="sn133-current">${current ? `${esc(current.name || "Exercise")} • Exercise ${index + 1} of ${exercises.length}` : `${exercises.length} exercises`}</p>
         <div class="sn133-progress-copy"><span>${progress.done} of ${progress.planned} sets completed</span><span>${percent}%</span></div>
@@ -134,6 +130,7 @@
     plan.className = `${plan.className
       .replace(/\bsn54-rest-card\b/g, "")
       .replace(/\bsn110-empty-plan\b/g, "")
+      .replace(/\bsn111-empty-plan\b/g, "")
       .replace(/\bsn133-active-plan\b/g, "")
       .trim()} sn111-empty-plan`;
     plan.innerHTML = `
@@ -166,7 +163,7 @@
   queueMicrotask(patchHomeSchedule);
 
   window.START_NOW_SCHEDULE_TRUTH = {
-    version: "v133",
+    version: "v135",
     scheduledToday,
     hasAnyScheduledWorkout,
     activeSession,
