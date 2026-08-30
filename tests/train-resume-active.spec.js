@@ -18,7 +18,7 @@ async function clearBrowserState(page) {
   await expect(page.locator('#app')).not.toBeEmpty();
 }
 
-test('Train resumes an active workout even when no workout is scheduled today', async ({ page }) => {
+test('Home and Train resume an active workout even when no workout is scheduled today', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.stack || error.message));
   await clearBrowserState(page);
@@ -37,7 +37,22 @@ test('Train resumes an active workout even when no workout is scheduled today', 
   await expect.poll(() => page.evaluate(() => state.page)).toBe('home');
   await expect(page.evaluate(() => Boolean(window.SN36?.activeWorkoutSession?.()))).resolves.toBe(true);
 
-  // Train must resume the live session instead of opening the Quick Workout chooser.
+  // Today's Plan must represent the live workout instead of the empty/rest-day state.
+  const plan = page.locator('.plan-card.sn133-active-plan');
+  await expect(plan).toBeVisible();
+  await expect(plan.getByText('Workout in progress', { exact: true })).toBeVisible();
+  await expect(plan.getByRole('heading', { name: 'Push Day' })).toBeVisible();
+  await expect(plan.getByRole('button', { name: 'Resume Workout →' })).toBeVisible();
+  await expect(plan.getByText('No workout scheduled', { exact: true })).toHaveCount(0);
+
+  // The Home resume button must return to the same active session.
+  await plan.getByRole('button', { name: 'Resume Workout →' }).click();
+  await expect.poll(() => page.evaluate(() => state.page)).toBe('activeWorkout');
+  await expect(page.locator('.sn-workout-screen')).toBeVisible();
+
+  // Leave again and confirm the center Train button still resumes the live session too.
+  await page.locator('#snExitWorkout').click();
+  await expect.poll(() => page.evaluate(() => state.page)).toBe('home');
   await page.locator('#quickStart').click();
   await expect.poll(() => page.evaluate(() => state.page)).toBe('activeWorkout');
   await expect(page.locator('.sn-workout-screen')).toBeVisible();
