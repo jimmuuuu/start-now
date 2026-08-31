@@ -607,8 +607,4 @@ function showToast(msg){
   setTimeout(()=>toast.classList.remove("show"),1800);
 }
 
-if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
-}
-
 render();
