@@ -1,0 +1,776 @@
+{
+  "generatedAt": "2026-08-23T05:19:00.182Z",
+  "totalExercises": 250,
+  "safelyMapped": 85,
+  "workingGifUrls": 85,
+  "brokenGifUrls": 0,
+  "stillUnmapped": 165,
+  "verifiedRuntimeCoveragePercent": 34,
+  "results": [
+    {
+      "id": "chest-press",
+      "name": "Chest Press",
+      "providerName": "lever chest press",
+      "url": "https://static.exercisedb.dev/media/DOoWcnA.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "incline-press",
+      "name": "Incline Press",
+      "providerName": "lever incline chest press",
+      "url": "https://static.exercisedb.dev/media/jHAnWmT.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "shoulder-press",
+      "name": "Shoulder Press",
+      "providerName": "lever shoulder press",
+      "url": "https://static.exercisedb.dev/media/67n3r98.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "lateral-raise",
+      "name": "Lateral Raise",
+      "providerName": "dumbbell lateral raise",
+      "url": "https://static.exercisedb.dev/media/DsgkuIt.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "seated-row",
+      "name": "Seated Row",
+      "providerName": "cable seated row",
+      "url": "https://static.exercisedb.dev/media/fUBheHs.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "reverse-fly",
+      "name": "Reverse Fly",
+      "providerName": "dumbbell reverse fly",
+      "url": "https://static.exercisedb.dev/media/EAs3xL9.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "biceps-curl",
+      "name": "Biceps Curl",
+      "providerName": "dumbbell biceps curl",
+      "url": "https://static.exercisedb.dev/media/NbVPDMW.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "hammer-curl",
+      "name": "Hammer Curl",
+      "providerName": "dumbbell hammer curl",
+      "url": "https://static.exercisedb.dev/media/slDvUAU.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "leg-extension",
+      "name": "Leg Extension",
+      "providerName": "lever leg extension",
+      "url": "https://static.exercisedb.dev/media/my33uHU.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "leg-curl",
+      "name": "Leg Curl",
+      "providerName": "lever lying leg curl",
+      "url": "https://static.exercisedb.dev/media/17lJ1kr.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "calf-raise",
+      "name": "Calf Raise",
+      "providerName": "lever standing calf raise",
+      "url": "https://static.exercisedb.dev/media/ykUOVze.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "hip-abduction",
+      "name": "Hip Abduction",
+      "providerName": "lever seated hip abduction",
+      "url": "https://static.exercisedb.dev/media/CHpahtl.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "cable-crunch",
+      "name": "Cable Crunch",
+      "providerName": "cable kneeling crunch",
+      "url": "https://static.exercisedb.dev/media/WW95auq.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "barbell-bench-press",
+      "name": "Barbell Bench Press",
+      "providerName": "barbell bench press",
+      "url": "https://static.exercisedb.dev/media/EIeI8Vf.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-bench-press",
+      "name": "Dumbbell Bench Press",
+      "providerName": "dumbbell bench press",
+      "url": "https://static.exercisedb.dev/media/SpYC0Kp.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "incline-barbell-bench-press",
+      "name": "Incline Barbell Bench Press",
+      "providerName": "barbell incline bench press",
+      "url": "https://static.exercisedb.dev/media/3TZduzM.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "incline-dumbbell-bench-press",
+      "name": "Incline Dumbbell Bench Press",
+      "providerName": "dumbbell incline bench press",
+      "url": "https://static.exercisedb.dev/media/ns0SIbU.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "decline-barbell-bench-press",
+      "name": "Decline Barbell Bench Press",
+      "providerName": "barbell decline bench press",
+      "url": "https://static.exercisedb.dev/media/GrO65fd.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "decline-dumbbell-bench-press",
+      "name": "Decline Dumbbell Bench Press",
+      "providerName": "dumbbell decline bench press",
+      "url": "https://static.exercisedb.dev/media/DwhEmmE.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "machine-chest-press",
+      "name": "Machine Chest Press",
+      "providerName": "lever chest press",
+      "url": "https://static.exercisedb.dev/media/DOoWcnA.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "smith-machine-bench-press",
+      "name": "Smith Machine Bench Press",
+      "providerName": "smith bench press",
+      "url": "https://static.exercisedb.dev/media/trqKQv2.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "smith-machine-incline-press",
+      "name": "Smith Machine Incline Press",
+      "providerName": "smith incline bench press",
+      "url": "https://static.exercisedb.dev/media/5v7KYld.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "push-up",
+      "name": "Push-Up",
+      "providerName": "push-up",
+      "url": "https://static.exercisedb.dev/media/I4hDWkc.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "close-grip-push-up",
+      "name": "Close-Grip Push-Up",
+      "providerName": "close-grip push-up",
+      "url": "https://static.exercisedb.dev/media/x6KpKpq.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "decline-push-up",
+      "name": "Decline Push-Up",
+      "providerName": "decline push-up",
+      "url": "https://static.exercisedb.dev/media/i5cEhka.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "incline-push-up",
+      "name": "Incline Push-Up",
+      "providerName": "incline push-up",
+      "url": "https://static.exercisedb.dev/media/B1EVP9F.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "chest-dip",
+      "name": "Chest Dip",
+      "providerName": "chest dip",
+      "url": "https://static.exercisedb.dev/media/9WTm7dq.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-fly",
+      "name": "Dumbbell Fly",
+      "providerName": "dumbbell fly",
+      "url": "https://static.exercisedb.dev/media/yz9nUhF.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "incline-dumbbell-fly",
+      "name": "Incline Dumbbell Fly",
+      "providerName": "dumbbell incline fly",
+      "url": "https://static.exercisedb.dev/media/ESOd5Pl.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-pullover",
+      "name": "Dumbbell Pullover",
+      "providerName": "dumbbell pullover",
+      "url": "https://static.exercisedb.dev/media/9XjtHvS.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "seated-dumbbell-shoulder-press",
+      "name": "Seated Dumbbell Shoulder Press",
+      "providerName": "dumbbell seated shoulder press",
+      "url": "https://static.exercisedb.dev/media/znQUdHY.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "machine-shoulder-press",
+      "name": "Machine Shoulder Press",
+      "providerName": "lever shoulder press",
+      "url": "https://static.exercisedb.dev/media/67n3r98.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "smith-machine-shoulder-press",
+      "name": "Smith Machine Shoulder Press",
+      "providerName": "smith shoulder press",
+      "url": "https://static.exercisedb.dev/media/903mzG8.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "cable-lateral-raise",
+      "name": "Cable Lateral Raise",
+      "providerName": "cable lateral raise",
+      "url": "https://static.exercisedb.dev/media/goJ6ezq.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-front-raise",
+      "name": "Dumbbell Front Raise",
+      "providerName": "dumbbell front raise",
+      "url": "https://static.exercisedb.dev/media/3eGE2JC.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "cable-front-raise",
+      "name": "Cable Front Raise",
+      "providerName": "cable front raise",
+      "url": "https://static.exercisedb.dev/media/u2X71Np.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "machine-lateral-raise",
+      "name": "Machine Lateral Raise",
+      "providerName": "lever lateral raise",
+      "url": "https://static.exercisedb.dev/media/dRTfGZT.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "pull-up",
+      "name": "Pull-Up",
+      "providerName": "pull-up",
+      "url": "https://static.exercisedb.dev/media/lBDjFxJ.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "chin-up",
+      "name": "Chin-Up",
+      "providerName": "chin-up",
+      "url": "https://static.exercisedb.dev/media/T2mxWqc.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "neutral-grip-pull-up",
+      "name": "Neutral-Grip Pull-Up",
+      "providerName": "pull up (neutral grip)",
+      "url": "https://static.exercisedb.dev/media/0V2YQjW.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "barbell-row",
+      "name": "Barbell Row",
+      "providerName": "barbell bent over row",
+      "url": "https://static.exercisedb.dev/media/eZyBC3j.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-row",
+      "name": "Dumbbell Row",
+      "providerName": "dumbbell bent over row",
+      "url": "https://static.exercisedb.dev/media/BJ0Hz5L.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "one-arm-dumbbell-row",
+      "name": "One-Arm Dumbbell Row",
+      "providerName": "dumbbell one arm bent-over row",
+      "url": "https://static.exercisedb.dev/media/C0MA9bC.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "inverted-row",
+      "name": "Inverted Row",
+      "providerName": "inverted row",
+      "url": "https://static.exercisedb.dev/media/bZGHsAZ.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "romanian-deadlift",
+      "name": "Romanian Deadlift",
+      "providerName": "barbell romanian deadlift",
+      "url": "https://static.exercisedb.dev/media/wQ2c4XD.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "barbell-shrug",
+      "name": "Barbell Shrug",
+      "providerName": "barbell shrug",
+      "url": "https://static.exercisedb.dev/media/dG7tG5y.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-shrug",
+      "name": "Dumbbell Shrug",
+      "providerName": "dumbbell shrug",
+      "url": "https://static.exercisedb.dev/media/NJzBsGJ.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "cable-shrug",
+      "name": "Cable Shrug",
+      "providerName": "cable shrug",
+      "url": "https://static.exercisedb.dev/media/Eg98Ft9.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "barbell-curl",
+      "name": "Barbell Curl",
+      "providerName": "barbell curl",
+      "url": "https://static.exercisedb.dev/media/25GPyDY.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "ez-bar-curl",
+      "name": "EZ-Bar Curl",
+      "providerName": "ez barbell curl",
+      "url": "https://static.exercisedb.dev/media/6TG6x2w.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-curl",
+      "name": "Dumbbell Curl",
+      "providerName": "dumbbell biceps curl",
+      "url": "https://static.exercisedb.dev/media/NbVPDMW.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "incline-dumbbell-curl",
+      "name": "Incline Dumbbell Curl",
+      "providerName": "dumbbell incline curl",
+      "url": "https://static.exercisedb.dev/media/ae9UoXQ.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "machine-preacher-curl",
+      "name": "Machine Preacher Curl",
+      "providerName": "lever preacher curl",
+      "url": "https://static.exercisedb.dev/media/b6hQYMb.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "cable-curl",
+      "name": "Cable Curl",
+      "providerName": "cable curl",
+      "url": "https://static.exercisedb.dev/media/G08RZcQ.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "single-arm-pushdown",
+      "name": "Single-Arm Pushdown",
+      "providerName": "cable one arm tricep pushdown",
+      "url": "https://static.exercisedb.dev/media/qRZ5S1N.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-overhead-triceps-extension",
+      "name": "Dumbbell Overhead Triceps Extension",
+      "providerName": "dumbbell standing triceps extension",
+      "url": "https://static.exercisedb.dev/media/PdmaD0N.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "triceps-dip",
+      "name": "Triceps Dip",
+      "providerName": "triceps dip",
+      "url": "https://static.exercisedb.dev/media/X6C6i5Y.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "cable-wrist-curl",
+      "name": "Cable Wrist Curl",
+      "providerName": "cable wrist curl",
+      "url": "https://static.exercisedb.dev/media/LrV4s90.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "back-squat",
+      "name": "Back Squat",
+      "providerName": "barbell full squat",
+      "url": "https://static.exercisedb.dev/media/qXTaZnJ.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "goblet-squat",
+      "name": "Goblet Squat",
+      "providerName": "dumbbell goblet squat",
+      "url": "https://static.exercisedb.dev/media/yn8yg1r.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "smith-machine-squat",
+      "name": "Smith Machine Squat",
+      "providerName": "smith squat",
+      "url": "https://static.exercisedb.dev/media/jFtipLl.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "hack-squat",
+      "name": "Hack Squat",
+      "providerName": "sled hack squat",
+      "url": "https://static.exercisedb.dev/media/Qa55kX1.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "reverse-lunge",
+      "name": "Reverse Lunge",
+      "providerName": "dumbbell rear lunge",
+      "url": "https://static.exercisedb.dev/media/SSsBDwB.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "forward-lunge",
+      "name": "Forward Lunge",
+      "providerName": "dumbbell lunge",
+      "url": "https://static.exercisedb.dev/media/RRWFUcw.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "walking-lunge",
+      "name": "Walking Lunge",
+      "providerName": "walking lunge",
+      "url": "https://static.exercisedb.dev/media/IZVHb27.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "sissy-squat",
+      "name": "Sissy Squat",
+      "providerName": "sissy squat",
+      "url": "https://static.exercisedb.dev/media/xdYPUtE.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-romanian-deadlift",
+      "name": "Dumbbell Romanian Deadlift",
+      "providerName": "dumbbell romanian deadlift",
+      "url": "https://static.exercisedb.dev/media/rR0LJzx.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "barbell-romanian-deadlift",
+      "name": "Barbell Romanian Deadlift",
+      "providerName": "barbell romanian deadlift",
+      "url": "https://static.exercisedb.dev/media/wQ2c4XD.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "glute-ham-raise",
+      "name": "Glute-Ham Raise",
+      "providerName": "glute-ham raise",
+      "url": "https://static.exercisedb.dev/media/Vvwjz6N.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "kettlebell-swing",
+      "name": "Kettlebell Swing",
+      "providerName": "kettlebell swing",
+      "url": "https://static.exercisedb.dev/media/UHJlbu3.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "standing-calf-raise",
+      "name": "Standing Calf Raise",
+      "providerName": "lever standing calf raise",
+      "url": "https://static.exercisedb.dev/media/ykUOVze.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "seated-calf-raise",
+      "name": "Seated Calf Raise",
+      "providerName": "lever seated calf raise",
+      "url": "https://static.exercisedb.dev/media/bOOdeyc.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "leg-press-calf-raise",
+      "name": "Leg Press Calf Raise",
+      "providerName": "sled calf press on leg press",
+      "url": "https://static.exercisedb.dev/media/ykHcWme.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "donkey-calf-raise",
+      "name": "Donkey Calf Raise",
+      "providerName": "donkey calf raise",
+      "url": "https://static.exercisedb.dev/media/u5ESqzH.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "decline-sit-up",
+      "name": "Decline Sit-Up",
+      "providerName": "decline sit-up",
+      "url": "https://static.exercisedb.dev/media/QLL2gdc.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "reverse-crunch",
+      "name": "Reverse Crunch",
+      "providerName": "reverse crunch",
+      "url": "https://static.exercisedb.dev/media/nCU1Ekp.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dead-bug",
+      "name": "Dead Bug",
+      "providerName": "dead bug",
+      "url": "https://static.exercisedb.dev/media/iny3m5y.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "mountain-climber",
+      "name": "Mountain Climber",
+      "providerName": "mountain climber",
+      "url": "https://static.exercisedb.dev/media/RJgzwny.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "hanging-leg-raise",
+      "name": "Hanging Leg Raise",
+      "providerName": "hanging leg raise",
+      "url": "https://static.exercisedb.dev/media/I3tsCnC.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "russian-twist",
+      "name": "Russian Twist",
+      "providerName": "russian twist",
+      "url": "https://static.exercisedb.dev/media/XVDdcoj.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "bear-crawl",
+      "name": "Bear Crawl",
+      "providerName": "bear crawl",
+      "url": "https://static.exercisedb.dev/media/0Yz8WdV.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "burpee",
+      "name": "Burpee",
+      "providerName": "burpee",
+      "url": "https://static.exercisedb.dev/media/dK9394r.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "dumbbell-push-press",
+      "name": "Dumbbell Push Press",
+      "providerName": "dumbbell push press",
+      "url": "https://static.exercisedb.dev/media/FS63wTN.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "trap-bar-deadlift",
+      "name": "Trap Bar Deadlift",
+      "providerName": "trap bar deadlift",
+      "url": "https://static.exercisedb.dev/media/jQGwmxN.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    },
+    {
+      "id": "jump-rope",
+      "name": "Jump Rope",
+      "providerName": "jump rope",
+      "url": "https://static.exercisedb.dev/media/e1e76I2.gif",
+      "ok": true,
+      "status": 206,
+      "contentType": "image/gif"
+    }
+  ]
+}
