@@ -128,7 +128,11 @@ function workoutMuscles(workout){
 }
 
 function navActive(){
-  document.querySelectorAll(".nav-item").forEach(btn=>btn.classList.toggle("active", btn.dataset.page===state.page));
+  document.querySelectorAll(".nav-item").forEach(btn=>{
+    const active=btn.dataset.page===state.page;
+    btn.classList.toggle("active", active);
+    if(active)btn.setAttribute("aria-current","page");else btn.removeAttribute("aria-current");
+  });
 }
 
 function render(){
@@ -147,7 +151,7 @@ function renderHome(){
   const isCustom=!today.builtIn;
   app.innerHTML = `
     <div class="topbar">
-      <div class="logo">START/<span>NOW</span></div>
+      <div class="logo">LEVEL <span>UP</span></div>
       <button class="avatar" data-go="profile">MG</button>
     </div>
 
@@ -218,7 +222,7 @@ function renderHome(){
 function renderWorkouts(){
   const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
   app.innerHTML = `
-    <div class="topbar"><div class="logo">START/<span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
+    <div class="topbar"><div class="logo">LEVEL <span>UP</span></div><button class="avatar" data-go="profile">MG</button></div>
     <div class="workouts-heading-row">
       <div>
         <div class="eyebrow">YOUR TRAINING</div>
@@ -252,7 +256,7 @@ function renderWorkouts(){
           <div class="custom-workout-copy">
             <h3>Push Day</h3>
             <p>6 exercises • Chest, Shoulders, Triceps</p>
-            <span class="built-in-label">START/NOW plan</span>
+            <span class="built-in-label">Level Up Fitness plan</span>
           </div>
           <button class="mini-start" data-start-default>Start</button>
         </div>
@@ -447,7 +451,7 @@ function saveWorkoutFromBuilder(){
 function renderProgress(){
   const grade=Math.min(98,82+state.completedWorkouts);
   app.innerHTML=`
-    <div class="topbar"><div class="logo">START/<span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
+    <div class="topbar"><div class="logo">LEVEL <span>UP</span></div><button class="avatar" data-go="profile">MG</button></div>
     <h1 class="page-title">Progress</h1>
     <section class="metric-grid">
       <div class="card metric"><small>Workout Grade</small><strong>${grade}%</strong><span class="lime">A</span></div>
@@ -473,7 +477,7 @@ function renderProgress(){
 
 function renderProfile(){
   app.innerHTML=`
-    <div class="topbar"><div class="logo">START/<span>NOW</span></div></div>
+    <div class="topbar"><div class="logo">LEVEL <span>UP</span></div></div>
     <h1 class="page-title">Profile</h1>
     <section class="card profile-card">
       <div class="profile-avatar">MG</div>

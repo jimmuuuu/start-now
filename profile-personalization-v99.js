@@ -158,7 +158,7 @@
     modal.querySelector("#snLevelSave").addEventListener("click", () => {
       const level = select.value;
       const next = { ...current, experience: level };
-      SN.saveProfile(next);
+      if (!SN.saveProfile(next)) return;
       const updated = modal.querySelector("#snLevelApplyPlan").checked ? updateCurrentPlan(level) : 0;
       closeModal();
       render();
@@ -207,10 +207,10 @@
       applyPhoto();
       showToast("Profile photo updated");
       Promise.resolve(window.SN_AUTH?.syncNow?.()).catch(error => {
-        console.warn("START/NOW profile photo cloud sync deferred", error);
+        console.warn("Level Up Fitness profile photo cloud sync deferred", error);
       });
     } catch (error) {
-      console.error("START/NOW profile photo update failed", error);
+      console.error("Level Up Fitness profile photo update failed", error);
       showToast(error?.message === "decode-failed" ? "Choose a JPEG, PNG, or WebP image" : "Couldn’t update the profile photo");
     } finally {
       setPhotoBusy(false);
@@ -259,7 +259,7 @@
       level.id = "snProfileLevel";
       level.className = "sn-profile-level";
       level.type = "button";
-      level.innerHTML = `<span><strong>Training level</strong><small>${current.experience}</small></span><b>Change</b>`;
+      level.innerHTML = `<span><strong>Training level</strong><small>${escapeHtml(current.experience)}</small></span><b>Change</b>`;
       const marker = card.querySelector(".toggle-row");
       if (marker) marker.insertAdjacentElement("beforebegin", level);
       else card.appendChild(level);

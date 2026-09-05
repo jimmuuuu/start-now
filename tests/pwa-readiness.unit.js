@@ -7,7 +7,7 @@ const read = file => fs.readFileSync(path.join(root, file));
 const text = file => read(file).toString('utf8');
 
 const manifest = JSON.parse(text('manifest.webmanifest'));
-assert.strictEqual(manifest.name, 'START/NOW Fitness');
+assert.strictEqual(manifest.name, 'Level Up Fitness');
 assert.strictEqual(manifest.start_url, './');
 assert.strictEqual(manifest.scope, './');
 assert.ok(['standalone', 'fullscreen'].includes(manifest.display), 'Manifest must launch as an app');

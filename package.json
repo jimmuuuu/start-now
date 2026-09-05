@@ -5,9 +5,19 @@
     "test:e2e": "playwright test",
     "test:data": "node tests/unified-data.unit.js",
     "test:notes": "node tests/workout-notes.unit.js",
-    "test:pwa": "node tests/pwa-readiness.unit.js"
+    "test:pwa": "node tests/pwa-readiness.unit.js",
+    "build": "node scripts/build.cjs",
+    "check": "node scripts/build.cjs --check",
+    "dev": "node scripts/serve.cjs",
+    "preview": "node scripts/serve.cjs dist",
+    "test": "npm run test:data && npm run test:notes && npm run test:pwa",
+    "test:production": "npm run build && playwright test"
   },
   "devDependencies": {
+    "@fontsource-variable/inter": "5.3.0",
     "@playwright/test": "^1.50.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.115.0"
   }
 }

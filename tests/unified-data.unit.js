@@ -133,4 +133,8 @@ const remoteOlder = [{ id: 'shared', name: 'Remote old', updatedAt: 10, exercise
 const localNewer = [{ id: 'shared', name: 'Local new', updatedAt: 20, exercises: [] }];
 assert.equal(SN.mergeWorkouts(remoteOlder, localNewer)[0].name, 'Local new', 'cloud merge resolves stable IDs by update time');
 
+const longHistory = Array.from({length:400},(_,i)=>({id:`retained-${i}`,timestamp:monday+i,workoutName:'Retention',completedSets:1}));
+assert.equal(SN.saveSessions(longHistory),true);
+assert.equal(JSON.parse(seed.getItem('sn_progress_sessions')).length,400,'saving history must not silently discard older workouts');
+assert.equal(SN.mergeSessions(longHistory,[]).length,400,'cloud merge must retain the entire history');
 console.log('Unified data model tests passed.');

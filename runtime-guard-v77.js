@@ -9,10 +9,10 @@
 
   function errorBoundary(error, requestedPage) {
     lastError = error;
-    console.error('[START/NOW] Page render failed', { page: requestedPage, error });
+    console.error('[Level Up Fitness] Page render failed', { page: requestedPage, error });
     root.innerHTML = `
       <section class="card sn77-error-boundary" role="alert">
-        <div class="eyebrow">START/NOW</div>
+        <div class="eyebrow">Level Up Fitness</div>
         <h1>Something went wrong</h1>
         <p>This screen could not load. Your saved workouts and history were not cleared.</p>
         <button type="button" class="primary" id="sn77ReturnHome">Return Home</button>
@@ -21,7 +21,7 @@
       state.page = 'home';
       handlingFailure = true;
       try { previousRender.call(window); }
-      catch (homeError) { console.error('[START/NOW] Home fallback also failed', homeError); }
+      catch (homeError) { console.error('[Level Up Fitness] Home fallback also failed', homeError); }
       finally { handlingFailure = false; }
     });
   }

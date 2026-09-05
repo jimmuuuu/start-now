@@ -198,7 +198,7 @@
   }
 
   function saveSessions(values, options = {}) {
-    const normalized = (values || []).map(normalizeSession).filter(Boolean).slice(-365);
+    const normalized = (values || []).map(normalizeSession).filter(Boolean);
     const saved = SN.write(SN.keys.sessions, normalized);
     if (saved && !options.silent) SN.syncStats?.();
     if (saved && !options.silent) announce("sessions", { ids: normalized.map(session => session.id) });
@@ -311,7 +311,7 @@
   SN.deleteSession = id => {
     const deleted = new Set(readArray(DELETED_SESSIONS_KEY).map(String));
     deleted.add(String(id));
-    SN.write(DELETED_SESSIONS_KEY, [...deleted].slice(-500));
+    if (!SN.write(DELETED_SESSIONS_KEY, [...deleted])) return false;
     return saveSessions(allSessions().filter(session => session.id !== id));
   };
   SN.upsertWorkout = workout => {
@@ -326,7 +326,7 @@
   SN.deleteWorkout = id => {
     const deleted = new Set(readArray(DELETED_WORKOUTS_KEY).map(String));
     deleted.add(String(id));
-    SN.write(DELETED_WORKOUTS_KEY, [...deleted].slice(-200));
+    if (!SN.write(DELETED_WORKOUTS_KEY, [...deleted])) return false;
     return saveWorkouts(workouts().filter(workout => workout.id !== id));
   };
   SN.scheduleMap = scheduleMap;
@@ -336,7 +336,7 @@
   SN.muscleActivity = muscleActivity;
   SN.summary = summary;
   SN.mergeWorkouts = (remote, local) => mergeByStableId(remote, local, normalizeWorkout);
-  SN.mergeSessions = (remote, local) => mergeByStableId(remote, local, normalizeSession).sort((a, b) => a.timestamp - b.timestamp).slice(-365);
+  SN.mergeSessions = (remote, local) => mergeByStableId(remote, local, normalizeSession).sort((a, b) => a.timestamp - b.timestamp);
   SN.previousWorkout = workout => completedSessions().filter(session => session.workoutId === workout?.id).sort((a, b) => b.timestamp - a.timestamp)[0] || null;
   SN.syncStats = () => {
     const rows = completedSessions();

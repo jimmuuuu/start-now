@@ -42,14 +42,14 @@
         stack:entry.stack ? entry.stack.slice(0,8000) : null,
         context:{
           name:entry.name,
-          href:location.href,
+          href:location.origin + location.pathname,
           userAgent:navigator.userAgent,
           online:navigator.onLine,
           viewport:`${window.innerWidth}x${window.innerHeight}`
         }
       });
     } catch (error) {
-      console.warn("START/NOW remote error report skipped", error);
+      console.warn("Level Up Fitness remote error report skipped", error);
     } finally {
       sending=false;
     }
@@ -80,7 +80,7 @@
   });
 
   window.addEventListener("offline", () => {
-    if (typeof window.showToast === "function") window.showToast("You’re offline. START/NOW will keep saving on this device.");
+    if (typeof window.showToast === "function") window.showToast("You’re offline. Level Up Fitness will keep saving on this device.");
   });
 
   window.addEventListener("online", () => {

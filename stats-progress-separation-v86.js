@@ -186,7 +186,7 @@
 
   function progressSummary(current, previous, metrics) {
     if (!current.length) return 'No workouts are logged in this time window yet. Finish a workout and this page will start measuring change.';
-    if (!previous.length) return 'You are building your first comparison baseline. Once another full period is logged, START/NOW will show what changed.';
+    if (!previous.length) return 'You are building your first comparison baseline. Once another full period is logged, Level Up Fitness will show what changed.';
 
     const workoutChange = metrics.workoutChange;
     const gradeChange = metrics.gradeChange;
@@ -237,7 +237,7 @@
     const metrics = {workoutChange, volumeChange, gradeChange, avgVolumeChange};
 
     app.innerHTML = `
-      <div class="topbar"><div class="logo">START/<span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
+      <div class="topbar"><div class="logo">LEVEL <span>UP</span></div><button class="avatar" data-go="profile">MG</button></div>
       <div class="progress-title-row">
         <div><div class="eyebrow">TRENDS & CHANGE</div><h1 class="page-title compact-title">Progress</h1></div>
         <div class="progress-grade-pill"><strong>${days}</strong><span>DAY VIEW</span></div>
@@ -339,7 +339,7 @@
       <section class="sn70-page">
         <div class="sn70-top"><button type="button" class="sn70-back" id="sn86StatsBack" aria-label="Back">←</button><div><div class="eyebrow">LIFETIME RECORD</div><h1>My Stats</h1></div></div>
         <p class="sn86-purpose">My Stats is your <strong>all-time record book</strong>: totals, averages, bests, and records. It does not try to tell you whether you are improving.</p>
-        <div class="sn86-lifetime-banner"><strong>All-time logged data</strong><span>No 7-day or 30-day window. No comparison with a previous period. These numbers accumulate for as long as you use START/NOW.</span></div>
+        <div class="sn86-lifetime-banner"><strong>All-time logged data</strong><span>No 7-day or 30-day window. No comparison with a previous period. These numbers accumulate for as long as you use Level Up Fitness.</span></div>
 
         <div class="sn86-stat-grid">
           <div class="card sn86-stat-card"><span>Total workouts</span><strong>${rows.length}</strong><small>all logged sessions</small></div>
@@ -401,7 +401,7 @@
         renderStatsSeparated();
         return;
       } catch (error) {
-        console.error('[START/NOW v86] Stats separation failed; falling back.', error);
+        console.error('[Level Up Fitness v86] Stats separation failed; falling back.', error);
       }
     }
 

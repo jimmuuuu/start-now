@@ -235,7 +235,7 @@
       return `${remaining} workout${remaining===1?"":"s"} left to match your current weekly schedule target.`;
     }
     if(records.length){
-      return `You’ve matched your weekly target. Keep logging sets so START/NOW can spot new strength PRs automatically.`;
+      return `You’ve matched your weekly target. Keep logging sets so Level Up Fitness can spot new strength PRs automatically.`;
     }
     return "You’ve matched your weekly target. Keep the streak going with quality sessions and controlled reps.";
   }
@@ -261,7 +261,7 @@
     const recent = recentFirst.slice(0,5);
 
     app.innerHTML = `
-      <div class="topbar"><div class="logo">START/<span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
+      <div class="topbar"><div class="logo">LEVEL <span>UP</span></div><button class="avatar" data-go="profile">MG</button></div>
       <div class="progress-title-row">
         <div>
           <div class="eyebrow">YOUR TRAINING</div>
@@ -327,7 +327,7 @@
             <div class="pr-copy"><strong>${escapeHtml(record.name)}</strong><span>${escapeHtml(record.muscle)} • ${dateLabel(record.timestamp)}</span></div>
             <div class="pr-weight">${formatNumber(record.weight)} <small>lb</small></div>
           </div>`).join("")}</div>` : `
-          <div class="progress-empty"><strong>No PRs yet</strong><span>Complete weighted sets and START/NOW will save your best lifts here.</span></div>`}
+          <div class="progress-empty"><strong>No PRs yet</strong><span>Complete weighted sets and Level Up Fitness will save your best lifts here.</span></div>`}
       </section>
 
       <section class="card progress-section-card">

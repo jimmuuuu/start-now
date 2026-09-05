@@ -316,7 +316,7 @@
       <div class="beginner-badge">NEW TO THE GYM?</div>
       <div class="beginner-plan-copy">
         <div class="beginner-plan-icon">✦</div>
-        <div><h2>Build it for me</h2><p>Answer 4 easy questions and START/NOW will build a routine from your actual answers.</p></div>
+        <div><h2>Build it for me</h2><p>Answer 4 easy questions and Level Up Fitness will build a routine from your actual answers.</p></div>
       </div>
       <div class="beginner-points"><span>✓ Goal-based plan</span><span>✓ Matches your equipment</span><span>✓ Editable before saving</span></div>
       <button class="primary" id="openBeginnerSetup">Make my beginner plan →</button>`;
@@ -401,13 +401,13 @@
     } else if (starterState.step === 1) {
       el.innerHTML = shell("Which days can you work out?", "Pick the exact days that fit your week. Your preview will use these days and you can still edit it before saving.", `<div class="beginner-day-grid">${ALL_DAYS.map(dayButton).join("")}</div><div class="beginner-day-helper"><strong>${starterState.selectedDays.length} selected</strong><span>${starterState.selectedDays.join(" • ") || "Choose at least one day"}</span></div>`);
     } else if (starterState.step === 2) {
-      el.innerHTML = shell("Where will you train?", "This directly changes which exercises START/NOW can choose.", [
+      el.innerHTML = shell("Where will you train?", "This directly changes which exercises Level Up Fitness can choose.", [
         optionButton("full-gym", starterState.equipment, "Full gym", "Mix beginner-friendly machines, cables, and dumbbells.", "equipment"),
         optionButton("machines", starterState.equipment, "Mostly machines", "Keep the routine machine-focused and easy to learn.", "equipment"),
         optionButton("home", starterState.equipment, "Home / bodyweight", "Use bodyweight and simple at-home movements.", "equipment")
       ].join(""));
     } else if (starterState.step === 3) {
-      el.innerHTML = shell("How long should workouts feel?", "This changes how many exercises START/NOW puts in each workout.", [
+      el.innerHTML = shell("How long should workouts feel?", "This changes how many exercises Level Up Fitness puts in each workout.", [
         optionButton(30, starterState.session, "About 30 minutes", "Short and focused — around 4 exercises.", "session"),
         optionButton(45, starterState.session, "About 45 minutes", "Balanced — around 5 exercises.", "session"),
         optionButton(60, starterState.session, "About 60 minutes", "More room — around 6 exercises.", "session")

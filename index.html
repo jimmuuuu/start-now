@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://wxeptxfijwrwmdzxvsuh.supabase.co wss://wxeptxfijwrwmdzxvsuh.supabase.co; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#FAFAF7" />
-  <meta name="description" content="Plan workouts, train, track progress, and stay consistent with START/NOW." />
-  <meta name="application-name" content="START/NOW" />
+  <meta name="description" content="Plan workouts, train, track progress, and stay consistent with Level Up Fitness." />
+  <meta name="application-name" content="Level Up Fitness" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="START/NOW" />
+  <meta name="apple-mobile-web-app-title" content="Level Up Fitness" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="startnow-build" content="modal-scroll-v138" />
-  <title>START/NOW Fitness</title>
+  <meta name="startnow-build" content="production-v139" />
+  <title>Level Up Fitness</title>
 
   <link rel="manifest" href="manifest.webmanifest?v=pwa-v137" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/pwa/favicon-32.png?v=pwa-v137" />
@@ -40,7 +41,7 @@
 
   <div class="toast" id="toast" role="status"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="third-party/supabase.js"></script>
   <script src="production-monitor-v88.js?v=production-v88"></script>
   <script src="app.js?v=single-muscle-map-v120"></script>
   <script src="exercise-library-extra.js?v=dashboard-v84"></script>
@@ -79,9 +80,7 @@
   <script src="runtime-guard-v77.js?v=dashboard-v84"></script>
   <script src="stats-progress-separation-v86.js?v=unified-data-v117"></script>
   <script src="cloud-account-v89.js?v=profile-photo-v137"></script>
-  <script src="settings-account-cleanup-v97.js?v=complete-exercise-media-v105"></script>
   <script src="profile-personalization-v99.js?v=profile-photo-v137"></script>
-  <script src="complete-exercise-media-v105.js?v=complete-exercise-media-v105"></script>
   <script src="workout-icon-cleanup-v101.js?v=complete-exercise-media-v105"></script>
   <script src="muscle-map-account-consistency-v120.js?v=single-muscle-map-v120"></script>
   <script src="train-entry-clarity-v107.js?v=train-entry-v107"></script>

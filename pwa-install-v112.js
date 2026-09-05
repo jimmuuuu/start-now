@@ -119,11 +119,11 @@
     backdrop.className = 'sn-pwa-help-backdrop';
     backdrop.setAttribute('role', 'dialog');
     backdrop.setAttribute('aria-modal', 'true');
-    backdrop.setAttribute('aria-label', 'Install START/NOW');
+    backdrop.setAttribute('aria-label', 'Install Level Up Fitness');
     backdrop.innerHTML = `
       <div class="sn-pwa-help">
-        <h2>Install START/NOW</h2>
-        <p>Add START/NOW to your Home Screen so it opens full-screen like an app.</p>
+        <h2>Install Level Up Fitness</h2>
+        <p>Add Level Up Fitness to your Home Screen so it opens full-screen like an app.</p>
         <ol>
           <li>Tap the browser <strong>Share</strong> button.</li>
           <li>Choose <strong>Add to Home Screen</strong>.</li>
@@ -143,11 +143,11 @@
     ensureStyles();
     const banner = document.createElement('aside');
     banner.className = 'sn-pwa-install';
-    banner.setAttribute('aria-label', 'Install START/NOW');
+    banner.setAttribute('aria-label', 'Install Level Up Fitness');
     banner.innerHTML = `
       <img src="./assets/pwa/icon-192.png" alt="" aria-hidden="true">
       <div class="sn-pwa-copy">
-        <strong>Install START/NOW</strong>
+        <strong>Install Level Up Fitness</strong>
         <small>${mode === 'native' ? 'Use it full-screen from your Home Screen.' : 'Add it to your Home Screen and use it like an app.'}</small>
       </div>
       <div class="sn-pwa-actions">
@@ -167,7 +167,7 @@
           await prompt.prompt();
           await prompt.userChoice;
         } catch (error) {
-          console.warn('START/NOW install prompt failed', error);
+          console.warn('Level Up Fitness install prompt failed', error);
         }
         hideBanner();
       } else {
@@ -211,7 +211,7 @@
         registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
         await registration.update();
       } catch (error) {
-        console.warn('START/NOW service worker registration failed', error);
+        console.warn('Level Up Fitness service worker registration failed', error);
       }
     }, { once: true });
   }

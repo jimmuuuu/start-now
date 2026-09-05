@@ -33,7 +33,7 @@
       <div class="sn-v42-no-media" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="11" y="14" width="42" height="34" rx="6"/><path d="M22 27h20M24 38l8-8 8 8"/></svg></div>
       <strong>${esc(reason)}</strong>
       <span>${esc(ex?.name || 'Exercise')}</span>
-      <small>No substitute is shown unless START/NOW has a verified match for this exact movement.</small>
+      <small>No substitute is shown unless Level Up Fitness has a verified match for this exact movement.</small>
     </div>`;
   }
 

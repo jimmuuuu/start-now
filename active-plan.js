@@ -26,7 +26,7 @@
     if (!workouts.length) return null;
     return {
       id: `starter-plan-${newestStamp}`,
-      name: "My START/NOW Plan",
+      name: "My Level Up Fitness Plan",
       stamp: newestStamp,
       workouts
     };
@@ -66,7 +66,7 @@
 
     app.innerHTML = `
       <div class="topbar">
-        <div class="logo">START/<span>NOW</span></div>
+        <div class="logo">LEVEL <span>UP</span></div>
         <button class="avatar" data-go="profile">MG</button>
       </div>
 
