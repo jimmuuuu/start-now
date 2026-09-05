@@ -4,8 +4,8 @@
   const body = document.body;
   if (!root || !body) return;
 
-  const modalSelector = "#snProductModal, #beginnerWizard, .sn-modal-backdrop, .beginner-modal-overlay";
-  const scrollableModalSelector = ".sn-modal, .beginner-modal";
+  const modalSelector = "#snProductModal, #beginnerWizard, .sn-modal-backdrop, .beginner-modal-overlay, #snAuthModal.open";
+  const scrollableModalSelector = ".sn-modal, .beginner-modal, .sn-auth-sheet";
 
   let locked = false;
   let scrollY = 0;
@@ -177,6 +177,6 @@
   document.addEventListener("keydown", handleKeydown, { capture: true });
 
   const observer = new MutationObserver(syncLock);
-  observer.observe(body, { childList: true, subtree: true });
+  observer.observe(body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
   syncLock();
 })();

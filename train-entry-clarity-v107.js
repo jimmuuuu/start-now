@@ -99,7 +99,7 @@
     const modes = {
       build: ['Create workout', 'Build a one-off session'],
       existing: ['Saved workouts', 'Start one of your saved workouts'],
-      surprise: ['Quick pick', 'Let START/NOW build one for you']
+      surprise: ['Quick pick', 'Let Level Up Fitness build one for you']
     };
 
     Object.entries(modes).forEach(([mode, copy]) => {

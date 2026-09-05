@@ -228,7 +228,7 @@
         <button type="button" class="sn-picker-row ${!currentId ? "selected" : ""}" data-workout-id=""><span class="sn-day-box">☾</span><span class="sn-picker-copy"><strong>Rest day</strong><span>No workout scheduled</span></span><span class="sn-picker-check">${!currentId ? "✓" : ""}</span></button>
         ${editableWorkouts.map(w => `<button type="button" class="sn-picker-row ${currentId === w.id ? "selected" : ""}" data-workout-id="${escapeHtml(w.id)}"><span class="sn-day-box">🏋</span><span class="sn-picker-copy"><strong>${escapeHtml(w.name)}</strong><span>${w.exercises?.length || 0} exercises • ${escapeHtml(workoutMuscles(w))}</span></span><span class="sn-picker-check">${currentId === w.id ? "✓" : ""}</span></button>`).join("")}
       </div>
-      <div class="sn-schedule-note">If you choose a workout already assigned elsewhere, START/NOW swaps the two days automatically.</div>`;
+      <div class="sn-schedule-note">If you choose a workout already assigned elsewhere, Level Up Fitness swaps the two days automatically.</div>`;
     document.getElementById("snBackSchedule").onclick = () => { pickingDay = null; renderEditor(); };
     document.getElementById("snCloseSchedule").onclick = closeEditor;
     document.querySelectorAll("[data-workout-id]").forEach(btn => btn.onclick = () => chooseForDay(day,btn.dataset.workoutId || null));

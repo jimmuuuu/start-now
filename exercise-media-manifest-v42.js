@@ -12,7 +12,7 @@
     .replace(/^_+|_+$/g, '')
     .replace(/_+/g, '_');
 
-  // Only aliases that are intentionally equivalent in START/NOW are collapsed.
+  // Only aliases that are intentionally equivalent in Level Up Fitness are collapsed.
   // Distinct variations (Smith vs barbell, seated vs standing, cable vs dumbbell, etc.) stay distinct.
   const INTERNAL_TO_CANONICAL = {
     'chest-press': 'machine_chest_press',
@@ -93,7 +93,7 @@
     machine_shoulder_press: pair('Machine_Shoulder_Military_Press', 'Machine Shoulder (Military) Press'),
     dumbbell_lateral_raise: pair('Side_Lateral_Raise', 'Side Lateral Raise'),
     cable_triceps_pushdown: pair('Triceps_Pushdown', 'Triceps Pushdown'),
-    lat_pulldown: pair('Wide-Grip_Lat_Pulldown', 'Wide-Grip Lat Pulldown', 'START/NOW generic Lat Pulldown uses the standard wide-grip pulldown demonstration; grip-specific variants remain separate.'),
+    lat_pulldown: pair('Wide-Grip_Lat_Pulldown', 'Wide-Grip Lat Pulldown', 'Level Up Fitness generic Lat Pulldown uses the standard wide-grip pulldown demonstration; grip-specific variants remain separate.'),
     seated_cable_row: pair('Seated_Cable_Rows', 'Seated Cable Rows'),
     dumbbell_biceps_curl: pair('Dumbbell_Bicep_Curl', 'Dumbbell Bicep Curl'),
     dumbbell_hammer_curl: pair('Hammer_Curls', 'Hammer Curls'),

@@ -133,7 +133,7 @@
         <div class="reason-list">
           <div class="reason"><strong>✅ Completion — 65%</strong>${result.completedSets}/${result.plannedSets} planned sets completed (${result.completion}%). This is the biggest part of the grade.</div>
           <div class="reason"><strong>🎯 Rep targets — 20%</strong>${result.repAdherence}% of your planned rep targets were hit on completed sets.</div>
-          <div class="reason"><strong>📝 Logging — 10%</strong>${result.logging}% of completed sets had usable rep data. Logging helps START/NOW understand what you actually did.</div>
+          <div class="reason"><strong>📝 Logging — 10%</strong>${result.logging}% of completed sets had usable rep data. Logging helps Level Up Fitness understand what you actually did.</div>
           <div class="reason"><strong>📅 Schedule — 5%</strong>${result.scheduleMatch === 100 ? "Workout matched today’s schedule." : "Workout was completed on a different day than scheduled."}</div>
         </div>
 

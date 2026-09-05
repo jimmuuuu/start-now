@@ -11,9 +11,9 @@
   SN.normalizeExerciseNote = value => String(value??"").slice(0,500);
   SN.unique = a => [...new Set((a||[]).filter(Boolean))];
   SN.read = (key,fallback) => { try { const v=JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch { return fallback; } };
-  SN.write = (key,value) => { try { localStorage.setItem(key,JSON.stringify(value)); return true; } catch(e) { console.error("START/NOW save failed",e); showToast?.("Couldn’t save. Check browser storage."); return false; } };
+  SN.write = (key,value) => { try { localStorage.setItem(key,JSON.stringify(value)); return true; } catch(e) { console.error("Level Up Fitness save failed",e); showToast?.("Couldn’t save. Check browser storage."); return false; } };
   SN.sessions = () => { const v=SN.read(SN.keys.sessions,[]); return Array.isArray(v)?v.filter(s=>SN.num(s?.timestamp)>0):[]; };
-  SN.saveSessions = sessions => SN.write(SN.keys.sessions,(sessions||[]).slice(-365));
+  SN.saveSessions = sessions => SN.write(SN.keys.sessions,(sessions||[]));
   SN.profile = () => SN.read(SN.keys.profile,null);
   SN.saveProfile = p => SN.write(SN.keys.profile,p);
   SN.restPrefs = () => ({autoStart:true,seconds:90,...SN.read(SN.keys.rest,{})});
@@ -59,7 +59,7 @@
 
   SN.progression = ex => {
     const history=SN.exerciseHistory(ex).slice(0,2), range=SN.repRange(ex);
-    if(!history.length) return {title:"Build a baseline",detail:`Use a manageable load and aim for ${range.min}-${range.max} controlled reps. START/NOW will compare this next time.`};
+    if(!history.length) return {title:"Build a baseline",detail:`Use a manageable load and aim for ${range.min}-${range.max} controlled reps. Level Up Fitness will compare this next time.`};
     const current=(history[0].exercises||[]).find(e=>SN.exerciseMatches(e,ex)), sets=(current?.sets||[]).filter(s=>s.done);
     if(!sets.length) return {title:"Complete the planned sets",detail:"Keep the load comfortable and focus on finishing the working sets with good form."};
     const avg=sets.reduce((a,s)=>a+SN.num(s.reps),0)/sets.length, weight=Math.max(0,...sets.map(s=>SN.num(s.weight)));

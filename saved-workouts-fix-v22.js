@@ -78,7 +78,7 @@
     pendingDeleteId = null;
   };
 
-  // Keep multiple open START/NOW tabs from silently drifting apart.
+  // Keep multiple open Level Up Fitness tabs from silently drifting apart.
   window.addEventListener("storage", event => {
     if(event.key !== WORKOUTS_KEY && event.key !== REVISION_KEY) return;
     const incomingRevision = Number(localStorage.getItem(REVISION_KEY) || 0);

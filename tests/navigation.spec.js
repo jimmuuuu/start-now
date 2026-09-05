@@ -140,7 +140,9 @@ test.describe('START/NOW navigation smoke', () => {
     await assertRouteState(page, 'profile');
     await expect(page.getByRole('heading', { name: 'Profile', exact: true })).toBeVisible();
     await expect(page.locator('.profile-card')).toBeVisible();
-    await expect(page.locator('#snAccountCard')).toBeHidden();
+    await expect(page.locator('#snAccountCard')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Privacy', exact: true })).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
   });

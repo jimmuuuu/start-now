@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "START/NOW Fitness",
-  "short_name": "START/NOW",
-  "description": "Plan workouts, train, track progress, and stay consistent with START/NOW.",
+  "name": "Level Up Fitness",
+  "short_name": "Level Up Fitness",
+  "description": "Plan workouts, train, track progress, and stay consistent with Level Up Fitness.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

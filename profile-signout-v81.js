@@ -24,7 +24,7 @@
   }
 
   async function signOut(){
-    if (!window.confirm("Sign out of START/NOW?")) return;
+    if (!window.confirm("Sign out of Level Up Fitness?")) return;
 
     try {
       // Use a real auth client automatically when one is connected to the app.
@@ -36,15 +36,14 @@
       }
       if (window.SN_AUTH?.signOut) {
         await window.SN_AUTH.signOut();
-        window.location.reload();
         return;
       }
 
-      // START/NOW is currently running as a local-only prototype with no auth provider.
+      // Level Up Fitness is currently running as a local-only prototype with no auth provider.
       // Do not delete workout/history data just to simulate a sign-out.
       window.showToast?.("Account sign-out will work once login is connected.");
     } catch (error) {
-      console.error("START/NOW sign out failed", error);
+      console.error("Level Up Fitness sign out failed", error);
       window.showToast?.("Couldn’t sign out. Try again.");
     }
   }

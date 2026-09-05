@@ -15,6 +15,37 @@
   let lastFingerprint = "";
   let authMode = "signin";
   let identityRefreshQueued = false;
+  let cloudStatus = "pending";
+  let authTrigger = null;
+  const OWNER_KEY = "sn_cloud_owner";
+
+  function switchAccountStorage(user) {
+    const owner = localStorage.getItem(OWNER_KEY) || safeJSON(localStorage.getItem(SYNC_META_KEY), {})?.userId;
+    const next = user?.id || null;
+    if (owner && owner !== next) {
+      // Preserve unsynced data privately under its original owner before switching.
+      localStorage.setItem(`sn_cloud_archive_${owner}`, JSON.stringify(collectStorage()));
+      clearUserLocalData();
+    }
+    if (next && next !== owner) {
+      const archiveKey = `sn_cloud_archive_${next}`;
+      const archive = safeJSON(localStorage.getItem(archiveKey), null);
+      if (archive) {
+        Object.entries(archive).forEach(([key,value]) => {
+          if (key.startsWith("sn_") && !key.startsWith("sn_cloud_") && typeof value === "string") localStorage.setItem(key,value);
+        });
+        localStorage.removeItem(archiveKey);
+      }
+    }
+    if (next) localStorage.setItem(OWNER_KEY,next);
+    else localStorage.removeItem(OWNER_KEY);
+    if (owner && owner !== next) {
+      // Discard the old account's in-memory render/session state as well.
+      window.location.reload();
+      return true;
+    }
+    return false;
+  }
 
   const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
     "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
@@ -26,7 +57,7 @@
 
   function show(message){
     if (typeof window.showToast === "function") window.showToast(message);
-    else console.info("START/NOW:", message);
+    else console.info("Level Up Fitness:", message);
   }
 
   function collectStorage(){
@@ -68,7 +99,7 @@
     return mergeById(remote, local)
       .filter(session => Number(session?.timestamp) > 0)
       .sort((a,b) => Number(a.timestamp)-Number(b.timestamp))
-      .slice(-365);
+      ;
   }
 
   function hasOwn(object, key){
@@ -104,11 +135,19 @@
     const remoteStorage = backup?.storage && typeof backup.storage === "object" ? backup.storage : {};
     const hadLocalData = localHasMeaningfulData();
     const localProfile = safeJSON(localStorage.getItem(PROFILE_KEY), {}) || {};
+    // Merge tombstones before records so another device cannot resurrect deletions.
+    for (const key of ["sn_deleted_workout_ids", "sn_deleted_session_ids"]) {
+      const remote = safeJSON(remoteStorage[key], []);
+      const local = safeJSON(localStorage.getItem(key), []);
+      const ids = [...new Set([...(Array.isArray(remote) ? remote : []), ...(Array.isArray(local) ? local : [])].map(String))];
+      localStorage.setItem(key, JSON.stringify(ids));
+    }
 
     if (!hadLocalData && Object.keys(remoteStorage).length) {
       Object.entries(remoteStorage).forEach(([key,value]) => {
         if (!key.startsWith("sn_") || EXCLUDED_KEYS.has(key) || key.startsWith("sn_cloud_")) return;
         if (key === PROFILE_KEY) return;
+        if (key === "sn_deleted_workout_ids" || key === "sn_deleted_session_ids") return;
         if (typeof value === "string") localStorage.setItem(key, value);
       });
     } else {
@@ -116,19 +155,24 @@
       const localWorkouts = safeJSON(localStorage.getItem("sn_custom_workouts"), []);
       const deletedIds = new Set(safeJSON(localStorage.getItem("sn_deleted_workout_ids"), []));
       const mergedWorkouts = mergeById(remoteWorkouts, localWorkouts).filter(workout => !deletedIds.has(workout.id));
-      window.SN36?.saveWorkouts ? window.SN36.saveWorkouts(mergedWorkouts, {silent:true}) : localStorage.setItem("sn_custom_workouts", JSON.stringify(mergedWorkouts));
+      if (window.SN36?.saveWorkouts) {
+        if (!window.SN36.saveWorkouts(mergedWorkouts, {silent:true})) throw new Error("Device storage is full. Cloud backup was not overwritten.");
+      } else localStorage.setItem("sn_custom_workouts", JSON.stringify(mergedWorkouts));
     }
 
     mergeProfile(remoteStorage, localProfile, hadLocalData, backup?.updated_at);
 
     const localSessions = safeJSON(localStorage.getItem("sn_progress_sessions"), []);
     const backupSessions = safeJSON(remoteStorage.sn_progress_sessions, []);
+    const deletedSessions = new Set(safeJSON(localStorage.getItem("sn_deleted_session_ids"), []));
     const mergedSessions = mergeSessions(
       [...(Array.isArray(backupSessions)?backupSessions:[]), ...(Array.isArray(remoteSessions)?remoteSessions:[])],
       localSessions
-    ).filter(session => !new Set(safeJSON(localStorage.getItem("sn_deleted_session_ids"), [])).has(session.id));
-    if (mergedSessions.length) {
-      window.SN36?.saveSessions ? window.SN36.saveSessions(mergedSessions, {silent:true}) : localStorage.setItem("sn_progress_sessions", JSON.stringify(mergedSessions));
+    ).filter(session => !deletedSessions.has(session.id));
+    {
+      if (window.SN36?.saveSessions) {
+        if (!window.SN36.saveSessions(mergedSessions, {silent:true})) throw new Error("Device storage is full. Cloud backup was not overwritten.");
+      } else localStorage.setItem("sn_progress_sessions", JSON.stringify(mergedSessions));
     }
 
     try {
@@ -138,7 +182,7 @@
       }
       window.SN36?.syncStats?.();
     } catch (error) {
-      console.warn("START/NOW cloud state refresh skipped", error);
+      console.warn("Level Up Fitness cloud state refresh skipped", error);
     }
 
     return !hadLocalData && (Object.keys(remoteStorage).length > 0 || remoteSessions.length > 0);
@@ -183,18 +227,20 @@
   }
 
   async function fetchCloud(user){
-    const [profileResult, sessionsResult] = await Promise.all([
-      client.from("profiles").select("app_settings, weekly_plan, updated_at").eq("id", user.id).maybeSingle(),
-      client.from("workout_sessions").select("id, draft_payload, updated_at").eq("user_id", user.id).order("started_at", {ascending:true})
-    ]);
+    const profileResult = await client.from("profiles").select("app_settings, weekly_plan, updated_at").eq("id", user.id).maybeSingle();
     if (profileResult.error) throw profileResult.error;
-    if (sessionsResult.error) throw sessionsResult.error;
+    const sessions = [];
+    for (let offset = 0; ; offset += 500) {
+      const result = await client.from("workout_sessions").select("id, draft_payload, updated_at").eq("user_id", user.id).order("id", {ascending:true}).range(offset, offset + 499);
+      if (result.error) throw result.error;
+      sessions.push(...(result.data || []).map(row => row.draft_payload).filter(Boolean));
+      if ((result.data || []).length < 500) break;
+    }
     const profile = profileResult.data || null;
-    const sessions = (sessionsResult.data || []).map(row => row.draft_payload).filter(Boolean);
     return { profile, sessions };
   }
 
-  async function pushCloud(user){
+  async function pushCloud(user, cloud){
     const storage = collectStorage();
     const now = new Date().toISOString();
     const localProfile = window.SN36?.profile?.() || safeJSON(localStorage.getItem("sn_user_profile_v36"), {}) || {};
@@ -203,10 +249,8 @@
     ).slice(0,80);
     const workouts = safeJSON(storage.sn_custom_workouts, []);
 
-    const profileRead = await client.from("profiles").select("app_settings").eq("id", user.id).maybeSingle();
-    if (profileRead.error) throw profileRead.error;
-    const existingSettings = profileRead.data?.app_settings && typeof profileRead.data.app_settings === "object"
-      ? profileRead.data.app_settings : {};
+    const existingSettings = cloud.profile?.app_settings && typeof cloud.profile.app_settings === "object"
+      ? cloud.profile.app_settings : {};
 
     const profileResult = await client.from("profiles").upsert({
       id: user.id,
@@ -223,15 +267,20 @@
 
     const sessions = safeJSON(storage.sn_progress_sessions, []);
     if (Array.isArray(sessions) && sessions.length) {
-      const rows = sessions.slice(-365).map(session => sessionRow(session, user.id));
-      const sessionResult = await client.from("workout_sessions").upsert(rows, {onConflict:"id"});
-      if (sessionResult.error) throw sessionResult.error;
+      const remote = new Map(cloud.sessions.map(session => [sessionId(session), JSON.stringify(session)]));
+      const rows = sessions.filter(session => remote.get(sessionId(session)) !== JSON.stringify(session)).map(session => sessionRow(session, user.id));
+      for (let offset=0; offset<rows.length; offset+=100) {
+        const sessionResult = await client.from("workout_sessions").upsert(rows.slice(offset,offset+100), {onConflict:"id"});
+        if (sessionResult.error) throw sessionResult.error;
+      }
     }
 
     const deletedSessionIds = safeJSON(storage.sn_deleted_session_ids, []);
     if (Array.isArray(deletedSessionIds) && deletedSessionIds.length) {
-      const deleteResult = await client.from("workout_sessions").delete().eq("user_id", user.id).in("id", deletedSessionIds.slice(-500));
-      if (deleteResult.error) throw deleteResult.error;
+      for (let offset=0; offset<deletedSessionIds.length; offset+=100) {
+        const deleteResult = await client.from("workout_sessions").delete().eq("user_id", user.id).in("id", deletedSessionIds.slice(offset,offset+100));
+        if (deleteResult.error) throw deleteResult.error;
+      }
     }
 
     localStorage.setItem(SYNC_META_KEY, JSON.stringify({lastSyncedAt:now, userId:user.id}));
@@ -241,12 +290,14 @@
   async function syncNow(options={}){
     if (!client || !currentUser || syncing) return false;
     syncing = true;
+    const user = currentUser;
     updateAccountUI("syncing");
     try {
-      const cloud = await fetchCloud(currentUser);
+      const cloud = await fetchCloud(user);
+      if (currentUser?.id !== user.id) return false;
       const backup = cloud.profile?.app_settings?.start_now_backup || null;
       const restored = applyRemoteBackup(backup, cloud.sessions);
-      await pushCloud(currentUser);
+      await pushCloud(user, cloud);
       updateAccountUI("synced");
       if (restored && options.reloadOnRestore) {
         window.location.reload();
@@ -254,7 +305,7 @@
       }
       return true;
     } catch (error) {
-      console.error("START/NOW cloud sync failed", error);
+      console.error("Level Up Fitness cloud sync failed", error);
       updateAccountUI("error");
       if (!options.silent) show("Cloud sync couldn’t finish. Your data is still saved on this device.");
       return false;
@@ -281,7 +332,7 @@
     const keys = [];
     for (let i=0;i<localStorage.length;i++) {
       const key = localStorage.key(i);
-      if (key?.startsWith("sn_") && !PRESERVE_ON_SIGNOUT.has(key)) keys.push(key);
+      if (key?.startsWith("sn_") && !key.startsWith("sn_cloud_archive_") && !PRESERVE_ON_SIGNOUT.has(key)) keys.push(key);
     }
     keys.forEach(key => localStorage.removeItem(key));
   }
@@ -330,7 +381,7 @@
       .sn-account-status strong,.sn-account-status small{display:block}.sn-account-status strong{font-size:12px}.sn-account-status small{margin-top:3px;color:var(--muted);font-size:10px}.sn-cloud-dot{width:9px;height:9px;border-radius:50%;background:#94A3B8;flex:0 0 auto}.sn-cloud-dot.synced{background:#7FAF19}.sn-cloud-dot.syncing{background:#D89A0E}.sn-cloud-dot.error{background:#FF5A5F}
       .sn-account-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.sn-account-btn{min-height:44px;border-radius:13px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:12px;font-weight:800;cursor:pointer}.sn-account-btn.primary{background:#FF5A5F;border-color:#FF5A5F;color:white}.sn-account-btn.danger{color:#FF5A5F;border-color:rgba(255,90,95,.3);background:rgba(255,90,95,.06)}
       .sn-legal-links{display:flex;justify-content:center;gap:18px;padding:17px 0 2px}.sn-legal-links a{color:var(--muted);font-size:11px;font-weight:700;text-decoration:none}.sn-legal-links a:hover{color:var(--text)}
-      .sn-auth-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,12,18,.64);backdrop-filter:blur(5px)}.sn-auth-modal.open{display:flex}.sn-auth-sheet{width:min(100%,430px);border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:0 24px 80px rgba(0,0,0,.28);padding:22px}.sn-auth-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.sn-auth-head h2{margin:0;font-size:24px}.sn-auth-head p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.45}.sn-auth-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:20px;cursor:pointer}.sn-auth-form{display:grid;gap:11px;margin-top:18px}.sn-auth-field{display:grid;gap:6px}.sn-auth-field span{font-size:11px;font-weight:800;color:var(--muted)}.sn-auth-field input{width:100%;box-sizing:border-box;min-height:48px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--text);font:inherit;padding:0 13px}.sn-auth-submit{min-height:50px;border:0;border-radius:14px;background:#FF5A5F;color:white;font:inherit;font-weight:900;cursor:pointer}.sn-auth-error{min-height:16px;color:#FF5A5F;font-size:11px}.sn-auth-switch{text-align:center;margin-top:13px;color:var(--muted);font-size:11px}.sn-auth-switch button{border:0;background:none;color:#3478F6;font:inherit;font-weight:800;cursor:pointer}
+      .sn-auth-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,12,18,.64);backdrop-filter:blur(5px)}.sn-auth-modal.open{display:flex}.sn-auth-sheet{max-height:calc(100dvh - 40px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;width:min(100%,430px);border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:0 24px 80px rgba(0,0,0,.28);padding:22px}.sn-auth-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.sn-auth-head h2{margin:0;font-size:24px}.sn-auth-head p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.45}.sn-auth-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:20px;cursor:pointer}.sn-auth-form{display:grid;gap:11px;margin-top:18px}.sn-auth-field{display:grid;gap:6px}.sn-auth-field span{font-size:11px;font-weight:800;color:var(--muted)}.sn-auth-field input{width:100%;box-sizing:border-box;min-height:48px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--text);font:inherit;padding:0 13px}.sn-auth-submit{min-height:50px;border:0;border-radius:14px;background:#FF5A5F;color:white;font:inherit;font-weight:900;cursor:pointer}.sn-auth-error{min-height:16px;color:#FF5A5F;font-size:11px}.sn-auth-switch{text-align:center;margin-top:13px;color:var(--muted);font-size:11px}.sn-auth-switch button{border:0;background:none;color:#3478F6;font:inherit;font-weight:800;cursor:pointer}
       .dark .sn-auth-sheet{background:#17191B}.dark .sn-account-btn.danger{background:rgba(255,90,95,.08)}
       @media(max-width:390px){.sn-account-actions{grid-template-columns:1fr}.sn-auth-sheet{padding:18px}}
     `;
@@ -353,13 +404,23 @@
           <div class="sn-auth-error" id="snAuthError" role="alert"></div>
           <button class="sn-auth-submit" id="snAuthSubmit" type="submit">Sign in</button>
         </form>
-        <div class="sn-auth-switch"><span id="snAuthSwitchCopy">New to START/NOW?</span> <button id="snAuthSwitch" type="button">Create account</button></div>
+        <div class="sn-auth-switch"><span id="snAuthSwitchCopy">New to Level Up Fitness?</span> <button id="snAuthSwitch" type="button">Create account</button></div>
+        <div class="sn-auth-switch"><button id="snForgotPassword" type="button">Forgot password?</button></div>
       </div>`;
     document.body.appendChild(modal);
     modal.addEventListener("click", event => { if (event.target === modal) closeAuth(); });
     modal.querySelector("#snAuthClose").addEventListener("click", closeAuth);
     modal.querySelector("#snAuthSwitch").addEventListener("click", () => setAuthMode(authMode === "signin" ? "signup" : "signin"));
+    modal.querySelector("#snForgotPassword").addEventListener("click", () => setAuthMode("reset"));
     modal.querySelector("#snAuthForm").addEventListener("submit", submitAuth);
+    modal.addEventListener("keydown", event => {
+      if (event.key === "Escape") { event.preventDefault(); closeAuth(); }
+      if (event.key !== "Tab") return;
+      const items = [...modal.querySelectorAll("button, input")].filter(el => !el.disabled && el.getClientRects().length);
+      const first = items[0], last = items.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    });
   }
 
   function setAuthMode(mode){
@@ -369,42 +430,71 @@
     document.getElementById("snAuthIntro").textContent = signup ? "Create an account to protect and sync your training data." : "Back up workouts and keep your history with your account.";
     document.getElementById("snNameField").hidden = !signup;
     document.getElementById("snAuthSubmit").textContent = signup ? "Create account" : "Sign in";
-    document.getElementById("snAuthSwitchCopy").textContent = signup ? "Already have an account?" : "New to START/NOW?";
+    document.getElementById("snAuthSwitchCopy").textContent = signup ? "Already have an account?" : "New to Level Up Fitness?";
     document.getElementById("snAuthSwitch").textContent = signup ? "Sign in" : "Create account";
     const password = document.getElementById("snAuthPassword");
     password.autocomplete = signup ? "new-password" : "current-password";
+    password.closest("label").hidden = mode === "reset";
+    password.required = mode !== "reset";
+    const email = document.getElementById("snAuthEmail");
+    email.closest("label").hidden = mode === "recovery";
+    email.required = mode !== "recovery";
+    document.getElementById("snForgotPassword").hidden = mode !== "signin";
+    if (mode === "reset" || mode === "recovery") {
+      document.getElementById("snAuthTitle").textContent = mode === "reset" ? "Reset password" : "Choose a new password";
+      document.getElementById("snAuthIntro").textContent = mode === "reset" ? "We’ll send a secure reset link to your email." : "Use at least 8 characters for your new password.";
+      document.getElementById("snAuthSubmit").textContent = mode === "reset" ? "Send reset link" : "Save password";
+      password.autocomplete = "new-password";
+    }
     document.getElementById("snAuthError").textContent = "";
   }
 
   function openAuth(mode="signin"){
+    authTrigger = document.activeElement;
     ensureAuthModal();
     setAuthMode(mode);
     document.getElementById("snAuthModal").classList.add("open");
-    setTimeout(() => document.getElementById("snAuthEmail")?.focus(), 0);
+    setTimeout(() => document.getElementById(mode === "recovery" ? "snAuthPassword" : "snAuthEmail")?.focus(), 0);
   }
 
   function closeAuth(){
     document.getElementById("snAuthModal")?.classList.remove("open");
+    document.getElementById("snAuthPassword").value = "";
+    authTrigger?.focus?.();
   }
 
   async function submitAuth(event){
     event.preventDefault();
-    if (!client) return;
+    if (!client) {
+      document.getElementById("snAuthError").textContent = "Account service is unavailable. Your workouts remain on this device. Please try again later.";
+      return;
+    }
     const errorEl = document.getElementById("snAuthError");
     const button = document.getElementById("snAuthSubmit");
     const email = document.getElementById("snAuthEmail").value.trim();
     const password = document.getElementById("snAuthPassword").value;
     const name = document.getElementById("snAuthName").value.trim();
+    const submittedMode = authMode;
     errorEl.textContent = "";
     button.disabled = true;
     button.textContent = authMode === "signup" ? "Creating…" : "Signing in…";
     try {
-      if (authMode === "signup") {
+      if (submittedMode === "reset") {
+        const {error} = await client.auth.resetPasswordForEmail(email, {redirectTo:location.origin + location.pathname});
+        if (error) throw error;
+        closeAuth();
+        show("If an account exists for that email, a password reset link will arrive shortly.");
+      } else if (submittedMode === "recovery") {
+        const {error} = await client.auth.updateUser({password});
+        if (error) throw error;
+        closeAuth();
+        show("Password updated.");
+      } else if (submittedMode === "signup") {
         const {data,error} = await client.auth.signUp({email,password,options:{data:{display_name:name || email.split("@")[0]}}});
         if (error) throw error;
         if (!data.session) {
           closeAuth();
-          show("Check your email to confirm your START/NOW account, then sign in.");
+          show("Check your email to confirm your Level Up Fitness account, then sign in.");
         } else {
           closeAuth();
           show("Account created. Cloud backup is on.");
@@ -416,11 +506,11 @@
         show("Signed in. Syncing your training data…");
       }
     } catch (error) {
-      console.error("START/NOW authentication failed", error);
+      console.error("Level Up Fitness authentication failed", error);
       errorEl.textContent = error?.message || "Couldn’t complete that request.";
     } finally {
       button.disabled = false;
-      button.textContent = authMode === "signup" ? "Create account" : "Sign in";
+      button.textContent = authMode === "reset" ? "Send reset link" : authMode === "recovery" ? "Save password" : authMode === "signup" ? "Create account" : "Sign in";
     }
   }
 
@@ -428,12 +518,14 @@
     if (!currentUser) return {title:"Saved on this device",detail:"Sign in for cloud backup."};
     if (status === "syncing") return {title:"Syncing…",detail:currentUser.email || "Your account"};
     if (status === "error") return {title:"Device copy is safe",detail:"Cloud sync will retry automatically."};
+    if (status === "pending") return {title:"Waiting for backup",detail:"Your training data is saved on this device."};
     const meta = safeJSON(localStorage.getItem(SYNC_META_KEY), null);
     const when = meta?.lastSyncedAt ? new Date(meta.lastSyncedAt).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}) : "just now";
     return {title:"Cloud backup on",detail:`${currentUser.email || "Signed in"} • Synced ${when}`};
   }
 
   function updateAccountUI(status="synced"){
+    cloudStatus = status;
     const root = document.getElementById("snCloudStatus");
     if (!root) return;
     const copy = statusCopy(status);
@@ -476,13 +568,13 @@
 
     const signoutWrap = root.querySelector(".sn-profile-signout-wrap");
     if (signoutWrap) signoutWrap.hidden = !currentUser;
-    updateAccountUI("synced");
+    updateAccountUI(cloudStatus);
     applyIdentity();
   }
 
   async function deleteAccount(){
     if (!client || !currentUser) return;
-    const confirmed = window.confirm("Delete your START/NOW account and all cloud workout data? This cannot be undone.");
+    const confirmed = window.confirm("Delete your Level Up Fitness account and all cloud workout data? This cannot be undone.");
     if (!confirmed) return;
     const second = window.confirm("Are you sure? Your account, workout history, saved plans, and synced notes will be permanently deleted.");
     if (!second) return;
@@ -492,31 +584,38 @@
       if (error) throw error;
       clearUserLocalData();
       try { await client.auth.signOut({scope:"local"}); } catch {}
-      show("Your START/NOW account was deleted.");
+      show("Your Level Up Fitness account was deleted.");
       setTimeout(() => window.location.reload(), 500);
     } catch (error) {
-      console.error("START/NOW account deletion failed", error);
+      console.error("Level Up Fitness account deletion failed", error);
       show("Couldn’t delete the account. Please try again.");
     }
   }
 
   async function signOut(){
-    if (!client) return;
+    if (!client) return false;
     try {
-      await syncNow({silent:true});
-      await client.auth.signOut();
-    } finally {
+      if (!await syncNow({silent:true}) || fingerprint() !== lastFingerprint) {
+        show("Sign-out paused: back up your latest changes before signing out. Your data is still on this device.");
+        return false;
+      }
+      const {error} = await client.auth.signOut({scope:"local"});
+      if (error) throw error;
       clearUserLocalData();
       window.location.reload();
+      return true;
+    } catch (error) {
+      show("Couldn’t sign out. Your data is still on this device. Please try again.");
+      return false;
     }
   }
 
   async function onUser(user, {reloadOnRestore=false}={}){
+    if (switchAccountStorage(user)) return;
     currentUser = user || null;
     window.SN_CLOUD_USER = currentUser;
     if (currentUser) {
       await syncNow({silent:true,reloadOnRestore});
-      lastFingerprint = fingerprint();
     }
     appendAccountCard();
     applyIdentity();
@@ -525,7 +624,7 @@
   async function init(){
     ensureAuthModal();
     if (!window.supabase?.createClient) {
-      console.warn("START/NOW cloud backup unavailable: Supabase library did not load.");
+      console.warn("Level Up Fitness cloud backup unavailable: Supabase library did not load.");
       appendAccountCard();
       return;
     }
@@ -536,13 +635,12 @@
     window.SN_SUPABASE = client;
     window.SN_AUTH = { signOut, openSignIn:() => openAuth("signin"), openSignUp:() => openAuth("signup"), syncNow };
 
-    const {data:{session}} = await client.auth.getSession();
-    await onUser(session?.user || null, {reloadOnRestore:true});
-
     client.auth.onAuthStateChange((event, session) => {
       setTimeout(async () => {
+        if (event === "PASSWORD_RECOVERY") openAuth("recovery");
         const nextUser = session?.user || null;
         const changed = nextUser?.id !== currentUser?.id;
+        if (changed && switchAccountStorage(nextUser)) return;
         currentUser = nextUser;
         window.SN_CLOUD_USER = currentUser;
         if (currentUser && (changed || event === "SIGNED_IN" || event === "TOKEN_REFRESHED")) {
@@ -553,6 +651,9 @@
         else { appendAccountCard(); applyIdentity(); }
       }, 0);
     });
+
+    const {data:{session}} = await client.auth.getSession();
+    await onUser(session?.user || null, {reloadOnRestore:true});
 
     startSyncLoop();
     document.addEventListener("visibilitychange", () => {
@@ -574,5 +675,5 @@
   }
 
   window.START_NOW_CLOUD = {version:"v89",syncNow:() => syncNow(),openSignIn:() => openAuth("signin"),openSignUp:() => openAuth("signup")};
-  init().catch(error => console.error("START/NOW cloud initialization failed", error));
+  init().catch(error => console.error("Level Up Fitness cloud initialization failed", error));
 })();

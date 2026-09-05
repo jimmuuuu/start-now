@@ -155,7 +155,7 @@
       <div class="sn111-kicker">TODAY'S PLAN</div>
       <div class="sn111-body">
         <h2>No workout scheduled</h2>
-        <p>Your weekly schedule is empty, so START/NOW will not label a default workout as today's plan.</p>
+        <p>Your weekly schedule is empty, so Level Up Fitness will not label a default workout as today's plan.</p>
         <span class="sn111-day">${esc(day)}</span>
       </div>
       <button type="button" class="sn111-action" id="sn111Workouts">Set up my schedule →</button>
