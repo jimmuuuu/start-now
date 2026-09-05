@@ -1,4 +1,4 @@
-// START/NOW v113 — hard-lock the app behind modals without fighting mobile text entry.
+// START/NOW v138 — keep the page locked behind modals while preserving native iOS modal scrolling.
 (() => {
   const root = document.documentElement;
   const body = document.body;
@@ -10,7 +10,6 @@
   let locked = false;
   let scrollY = 0;
   let previous = null;
-  let lastTouchY = null;
   let restoringScroll = false;
 
   function isFormEntryTarget(target = document.activeElement) {
@@ -37,11 +36,21 @@
     .sn-modal-backdrop,
     .beginner-modal-overlay {
       overscroll-behavior: none !important;
+      touch-action: none;
     }
     .sn-modal,
     .beginner-modal {
+      overflow-y: auto !important;
       overscroll-behavior: contain !important;
       -webkit-overflow-scrolling: touch;
+      touch-action: pan-y !important;
+      min-height: 0;
+    }
+    @supports (height: 100dvh) {
+      .sn-modal,
+      .beginner-modal {
+        max-height: min(82dvh, 760px);
+      }
     }
     @media (max-width: 768px) {
       input,
@@ -105,7 +114,6 @@
     body.style.right = previous?.bodyRight || "";
     body.style.width = previous?.bodyWidth || "";
     previous = null;
-    lastTouchY = null;
 
     restoringScroll = true;
     window.scrollTo(0, scrollY);
@@ -117,43 +125,26 @@
     else unlockBackground();
   }
 
-  function canScrollModal(modal, deltaY) {
-    if (!modal) return false;
-    const maxScroll = Math.max(0, modal.scrollHeight - modal.clientHeight);
-    if (maxScroll <= 1) return false;
-    if (deltaY < 0) return modal.scrollTop > 0;
-    if (deltaY > 0) return modal.scrollTop < maxScroll - 1;
-    return true;
-  }
-
   function modalForTarget(target) {
     return target?.closest?.(scrollableModalSelector) || null;
   }
 
   function handleWheel(event) {
     if (!locked) return;
-    const modal = modalForTarget(event.target);
-    if (!modal || !canScrollModal(modal, event.deltaY)) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  }
-
-  function handleTouchStart(event) {
-    if (!locked || !event.touches?.length) return;
-    lastTouchY = event.touches[0].clientY;
+    // Let the modal own its scrolling. Blocking wheel/touch movement at the
+    // document level can make iOS treat a long sheet as completely frozen.
+    if (modalForTarget(event.target)) return;
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   function handleTouchMove(event) {
-    if (!locked || !event.touches?.length) return;
-    const currentY = event.touches[0].clientY;
-    const deltaY = lastTouchY == null ? 0 : lastTouchY - currentY;
-    lastTouchY = currentY;
-    const modal = modalForTarget(event.target);
-    if (!modal || !canScrollModal(modal, deltaY)) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    if (!locked) return;
+    // Native momentum scrolling inside the sheet is more reliable on iOS than
+    // manually deciding whether every touch delta is allowed to scroll.
+    if (modalForTarget(event.target)) return;
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   function handleKeydown(event) {
@@ -164,11 +155,7 @@
     if (!scrollKeys.has(event.key)) return;
 
     const modal = modalForTarget(event.target) || document.querySelector(scrollableModalSelector);
-    let deltaY = 0;
-    if (["ArrowDown", "PageDown", "End", " "].includes(event.key)) deltaY = 1;
-    if (["ArrowUp", "PageUp", "Home"].includes(event.key)) deltaY = -1;
-
-    if (!modal || !canScrollModal(modal, deltaY)) event.preventDefault();
+    if (!modal) event.preventDefault();
   }
 
   function enforceScrollPosition() {
@@ -185,13 +172,9 @@
   }
 
   document.addEventListener("wheel", handleWheel, { passive: false, capture: true });
-  document.addEventListener("touchstart", handleTouchStart, { passive: true, capture: true });
   document.addEventListener("touchmove", handleTouchMove, { passive: false, capture: true });
-  document.addEventListener("keydown", handleKeydown, { capture: true });
-  document.addEventListener("focusin", event => {
-    if (locked && isFormEntryTarget(event.target)) lastTouchY = null;
-  }, { capture: true });
   window.addEventListener("scroll", enforceScrollPosition, { passive: true });
+  document.addEventListener("keydown", handleKeydown, { capture: true });
 
   const observer = new MutationObserver(syncLock);
   observer.observe(body, { childList: true, subtree: true });
