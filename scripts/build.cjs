@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const out = path.join(root, 'dist');
 // Keep the checked-in browser dependency tied to the reproducible npm lockfile.
 const vendor = fs.readFileSync(path.join(root,'node_modules/@supabase/supabase-js/dist/umd/supabase.js'));
-if (!vendor.equals(fs.readFileSync(path.join(root,'third-party/supabase.js')))) throw new Error('Supabase browser bundle differs from the installed lockfile; update third-party/supabase.js');
+if (vendor.toString().replace(/\r\n/g,'\n') !== fs.readFileSync(path.join(root,'third-party/supabase.js'),'utf8').replace(/\r\n/g,'\n')) throw new Error('Supabase browser bundle differs from the installed lockfile; update third-party/supabase.js');
 const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
 const scripts = [...index.matchAll(/<script src="([^"?]+)[^"]*"/g)].map(m=>m[1]);
 for (const file of scripts) {
