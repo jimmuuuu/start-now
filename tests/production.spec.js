@@ -1,12 +1,16 @@
 const {test,expect}=require('@playwright/test');
 
-async function open(page, {signedIn=false, fail=false, remote={}}={}) {
-  await page.addInitScript(({signedIn,fail,remote})=>{
-    sessionStorage.setItem('sn_onboarding_seen_v36','1');
-    if (!localStorage.getItem('sn_user_profile_v36')) localStorage.setItem('sn_user_profile_v36',JSON.stringify({experience:'Beginner',days:['Monday'],goal:'Build muscle',location:'Gym',duration:45}));
+async function open(page, {signedIn=false, fail=false, remote={}, seedProfile=true, openProfile=true}={}) {
+  await page.addInitScript(({signedIn,fail,remote,seedProfile})=>{
+    if(seedProfile){
+      sessionStorage.setItem('sn_onboarding_seen_v36','1');
+      if(!localStorage.getItem('sn_user_profile_v36')) localStorage.setItem('sn_user_profile_v36',JSON.stringify({experience:'Beginner',days:['Monday'],goal:'Build muscle',location:'Gym',duration:45}));
+    }else if(!sessionStorage.getItem('sn_fresh_test_initialized')){
+      localStorage.clear();sessionStorage.clear();sessionStorage.setItem('sn_fresh_test_initialized','1');
+    }
     window.cloudTest={fail,remote,writes:[],signedOut:false};
     window.testUser=signedIn?{id:'test-user',email:'athlete@example.test'}:null;
-  },{signedIn,fail,remote});
+  },{signedIn,fail,remote,seedProfile});
   await page.route('**/third-party/supabase.js*',route=>route.fulfill({contentType:'text/javascript',body:`
     window.supabase={createClient(){return {
       auth:{getSession:async()=>({data:{session:window.testUser?{user:window.testUser}:null}}),onAuthStateChange:callback=>{window.cloudTest.authEvent=callback},signOut:async()=>{window.cloudTest.signedOut=true;return {error:null}},signInWithPassword:async()=>({error:{message:'Invalid login credentials'}}),resetPasswordForEmail:async(email)=>{cloudTest.resetEmail=email;return {error:null}},updateUser:async()=>{cloudTest.passwordUpdated=true;return {error:null}},signUp:async()=>({data:{session:null},error:null})},
@@ -14,8 +18,20 @@ async function open(page, {signedIn=false, fail=false, remote={}}={}) {
     }}};` }));
   await page.goto('/');
   await expect.poll(()=>page.evaluate(()=>!!window.SN_AUTH)).toBe(true);
-  await page.getByRole('button',{name:'Profile',exact:true}).click();
+  if(openProfile) await page.getByRole('button',{name:'Profile',exact:true}).click();
 }
+
+test('first-run onboarding saves preferences once and stays dismissed',async({page})=>{
+  await open(page,{seedProfile:false,openProfile:false});
+  await expect(page.getByRole('heading',{name:'Make training fit your week'})).toBeVisible();
+  await page.locator('#snPrefExperience').selectOption('Intermediate');
+  await page.locator('#snSavePrefs').click();
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('sn_user_profile_v36')||'null')?.experience)).toBe('Intermediate');
+  await expect(page.getByRole('heading',{name:'Choose a starting structure'})).toBeVisible();
+  await page.locator('#snProductModal [data-close]').click();
+  await page.reload();
+  await expect(page.getByRole('heading',{name:'Make training fit your week'})).toHaveCount(0);
+});
 
 test('account and legal controls are usable; auth error and keyboard close work',async({page})=>{
   await open(page);

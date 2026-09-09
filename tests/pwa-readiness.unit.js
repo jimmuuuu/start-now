@@ -53,6 +53,11 @@ for (const eventName of ['install', 'activate', 'fetch']) {
 }
 assert.match(sw, /cache:\s*['"]no-store['"]/, 'Navigation fetches should bypass stale HTTP cache');
 assert.match(sw, /caches\.match/, 'Service worker needs an offline cache fallback');
+assert.match(
+  sw,
+  /key\.startsWith\(['"]start-now-shell-['"]\)\s*&&\s*key\s*!==\s*CACHE_NAME/,
+  'Activation must remove only outdated Start Now caches and preserve other apps on the origin'
+);
 
 const appleIcon = path.join(root, 'assets/pwa/apple-touch-icon.png');
 assert.ok(fs.existsSync(appleIcon), 'Apple touch icon is missing');

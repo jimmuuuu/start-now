@@ -3,7 +3,7 @@
   const SN=window.SN36;if(!SN)return;
   const priorRender=render, priorWorkouts=renderWorkouts;
   const esc=v=>escapeHtml(String(v??""));
-  let draft=null;
+  let draft=null,onboardingTimer=0;
   const pick=(names,muscle)=>{for(const name of names){const exact=exerciseLibrary.find(e=>e.name.toLowerCase()===name.toLowerCase());if(exact)return exact}return exerciseLibrary.find(e=>e.muscle===muscle)||exerciseLibrary[0]};
   const spec=(names,muscle,sets=3,min=8,max=10)=>{const ex=pick(names,muscle);return {...ex,sets,reps:max,repMin:min,repMax:max,weight:SN.num(ex.weight)}};
 
@@ -34,7 +34,7 @@
     ]}
   };
 
-  function closeModal(){document.getElementById("snProductModal")?.remove()}
+  function closeModal(){clearTimeout(onboardingTimer);onboardingTimer=0;document.getElementById("snProductModal")?.remove()}
   function openTemplates(){closeModal();const m=document.createElement("div");m.id="snProductModal";m.className="sn-modal-backdrop";m.innerHTML=`<div class="sn-modal"><div class="sn-modal-head"><div><span>ROUTINE TEMPLATES</span><h2>Choose a starting structure</h2></div><button data-close>×</button></div><p class="sn-modal-help">Use a template or build your own. Every template stays editable after you add it.</p><div class="sn-template-list">${Object.entries(templates).map(([id,t])=>`<button data-template="${id}"><span><strong>${esc(t.name)}</strong><small>${t.days.length} days • ${t.workouts.map(w=>w[0]).join(" • ")}</small></span><b>Use →</b></button>`).join("")}</div></div>`;document.body.appendChild(m);m.querySelector("[data-close]").onclick=closeModal;m.addEventListener("click",e=>{if(e.target===m)closeModal()});m.querySelectorAll("[data-template]").forEach(b=>b.onclick=()=>applyTemplate(b.dataset.template))}
   function applyTemplate(id){const t=templates[id];if(!t)return;if(!confirm(`Use the ${t.name} template? Existing workouts on those days will become unscheduled, not deleted.`))return;const occupied=new Set(t.days),stamp=Date.now(),profile=SN.profile(),avoid=String(profile?.avoid||"").toLowerCase();state.customWorkouts=state.customWorkouts.map(w=>({...w,days:(w.days||[]).filter(d=>!occupied.has(d))}));t.workouts.forEach((w,i)=>{const exercises=w[1].map(s=>spec(...s)).filter(ex=>!avoid||!avoid.split(",").some(a=>a.trim()&&ex.name.toLowerCase().includes(a.trim())));state.customWorkouts.push({id:`template-${id}-${stamp}-${i}`,name:w[0],builtIn:false,templateGenerated:true,createdAt:stamp,days:[t.days[i]],exercises})});saveCustomWorkouts();closeModal();showToast(`${t.name} added`);state.page="workouts";render()}
 
@@ -50,5 +50,5 @@
   SN.openPreferences=()=>preferences(false);SN.openTemplates=openTemplates;
 
   render=function(){if(state.page==="planEdit")return renderEditor();return priorRender()};
-  setTimeout(()=>{const existing=(state.customWorkouts||[]).length||SN.sessions().length||SN.restoreActive?.();if(!SN.profile()&&!existing&&!sessionStorage.getItem("sn_onboarding_seen_v36")){sessionStorage.setItem("sn_onboarding_seen_v36","1");preferences(true)}},400);
+  onboardingTimer=setTimeout(()=>{onboardingTimer=0;const existing=(state.customWorkouts||[]).length||SN.sessions().length||SN.restoreActive?.();if(!SN.profile()&&!existing&&!sessionStorage.getItem("sn_onboarding_seen_v36")){sessionStorage.setItem("sn_onboarding_seen_v36","1");preferences(true)}},400);
 })();
