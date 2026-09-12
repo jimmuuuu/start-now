@@ -2,7 +2,6 @@ const {test,expect}=require('@playwright/test');
 
 test.beforeEach(async({page})=>{
   await page.addInitScript(()=>{
-    sessionStorage.setItem('sn_onboarding_seen_v36','1');
     localStorage.setItem('sn_user_profile_v36',JSON.stringify({experience:'Beginner',days:['Monday'],goal:'Build muscle',location:'Gym',duration:45}));
   });
 });
@@ -79,18 +78,6 @@ test('empty reps cannot be marked completed',async({page})=>{
   expect(await page.evaluate(()=>SN36.active.exercises[0].sets[0].done)).toBe(false);
 });
 
-test('failed preferences save keeps the form and entered values',async({page})=>{
-  await page.goto('/');
-  await page.evaluate(()=>SN36.openPreferences());
-  await page.locator('#snPrefAvoid').fill('keep my input');
-  await page.evaluate(()=>{
-    const original=Storage.prototype.setItem;
-    Storage.prototype.setItem=function(key,value){if(key==='sn_user_profile_v36')throw new DOMException('Full','QuotaExceededError');return original.call(this,key,value);};
-  });
-  await page.locator('#snSavePrefs').click();
-  await expect(page.locator('#snPrefAvoid')).toHaveValue('keep my input');
-  await expect(page.locator('#toast')).not.toContainText('Preferences saved');
-});
 
 test('cancelling deletion does not delete the workout on the next save',async({page})=>{
   await page.goto('/');

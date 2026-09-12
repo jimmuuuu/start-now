@@ -5,7 +5,6 @@ async function reset(page) {
   await page.evaluate(async () => {
     localStorage.clear();
     sessionStorage.clear();
-    sessionStorage.setItem('sn_onboarding_seen_v36', '1');
     if ('caches' in window) await Promise.all((await caches.keys()).map(key => caches.delete(key)));
   });
   await page.reload({ waitUntil: 'domcontentloaded' });

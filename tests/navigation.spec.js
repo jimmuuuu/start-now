@@ -18,7 +18,6 @@ async function clearBrowserState(page) {
       duration: 45,
       avoid: ''
     }));
-    sessionStorage.setItem('sn_onboarding_seen_v36', '1');
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(registration => registration.unregister()));
@@ -37,7 +36,6 @@ async function openFresh(page) {
   await expect(page.locator('meta[name="startnow-build"]')).toHaveAttribute('content', BUILD);
   await expect(page.locator('#app')).not.toBeEmpty();
   await expect(page.locator('#quickStart')).toBeVisible();
-  await expect(page.locator('#snProductModal')).toHaveCount(0);
 }
 
 async function assertRuntimeHealthy(page) {

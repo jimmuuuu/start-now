@@ -16,7 +16,6 @@ async function openProfile(page) {
       duration: 45,
       avoid: ''
     }));
-    sessionStorage.setItem('sn_onboarding_seen_v36', '1');
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Profile', exact: true }).click();

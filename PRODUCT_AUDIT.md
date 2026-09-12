@@ -102,7 +102,6 @@ The profile grade and progress experience needed a clearer rolling training-grad
 - Existing saved workouts can now be edited: name, days, sets, rep ranges, exercise order, add/remove exercises
 - Editable templates for Push/Pull/Legs, Upper/Lower, Full Body, and Arnold Split
 - Short training-preferences flow for experience, goal, preferred days, location, workout length, and exercises to avoid
-- Existing users are not forced back through onboarding
 
 ## Reliability note
 

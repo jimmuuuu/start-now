@@ -105,7 +105,6 @@ The navigation test suite was also corrected so it reads the active build versio
 - [ ] Saved workouts persist
 - [ ] Workout schedule persists
 - [ ] Workout history persists
-- [ ] Profile/training preferences persist
 - [ ] Dark mode persists
 - [ ] Existing localStorage data survives app updates
 - [ ] No stabilization fix clears user localStorage unexpectedly

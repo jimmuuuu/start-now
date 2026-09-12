@@ -5,7 +5,6 @@ async function setupActiveWorkout(page) {
   await page.evaluate(() => {
     localStorage.clear();
     sessionStorage.clear();
-    sessionStorage.setItem('sn_onboarding_seen_v36', '1');
 
     const today = typeof dayName === 'function'
       ? dayName()
@@ -22,7 +21,6 @@ async function setupActiveWorkout(page) {
     saveCustomWorkouts();
     state.page = 'home';
     render();
-    document.getElementById('snProductModal')?.remove();
   });
 
   await page.locator('#startWorkout').click();

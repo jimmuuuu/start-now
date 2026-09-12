@@ -3,7 +3,6 @@ const {test,expect}=require('@playwright/test');
 async function open(page, {signedIn=false, fail=false, remote={}, seedProfile=true, openProfile=true}={}) {
   await page.addInitScript(({signedIn,fail,remote,seedProfile})=>{
     if(seedProfile){
-      sessionStorage.setItem('sn_onboarding_seen_v36','1');
       if(!localStorage.getItem('sn_user_profile_v36')) localStorage.setItem('sn_user_profile_v36',JSON.stringify({experience:'Beginner',days:['Monday'],goal:'Build muscle',location:'Gym',duration:45}));
     }else if(!sessionStorage.getItem('sn_fresh_test_initialized')){
       localStorage.clear();sessionStorage.clear();sessionStorage.setItem('sn_fresh_test_initialized','1');
@@ -21,16 +20,10 @@ async function open(page, {signedIn=false, fail=false, remote={}, seedProfile=tr
   if(openProfile) await page.getByRole('button',{name:'Profile',exact:true}).click();
 }
 
-test('first-run onboarding saves preferences once and stays dismissed',async({page})=>{
+test('fresh starts open directly without onboarding',async({page})=>{
   await open(page,{seedProfile:false,openProfile:false});
-  await expect(page.getByRole('heading',{name:'Make training fit your week'})).toBeVisible();
-  await page.locator('#snPrefExperience').selectOption('Intermediate');
-  await page.locator('#snSavePrefs').click();
-  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('sn_user_profile_v36')||'null')?.experience)).toBe('Intermediate');
-  await expect(page.getByRole('heading',{name:'Choose a starting structure'})).toBeVisible();
-  await page.locator('#snProductModal [data-close]').click();
-  await page.reload();
-  await expect(page.getByRole('heading',{name:'Make training fit your week'})).toHaveCount(0);
+  await expect(page.locator('#snProductModal')).toHaveCount(0);
+  await expect(page.getByRole('heading',{name:'Let’s get stronger today.'})).toBeVisible();
 });
 
 test('account and legal controls are usable; auth error and keyboard close work',async({page})=>{
@@ -101,7 +94,6 @@ for(const width of [320,375,430,1280]) test(`main pages fit ${width}px without r
 test('production service worker supports first-install offline reload',async({browser})=>{
   const context=await browser.newContext({serviceWorkers:'allow',viewport:{width:390,height:844}});
   const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.addInitScript(()=>sessionStorage.setItem('sn_onboarding_seen_v36','1'));
   await page.goto('http://127.0.0.1:4173/');
   await page.evaluate(()=>navigator.serviceWorker.ready);
   await expect.poll(()=>page.evaluate(()=>!!navigator.serviceWorker.controller)).toBe(true);

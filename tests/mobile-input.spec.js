@@ -5,18 +5,10 @@ async function resetApp(page) {
   await page.evaluate(() => {
     localStorage.clear();
     sessionStorage.clear();
-    sessionStorage.setItem('sn_onboarding_seen_v36', '1');
     state.customWorkouts = [];
     state.page = 'home';
     render();
   });
-}
-
-async function dismissStartupModal(page) {
-  await page.evaluate(() => {
-    document.getElementById('snProductModal')?.remove();
-  });
-  await expect(page.locator('#snProductModal')).toHaveCount(0);
 }
 
 async function seedWorkout(page) {
@@ -41,7 +33,6 @@ async function seedWorkout(page) {
 test('swap search stays focused while typing and uses an iOS-safe font size', async ({ page }) => {
   await resetApp(page);
   await seedWorkout(page);
-  await dismissStartupModal(page);
 
   await page.locator('#startWorkout').click();
   await expect(page.locator('.sn-workout-screen')).toBeVisible();
