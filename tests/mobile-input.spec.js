@@ -11,6 +11,10 @@ async function resetApp(page) {
   });
 }
 
+async function dismissStartupModal() {
+  // The onboarding modal was removed; keep the old test call sites harmless.
+}
+
 async function seedWorkout(page) {
   await page.evaluate(() => {
     const today = typeof dayName === 'function'

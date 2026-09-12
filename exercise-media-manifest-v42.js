@@ -4,6 +4,7 @@
   const SOURCE_ROOT = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
   const SOURCE_NAME = 'Free Exercise DB';
   const BROKEN_KEY = 'sn_exercise_media_broken_v42';
+  const ILLUSTRATED_FALLBACK = window.START_NOW_EXERCISE_ILLUSTRATED_FALLBACK || null;
 
   const slug = value => String(value || '')
     .toLowerCase()
@@ -150,6 +151,14 @@
     hanging_leg_raise: pair('Hanging_Leg_Raise', 'Hanging Leg Raise')
   };
 
+  function fallbackEntry(ex) {
+    try {
+      return ILLUSTRATED_FALLBACK?.forExercise?.(ex) || null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   function rawInternalId(ex) {
     return String(ex?.id || window.SN36?.exerciseId?.(ex) || '').trim();
   }
@@ -184,12 +193,17 @@
   function resolve(ex, { quiet = false } = {}) {
     const internalId = rawInternalId(ex) || '(legacy/no-id)';
     const canonical = canonicalId(ex);
-    const entry = MANIFEST[canonical] || null;
+    const approvedEntry = MANIFEST[canonical] || null;
     const broken = brokenMap()[canonical] || null;
+    const entry = broken ? (fallbackEntry(ex) || approvedEntry) : (approvedEntry || fallbackEntry(ex));
     const result = broken
-      ? { status: 'broken', internalId, canonicalId: canonical, entry, failureReason: broken.reason, broken }
-      : entry
-        ? { status: 'ready', internalId, canonicalId: canonical, entry }
+      ? entry?.fallback
+        ? { status: 'illustrated', internalId, canonicalId: canonical, entry, failureReason: broken.reason, broken }
+        : { status: 'broken', internalId, canonicalId: canonical, entry, failureReason: broken.reason, broken }
+      : approvedEntry
+        ? { status: 'ready', internalId, canonicalId: canonical, entry: approvedEntry }
+        : entry
+          ? { status: 'illustrated', internalId, canonicalId: canonical, entry }
         : { status: 'missing', internalId, canonicalId: canonical, entry: null, failureReason: 'No verified media entry for canonical exercise ID' };
 
     if (!quiet) {
@@ -197,7 +211,7 @@
         exerciseDisplayed: ex?.name || 'Exercise',
         internalId,
         canonicalId: canonical,
-        assetFound: result.status === 'ready',
+        assetFound: result.status === 'ready' || result.status === 'illustrated',
         assetType: entry?.type || null,
         source: entry?.source || null,
         sourceExercise: entry?.sourceExerciseName || null,
@@ -212,13 +226,14 @@
     const broken = brokenMap();
     const rows = library.map(ex => {
       const canonical = canonicalId(ex);
-      const entry = MANIFEST[canonical] || null;
+      const approvedEntry = MANIFEST[canonical] || null;
+      const entry = approvedEntry || fallbackEntry(ex);
       const brokenInfo = broken[canonical] || null;
       return {
         internalId: rawInternalId(ex),
         name: ex.name,
         canonicalId: canonical,
-        status: brokenInfo ? 'broken' : entry ? 'verified' : 'missing',
+        status: brokenInfo ? 'broken' : approvedEntry ? 'verified' : entry ? 'illustrated' : 'missing',
         type: entry?.type || null,
         source: entry?.source || null,
         sourceId: entry?.sourceId || null,
@@ -229,6 +244,7 @@
     const report = {
       total: rows.length,
       verified: rows.filter(row => row.status === 'verified').length,
+      illustrated: rows.filter(row => row.status === 'illustrated').length,
       missing: rows.filter(row => row.status === 'missing').length,
       broken: rows.filter(row => row.status === 'broken').length,
       rows,
@@ -246,6 +262,7 @@
     console.group('[Exercise Media Audit v42]');
     console.info(`Total exercises: ${result.total}`);
     console.info(`Verified demonstrations: ${result.verified}`);
+    console.info(`Illustrated movement guides: ${result.illustrated}`);
     console.info(`Missing demonstrations: ${result.missing}`);
     console.info(`Broken demonstrations: ${result.broken}`);
     if (result.missingExercises.length) console.table(result.missingExercises);
@@ -272,6 +289,6 @@
   // Enumerate the entire app library once. This does not load any media files.
   queueMicrotask(() => {
     const result = audit();
-    console.info(`[Exercise Media v42] ${result.verified}/${result.total} exercises have deterministic verified media; ${result.missing} use the safe fallback; ${result.broken} known broken this session.`);
+    console.info(`[Exercise Media v43] ${result.verified} verified + ${result.illustrated} illustrated / ${result.total} exercises have media; ${result.missing} missing; ${result.broken} known broken this session.`);
   });
 })();

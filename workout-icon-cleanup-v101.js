@@ -27,7 +27,7 @@
   function mediaFor(exercise) {
     try {
       const result = window.START_NOW_EXERCISE_MEDIA?.resolve(exercise, { quiet: true });
-      const media = result?.status === "ready" ? result.entry?.media : null;
+      const media = result && (result.status === "ready" || result.status === "illustrated") ? result.entry?.media : null;
       return Array.isArray(media) && media[0]
         ? { still: media[0], finish: media[1] || media[0] }
         : null;
@@ -87,6 +87,12 @@
     image.decoding = "async";
     image.loading = "lazy";
     image.addEventListener("error", () => {
+      window.START_NOW_EXERCISE_MEDIA?.markBroken?.(exercise, image.currentSrc || image.src, "Asset failed to load");
+      const fallbackMedia = mediaFor(exercise);
+      if (fallbackMedia?.still && fallbackMedia.still !== media.still) {
+        setVisual(node, exercise, fallbackMedia);
+        return;
+      }
       node.classList.remove("sn101-has-image");
       node.innerHTML = icon(fallback, 22);
     }, { once: true });

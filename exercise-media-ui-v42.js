@@ -40,6 +40,7 @@
   function imagePairMarkup(ex, result) {
     const [start, finish] = result.entry.media || [];
     if (!start || !finish) return unavailableMarkup(ex);
+    const sourceLabel = result.entry.fallback ? 'Illustrated movement guide' : 'Verified media';
     return `<div class="sn-v42-demo-pair" data-v42-pair>
       <div class="sn-v42-frame-stack" aria-label="${esc(ex?.name || 'Exercise')} start and finish demonstration">
         <img class="sn-v42-frame sn-v42-frame-start" src="${esc(start)}" alt="${esc(ex?.name || 'Exercise')} starting position" decoding="async" loading="eager" data-v42-media>
@@ -47,7 +48,7 @@
         <div class="sn-v42-loading" data-v42-loading><i></i><i></i><span>Loading demonstration…</span></div>
         <div class="sn-v42-phase"><span>START</span><b>↔</b><span>FINISH</span></div>
       </div>
-      <small class="sn-v42-source">Verified media • ${esc(result.entry.sourceExerciseName || result.entry.source || '')}</small>
+      <small class="sn-v42-source">${esc(sourceLabel)} • ${esc(result.entry.sourceExerciseName || result.entry.source || '')}</small>
     </div>`;
   }
 
@@ -62,7 +63,7 @@
   }
 
   function mediaMarkup(ex, result) {
-    if (result.status !== 'ready' || !result.entry) return unavailableMarkup(ex);
+    if ((result.status !== 'ready' && result.status !== 'illustrated') || !result.entry) return unavailableMarkup(ex);
     if (result.entry.type === 'video' || result.entry.type === 'gif') return videoMarkup(ex, result);
     if (result.entry.type === 'image') return singleImageMarkup(ex, result);
     if (result.entry.type === 'image-pair') return imagePairMarkup(ex, result);
@@ -83,7 +84,7 @@
     if (!card) return;
     const result = MEDIA.resolve(ex, { quiet: true });
     const nodes = [...card.querySelectorAll('[data-v42-media]')];
-    if (!nodes.length || result.status !== 'ready') return;
+    if (!nodes.length || (result.status !== 'ready' && result.status !== 'illustrated')) return;
     const loader = card.querySelector('[data-v42-loading]');
     let loaded = 0;
     let failed = false;
@@ -101,7 +102,10 @@
       MEDIA.markBroken(result.canonicalId, url, 'Asset failed to load');
       MEDIA.audit();
       const holder = card.querySelector('.sn-v42-media');
-      if (holder) holder.innerHTML = unavailableMarkup(ex, 'Exercise demonstration unavailable');
+      const replacement = MEDIA.resolve(ex, { quiet: true });
+      if (holder) holder.innerHTML = replacement.status === 'illustrated'
+        ? mediaMarkup(ex, replacement)
+        : unavailableMarkup(ex, 'Exercise demonstration unavailable');
       console.warn('[Exercise Media] Asset URL failed', { exercise: ex?.name, canonicalId: result.canonicalId, url });
     };
     nodes.forEach(node => {
