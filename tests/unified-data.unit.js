@@ -111,9 +111,9 @@ assert.equal(SN.scheduleMap().get('Tuesday').id, workouts[0].id, 'editing immedi
 assert.equal(SN.previousWorkout(SN.workouts()[0]).id, 'session-one', 'history remains connected after a display-name edit');
 
 SN.deleteWorkout(workouts[0].id);
-assert.equal(SN.workouts().length, 0, 'deleting a template updates the workout source');
-assert.equal(SN.scheduleMap().size, 0, 'deleting a template updates schedule-derived features');
-assert.equal(SN.sessions().length, 1, 'deleting a template preserves completed historical facts');
+assert.equal(SN.workouts().length, 0, 'deleting a workout updates the workout source');
+assert.equal(SN.scheduleMap().size, 0, 'deleting a workout updates schedule-derived features');
+assert.equal(SN.sessions().length, 1, 'deleting a workout preserves completed historical facts');
 assert.deepEqual(JSON.parse(seed.getItem('sn_deleted_workout_ids')), [workouts[0].id], 'workout deletion persists a cloud-sync tombstone');
 
 SN.updateSession('session-one', { exercises: [{ id: 'bench-press', name: 'Bench Press', sets: [{ weight: 110, reps: 10, done: true }] }] });

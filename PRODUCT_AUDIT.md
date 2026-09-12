@@ -38,7 +38,7 @@ The existing active-workout experience did not persist an in-progress session ac
 
 The existing PR system mainly surfaced heaviest logged weight. Exercise history did not have a dedicated drill-down page. The 250-exercise library was primarily data used by builders rather than a user-facing searchable reference with equipment/instruction/alternative information.
 
-The profile grade and progress experience needed a clearer rolling training-grade explanation. Plan creation supported custom and beginner-generated plans but did not offer clearly named routine templates such as PPL, Upper/Lower, Full Body, and Arnold while keeping everything editable.
+The profile grade and progress experience needed a clearer rolling training-grade explanation. Plan creation supported custom and beginner-generated plans while keeping saved workouts editable.
 
 ## v36 upgrades
 
@@ -100,7 +100,7 @@ The profile grade and progress experience needed a clearer rolling training-grad
 
 - Existing custom and beginner systems preserved
 - Existing saved workouts can now be edited: name, days, sets, rep ranges, exercise order, add/remove exercises
-- Editable templates for Push/Pull/Legs, Upper/Lower, Full Body, and Arnold Split
+- Direct workout editing for names, days, sets, rep ranges, exercise order, and exercise selection
 - Short training-preferences flow for experience, goal, preferred days, location, workout length, and exercises to avoid
 
 ## Reliability note

@@ -26,6 +26,13 @@ test('fresh starts open directly without onboarding',async({page})=>{
   await expect(page.getByRole('heading',{name:'Let’s get stronger today.'})).toBeVisible();
 });
 
+test('workouts page does not expose routine templates',async({page})=>{
+  await open(page,{openProfile:false});
+  await page.getByRole('button',{name:'Workouts',exact:true}).click();
+  await expect(page.locator('#snTemplates')).toHaveCount(0);
+  await expect(page.getByText('Templates',{exact:true})).toHaveCount(0);
+});
+
 test('account and legal controls are usable; auth error and keyboard close work',async({page})=>{
   await open(page);
   await page.getByRole('button',{name:'Sign in',exact:true}).click();

@@ -1,44 +1,12 @@
-// START/NOW v36 — plan editing, routine templates and useful personalization.
+// START/NOW v36 — plan editing and useful personalization.
 (() => {
   const SN=window.SN36;if(!SN)return;
   const priorRender=render, priorWorkouts=renderWorkouts;
   const esc=v=>escapeHtml(String(v??""));
   let draft=null;
-  const pick=(names,muscle)=>{for(const name of names){const exact=exerciseLibrary.find(e=>e.name.toLowerCase()===name.toLowerCase());if(exact)return exact}return exerciseLibrary.find(e=>e.muscle===muscle)||exerciseLibrary[0]};
-  const spec=(names,muscle,sets=3,min=8,max=10)=>{const ex=pick(names,muscle);return {...ex,sets,reps:max,repMin:min,repMax:max,weight:SN.num(ex.weight)}};
-
-  const templates={
-    ppl:{name:"Push / Pull / Legs",days:["Monday","Wednesday","Friday"],workouts:[
-      ["Push Day",[[["Chest Press","Machine Chest Press"],"Chest",3,8,10],[["Shoulder Press","Machine Shoulder Press"],"Shoulders",3,8,10],[["Cable Fly","Pec Deck Fly"],"Chest",2,10,12],[["Lateral Raise","Machine Lateral Raise"],"Shoulders",3,10,15],[["Triceps Pushdown"],"Triceps",3,10,12]]],
-      ["Pull Day",[[["Lat Pulldown"],"Back",3,8,10],[["Seated Row","Machine Row"],"Back",3,8,10],[["Reverse Fly","Machine Reverse Fly"],"Rear Delts",3,10,15],[["Biceps Curl","Preacher Curl Machine"],"Biceps",3,10,12],[["Hammer Curl"],"Biceps",2,10,12]]],
-      ["Legs Day",[[["Leg Press"],"Legs",3,8,12],[["Leg Curl","Seated Leg Curl"],"Hamstrings",3,10,12],[["Leg Extension"],"Quads",3,10,12],[["Hip Abduction"],"Glutes",2,12,15],[["Calf Raise","Seated Calf Raise"],"Calves",3,12,15]]]
-    ]},
-    upperLower:{name:"Upper / Lower",days:["Monday","Tuesday","Thursday","Friday"],workouts:[
-      ["Upper A",[[["Chest Press"],"Chest",3,8,10],[["Lat Pulldown"],"Back",3,8,10],[["Shoulder Press"],"Shoulders",3,8,10],[["Seated Row"],"Back",3,8,10],[["Triceps Pushdown"],"Triceps",2,10,12],[["Biceps Curl"],"Biceps",2,10,12]]],
-      ["Lower A",[[["Leg Press"],"Legs",3,8,12],[["Leg Curl"],"Hamstrings",3,10,12],[["Leg Extension"],"Quads",2,10,12],[["Hip Abduction"],"Glutes",2,12,15],[["Calf Raise"],"Calves",3,12,15]]],
-      ["Upper B",[[["Incline Dumbbell Bench Press","Incline Press"],"Chest",3,8,10],[["Seated Row"],"Back",3,8,10],[["Lateral Raise"],"Shoulders",3,10,15],[["Lat Pulldown"],"Back",3,8,10],[["Triceps Pushdown"],"Triceps",2,10,12],[["Hammer Curl"],"Biceps",2,10,12]]],
-      ["Lower B",[[["Hack Squat","Leg Press"],"Quads",3,8,12],[["Dumbbell Romanian Deadlift","Romanian Deadlift"],"Hamstrings",3,8,10],[["Leg Curl"],"Hamstrings",2,10,12],[["Leg Extension"],"Quads",2,10,12],[["Calf Raise"],"Calves",3,12,15]]]
-    ]},
-    fullBody:{name:"Full Body",days:["Monday","Wednesday","Friday"],workouts:[
-      ["Full Body A",[[["Leg Press"],"Legs",3,8,12],[["Chest Press"],"Chest",3,8,10],[["Lat Pulldown"],"Back",3,8,10],[["Leg Curl"],"Hamstrings",2,10,12],[["Lateral Raise"],"Shoulders",2,10,15]]],
-      ["Full Body B",[[["Hack Squat","Leg Press"],"Quads",3,8,12],[["Seated Row"],"Back",3,8,10],[["Shoulder Press"],"Shoulders",3,8,10],[["Hip Abduction"],"Glutes",2,12,15],[["Biceps Curl"],"Biceps",2,10,12]]],
-      ["Full Body C",[[["Leg Press"],"Legs",3,8,12],[["Incline Dumbbell Bench Press","Incline Press"],"Chest",3,8,10],[["Lat Pulldown"],"Back",3,8,10],[["Leg Curl"],"Hamstrings",2,10,12],[["Triceps Pushdown"],"Triceps",2,10,12]]]
-    ]},
-    arnold:{name:"Arnold Split",days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],workouts:[
-      ["Chest & Back A",[[["Chest Press","Smith Machine Bench Press"],"Chest",3,8,10],[["Incline Dumbbell Bench Press","Incline Press"],"Chest",3,8,10],[["Lat Pulldown"],"Back",3,8,10],[["Seated Row"],"Back",3,8,10],[["Cable Fly"],"Chest",2,10,12]]],
-      ["Shoulders & Arms A",[[["Arnold Press","Shoulder Press"],"Shoulders",3,8,10],[["Lateral Raise"],"Shoulders",3,10,15],[["Reverse Fly"],"Rear Delts",2,10,15],[["Biceps Curl"],"Biceps",3,10,12],[["Triceps Pushdown"],"Triceps",3,10,12]]],
-      ["Legs A",[[["Leg Press"],"Legs",3,8,12],[["Leg Curl"],"Hamstrings",3,10,12],[["Leg Extension"],"Quads",3,10,12],[["Hip Abduction"],"Glutes",2,12,15],[["Calf Raise"],"Calves",3,12,15]]],
-      ["Chest & Back B",[[["Incline Dumbbell Bench Press","Incline Press"],"Chest",3,8,10],[["Chest Press"],"Chest",3,8,10],[["Seated Row"],"Back",3,8,10],[["Lat Pulldown"],"Back",3,8,10],[["Pec Deck Fly","Cable Fly"],"Chest",2,10,12]]],
-      ["Shoulders & Arms B",[[["Shoulder Press"],"Shoulders",3,8,10],[["Cable Lateral Raise","Lateral Raise"],"Shoulders",3,10,15],[["Face Pull","Reverse Fly"],"Rear Delts",2,10,15],[["Hammer Curl"],"Biceps",3,10,12],[["Overhead Cable Triceps Extension","Triceps Pushdown"],"Triceps",3,10,12]]],
-      ["Legs B",[[["Hack Squat","Leg Press"],"Quads",3,8,12],[["Dumbbell Romanian Deadlift","Romanian Deadlift"],"Hamstrings",3,8,10],[["Leg Curl"],"Hamstrings",3,10,12],[["Leg Extension"],"Quads",2,10,12],[["Calf Raise"],"Calves",3,12,15]]]
-    ]}
-  };
-
   function closeModal(){document.getElementById("snProductModal")?.remove()}
-  function openTemplates(){closeModal();const m=document.createElement("div");m.id="snProductModal";m.className="sn-modal-backdrop";m.innerHTML=`<div class="sn-modal"><div class="sn-modal-head"><div><span>ROUTINE TEMPLATES</span><h2>Choose a starting structure</h2></div><button data-close>×</button></div><p class="sn-modal-help">Use a template or build your own. Every template stays editable after you add it.</p><div class="sn-template-list">${Object.entries(templates).map(([id,t])=>`<button data-template="${id}"><span><strong>${esc(t.name)}</strong><small>${t.days.length} days • ${t.workouts.map(w=>w[0]).join(" • ")}</small></span><b>Use →</b></button>`).join("")}</div></div>`;document.body.appendChild(m);m.querySelector("[data-close]").onclick=closeModal;m.addEventListener("click",e=>{if(e.target===m)closeModal()});m.querySelectorAll("[data-template]").forEach(b=>b.onclick=()=>applyTemplate(b.dataset.template))}
-  function applyTemplate(id){const t=templates[id];if(!t)return;if(!confirm(`Use the ${t.name} template? Existing workouts on those days will become unscheduled, not deleted.`))return;const occupied=new Set(t.days),stamp=Date.now(),profile=SN.profile(),avoid=String(profile?.avoid||"").toLowerCase();state.customWorkouts=state.customWorkouts.map(w=>({...w,days:(w.days||[]).filter(d=>!occupied.has(d))}));t.workouts.forEach((w,i)=>{const exercises=w[1].map(s=>spec(...s)).filter(ex=>!avoid||!avoid.split(",").some(a=>a.trim()&&ex.name.toLowerCase().includes(a.trim())));state.customWorkouts.push({id:`template-${id}-${stamp}-${i}`,name:w[0],builtIn:false,templateGenerated:true,createdAt:stamp,days:[t.days[i]],exercises})});saveCustomWorkouts();closeModal();showToast(`${t.name} added`);state.page="workouts";render()}
 
-  renderWorkouts=function(){priorWorkouts();const heading=document.querySelector(".workouts-heading-row");if(heading&&!document.getElementById("snTemplates")){const b=document.createElement("button");b.id="snTemplates";b.className="sn-templates-btn";b.textContent="Templates";heading.appendChild(b);b.onclick=openTemplates}const section=document.querySelector(".workout-library-section");if(section&&!document.getElementById("snLibraryLaunch")){const b=document.createElement("button");b.id="snLibraryLaunch";b.className="sn-library-launch";b.innerHTML=`<span>⌕</span><div><strong>Exercise library</strong><small>Search 250 exercises, instructions & alternatives</small></div><b>Open →</b>`;section.insertAdjacentElement("beforebegin",b);b.onclick=()=>{state.page="exerciseLibrary";render()}}
+  renderWorkouts=function(){priorWorkouts();const section=document.querySelector(".workout-library-section");if(section&&!document.getElementById("snLibraryLaunch")){const b=document.createElement("button");b.id="snLibraryLaunch";b.className="sn-library-launch";b.innerHTML=`<span>⌕</span><div><strong>Exercise library</strong><small>Search 250 exercises, instructions & alternatives</small></div><b>Open →</b>`;section.insertAdjacentElement("beforebegin",b);b.onclick=()=>{state.page="exerciseLibrary";render()}}
     document.querySelectorAll("[data-start-custom]").forEach(start=>{const row=start.closest(".custom-workout-row");if(!row||row.querySelector(".sn-edit-workout"))return;const edit=document.createElement("button");edit.className="sn-edit-workout";edit.textContent="Edit";edit.onclick=()=>openEditor(start.dataset.startCustom);const actions=row.querySelector(".workout-row-actions")||row;actions.insertBefore(edit,start)})};
 
   function openEditor(id){const w=state.customWorkouts.find(x=>x.id===id);if(!w)return;draft={...JSON.parse(JSON.stringify(w)),exercises:(w.exercises||[]).map(ex=>{const r=SN.repRange(ex);return {...ex,repMin:r.min,repMax:r.max}})};state.page="planEdit";render()}
