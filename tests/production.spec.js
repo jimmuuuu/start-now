@@ -145,8 +145,13 @@ test('expired account session isolates its unsynced device data from guest mode'
   expect(await page.evaluate(()=>localStorage.getItem('sn_cloud_archive_test-user'))).toContain('Private plan');
 });
 
-test('unverified substitute movements are never presented as verified demonstrations',async({page})=>{
+test('every listed movement resolves to real-person exercise media',async({page})=>{
   await open(page);
   const results=await page.evaluate(()=>['burpee','dumbbell-thruster','dead-hang','ski-erg','cable-hip-abduction'].map(id=>START_NOW_EXERCISE_MEDIA.resolve({id,name:id},{quiet:true})));
-  for(const result of results) expect(result.status).not.toBe('ready');
+  for(const result of results){
+    expect(result.status).toBe('ready');
+    expect(result.entry.type).toBe('image-pair');
+    expect(result.entry.media[0]).toMatch(/^https:\/\/raw\.githubusercontent\.com\/yuhonas\/free-exercise-db\/main\/exercises\/.+\/0\.jpg$/);
+    expect(result.entry.media[1]).toMatch(/^https:\/\/raw\.githubusercontent\.com\/yuhonas\/free-exercise-db\/main\/exercises\/.+\/1\.jpg$/);
+  }
 });

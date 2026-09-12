@@ -23,12 +23,12 @@ test('every exercise library row has a media visual and no entry is missing medi
 
   const mediaState = await page.locator('.sn-library-list .sn-library-icon img').evaluateAll(images => ({
     total: images.length,
-    invalid: images.filter(image => !new RegExp('^(https?:|data:image/svg\\+xml)').test(image.currentSrc || image.src)).length
+    invalid: images.filter(image => !new RegExp('^https://raw\\.githubusercontent\\.com/yuhonas/free-exercise-db/main/exercises/.+/(0|1)\\.jpg$').test(image.currentSrc || image.src)).length
   }));
-  expect(mediaState).toEqual({ total: 502, invalid: 0 });
+  expect(mediaState).toEqual({ total: 251, invalid: 0 });
 });
 
-test('a previously uncovered exercise opens with its illustrated movement guide', async ({ page }) => {
+test('a previously uncovered exercise opens with real-person demonstration photos', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('sn_user_profile_v36', JSON.stringify({
       experience: 'Beginner',
@@ -42,6 +42,8 @@ test('a previously uncovered exercise opens with its illustrated movement guide'
   await page.evaluate(() => { state.page = 'exerciseLibrary'; render(); });
   await page.getByRole('button', { name: /Svend Press/ }).click();
   await expect(page.locator('#snProductModal .sn-v42-card')).toBeVisible();
-  await expect(page.locator('#snProductModal .sn-v42-card img')).toHaveCount(2);
-  await expect(page.locator('#snProductModal .sn-v42-source')).toContainText('Illustrated movement guide');
+  await expect(page.locator('#snProductModal .sn-v42-card .sn-v42-demo-pair')).toHaveCount(1);
+  await expect(page.locator('#snProductModal .sn-v42-card .sn-v42-frame')).toHaveCount(2);
+  await expect(page.locator('#snProductModal .sn-v42-card .sn-v42-frame').first()).toHaveAttribute('src', /^https:\/\/raw\.githubusercontent\.com\/yuhonas\/free-exercise-db\/main\/exercises\/.+\/0\.jpg$/);
+  await expect(page.locator('#snProductModal .sn-v42-source')).toContainText('Real-person exercise photos');
 });

@@ -14,6 +14,9 @@ for (const file of scripts) {
   execFileSync(process.execPath,['--check',path.join(root,file)]);
 }
 if (process.argv.includes('--check')) { console.log(`${scripts.length} active scripts passed syntax checks`); process.exit(0); }
+// The output is a complete generated artifact; remove stale modules so deleted
+// features cannot remain addressable in a later deployment.
+fs.rmSync(out,{recursive:true,force:true});
 fs.mkdirSync(out,{recursive:true});
 const files = fs.readdirSync(root).filter(f=>/\.(js|css|html|webmanifest)$/.test(f));
 for (const f of files) fs.copyFileSync(path.join(root,f),path.join(out,f));

@@ -1,4 +1,4 @@
-// START/NOW v105 - uses exercise-specific image pairs for picker and library rows.
+// START/NOW v107 - uses real-person poster frames for picker and library rows.
 (() => {
   function icon(name = "dumbbell", size = 22) {
     if (window.START_NOW_ICONS?.icon) {
@@ -27,9 +27,10 @@
   function mediaFor(exercise) {
     try {
       const result = window.START_NOW_EXERCISE_MEDIA?.resolve(exercise, { quiet: true });
-      const media = result && (result.status === "ready" || result.status === "illustrated") ? result.entry?.media : null;
+      const media = result && result.status === "ready" ? result.entry?.media : null;
+      const entry = result && result.status === "ready" ? result.entry : null;
       return Array.isArray(media) && media[0]
-        ? { still: media[0], finish: media[1] || media[0] }
+        ? { still: media[0], poster: entry?.poster || null }
         : null;
     } catch (_) {
       return null;
@@ -82,29 +83,17 @@
     mediaFrame.className = "sn101-exercise-media";
     const image = document.createElement("img");
     image.className = "sn101-exercise-image";
-    image.src = media.still;
+    image.src = media.poster || media.still;
     image.alt = "";
     image.decoding = "async";
     image.loading = "lazy";
     image.addEventListener("error", () => {
       window.START_NOW_EXERCISE_MEDIA?.markBroken?.(exercise, image.currentSrc || image.src, "Asset failed to load");
-      const fallbackMedia = mediaFor(exercise);
-      if (fallbackMedia?.still && fallbackMedia.still !== media.still) {
-        setVisual(node, exercise, fallbackMedia);
-        return;
-      }
       node.classList.remove("sn101-has-image");
       node.innerHTML = icon(fallback, 22);
     }, { once: true });
-    const finish = document.createElement("img");
-    finish.className = "sn101-exercise-image finish";
-    finish.src = media.finish;
-    finish.alt = "";
-    finish.decoding = "async";
-    finish.loading = "lazy";
-    finish.addEventListener("error", () => finish.remove(), { once: true });
     node.classList.add("sn101-has-image");
-    mediaFrame.append(image, finish);
+    mediaFrame.append(image);
     node.appendChild(mediaFrame);
   }
 
