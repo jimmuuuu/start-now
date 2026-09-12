@@ -25,10 +25,11 @@
 
   function eligibleExercises(exercise) {
     const used = usedExerciseIds();
-    const targetMuscle = String(exercise?.muscle || "").trim();
+    const primaryMuscle = value => (SN.normalizeExercise?.(value) || value)?.muscle || "";
+    const targetMuscle = primaryMuscle(exercise);
     return exerciseLibrary
       .filter(candidate => !SN.exerciseMatches(candidate, exercise))
-      .filter(candidate => String(candidate?.muscle || "").trim() === targetMuscle)
+      .filter(candidate => primaryMuscle(candidate) === targetMuscle)
       .filter(candidate => !used.has(SN.exerciseId(candidate)))
       .sort((a, b) => {
         const equipmentDelta = Number(SN.equipment(b) === SN.equipment(exercise)) - Number(SN.equipment(a) === SN.equipment(exercise));
@@ -46,7 +47,8 @@
 
     const hadCompletedSets = (old.sets || []).some(set => set.done);
     if (hadCompletedSets) {
-      SN.active.usedExerciseIds = [...new Set([...(SN.active.usedExerciseIds || []), SN.exerciseId(old)])];
+      showToast("This exercise has completed sets. Add another exercise to keep your logged results.");
+      return;
     }
 
     const range = SN.repRange(replacement);
@@ -58,7 +60,7 @@
       swappedFrom: old.name,
       skipped: false,
       note: "",
-      sets: (old.sets || []).map(set => ({...set, done: false}))
+      sets: (old.sets || []).map(() => ({weight: null, reps: null, done: false, prefilled: false}))
     };
 
     saveActive();

@@ -53,7 +53,7 @@
     });
 
     // If a workout is opened in Edit mode, clean the actual editable value and
-    // fire the input event so beginner-plan-v2's internal preview state updates too.
+    // Fire the input event so the internal preview state updates too.
     wizard.querySelectorAll("input[data-workout-name]").forEach(input => {
       const next = cleanPlanName(input.value);
       if (input.value !== next) {

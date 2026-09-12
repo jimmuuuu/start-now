@@ -17,7 +17,7 @@
   function ensureHost() {
     if (!isHome()) return null;
     const root = document.getElementById("app");
-    if (!root) return null;
+    if (!root || !root.children.length) return null;
 
     const existing = findMuscleCard();
     if (existing) return existing;

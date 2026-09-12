@@ -23,7 +23,7 @@
   }
 
   function writeDeleted(set){
-    localStorage.setItem(DELETED_KEY, JSON.stringify([...set].slice(-200)));
+    localStorage.setItem(DELETED_KEY, JSON.stringify([...set]));
   }
 
   let knownRevision = Number(localStorage.getItem(REVISION_KEY) || 0);
@@ -33,7 +33,12 @@
   // knows this missing workout is intentional rather than stale-tab data loss.
   document.addEventListener("click", event => {
     const button = event.target.closest?.("[data-delete-workout]");
-    if(button) pendingDeleteId = button.dataset.deleteWorkout || null;
+    if(button) {
+      pendingDeleteId = button.dataset.deleteWorkout || null;
+      // The synchronous confirmed-delete handler consumes this marker. A cancelled
+      // dialog must not leave it behind for an unrelated save.
+      queueMicrotask(() => { pendingDeleteId = null; });
+    }
   }, true);
 
   const originalSaveCustomWorkouts = saveCustomWorkouts;

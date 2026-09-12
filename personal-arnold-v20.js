@@ -1,5 +1,5 @@
 // START/NOW personal Arnold split installer v20.
-// This never changes the public beginner-plan generator. It only installs the split
+// This never changes the public plan generator. It only installs the split
 // in the current browser/profile when opened with ?personal=arnold-v20.
 (() => {
   const params = new URLSearchParams(window.location.search);

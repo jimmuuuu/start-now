@@ -611,4 +611,4 @@ function showToast(msg){
   setTimeout(()=>toast.classList.remove("show"),1800);
 }
 
-render();
+// The final bootstrap renders after all page overrides have been installed.

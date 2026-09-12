@@ -20,8 +20,6 @@ The current repository does **not** contain an authentication implementation or 
 - Home page with today's scheduled workout and Start Workout
 - Custom workout creation
 - Exact weekly scheduling
-- Beginner plan generator with goal, training days, location/equipment, and session length
-- Editable beginner-plan preview before saving
 - Multiple plan structures rather than forcing one split
 - Weekly schedule editor
 - 250-exercise library data set

@@ -1,5 +1,5 @@
 // Keeps the newest generated beginner routine as the user's active plan.
-// Loaded after beginner-plan.js so newly generated plans immediately drive the Home tab.
+// Loaded with the plan features so saved plans immediately drive the Home tab.
 (() => {
   const originalRenderHome = renderHome;
   const originalRenderWorkouts = renderWorkouts;

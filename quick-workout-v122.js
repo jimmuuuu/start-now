@@ -320,7 +320,7 @@
         const ex=exerciseLibrary.find(item=>exerciseId(item)===id);
         if(!id||!ex)return;
         setPrescription(id,input.dataset.rxInput,input.value,ex);
-        renderQuickWorkout();
+        input.value=prescription(id,ex)[input.dataset.rxInput];
       }));
 
       document.querySelectorAll('[data-rx-done]').forEach(btn=>btn.addEventListener('click',()=>{

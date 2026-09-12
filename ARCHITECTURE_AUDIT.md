@@ -41,7 +41,6 @@ START/NOW
 │
 ├── Workouts
 │   ├── Builder
-│   ├── Beginner plan wizard
 │   ├── Plan editor
 │   └── Schedule tools
 │
@@ -62,7 +61,7 @@ START/NOW
 | Screen | Route key | Main renderer / owner | Important data |
 |---|---|---|---|
 | Home | `home` | base `renderHome`, then enhanced by `active-plan.js`, `product-pages-v36.js`, `rest-day-v54.js`, Quick Actions | schedule, streak, active workout, current plan |
-| Workouts | `workouts` | base `renderWorkouts`, enhanced by beginner plan / active plan / product plans | `sn_custom_workouts` |
+| Workouts | `workouts` | base `renderWorkouts`, enhanced by active plan / product plans | `sn_custom_workouts` |
 | Builder | `builder` | base `renderBuilder` | `state.builder`, exercise library |
 | Progress | `progress` | base/progress system, enhanced by grading + product pages | `sn_progress_sessions`, grade/streak helpers |
 | Profile | `profile` | base `renderProfile`, enhanced by product pages | profile prefs, streak, saved workouts |

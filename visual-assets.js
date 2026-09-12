@@ -215,5 +215,5 @@
     };
   }
 
-  if (typeof render === "function") render();
+  // The final bootstrap renders after all enhancements are installed.
 })();
