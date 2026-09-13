@@ -1,72 +1,60 @@
-// START/NOW v140 — keep modal sheets scrollable, tappable, and keyboard-focusable on iOS.
+// START/NOW v141 — keep modal sheets natively scrollable and fully interactive on iOS.
 (() => {
   const root = document.documentElement;
   const body = document.body;
   if (!root || !body) return;
 
   const modalSelector = "#snProductModal, #beginnerWizard, .sn-modal-backdrop, .beginner-modal-overlay, #snAuthModal.open";
-  const scrollableModalSelector = ".sn-modal, .beginner-modal, .sn-auth-sheet";
-
-  let locked = false;
-  let scrollY = 0;
-  let previous = null;
-  let restoringScroll = false;
-
-  function isFormEntryTarget(target = document.activeElement) {
-    return Boolean(target && (
-      target.matches?.("input, textarea, select") ||
-      target.isContentEditable
-    ));
-  }
+  let modalOpen = false;
+  let savedScrollY = 0;
 
   const style = document.createElement("style");
   style.id = "snModalScrollLockStyles";
   style.textContent = `
-    html.sn-background-locked,
-    body.sn-background-locked {
-      overflow: hidden !important;
-      overscroll-behavior: none !important;
-      height: 100% !important;
-    }
-    body.sn-background-locked .app-shell {
-      overflow: hidden !important;
-      overscroll-behavior: none !important;
-      touch-action: none !important;
-      pointer-events: none !important;
-    }
     .sn-modal-backdrop,
     .beginner-modal-overlay,
     #snAuthModal.open {
-      overscroll-behavior: none !important;
-      touch-action: auto !important;
       pointer-events: auto !important;
+      touch-action: pan-y pinch-zoom !important;
+      overscroll-behavior: contain !important;
     }
+
     .sn-modal,
     .beginner-modal,
     .sn-auth-sheet {
+      position: relative;
+      z-index: 1;
+      overflow-x: hidden !important;
       overflow-y: auto !important;
-      overscroll-behavior: contain !important;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain !important;
       touch-action: pan-y pinch-zoom !important;
       pointer-events: auto !important;
       min-height: 0;
-      position: relative;
     }
+
     .sn-modal button,
+    .beginner-modal button,
+    .sn-auth-sheet button {
+      pointer-events: auto !important;
+      touch-action: manipulation !important;
+    }
+
     .sn-modal input,
     .sn-modal textarea,
     .sn-modal select,
-    .beginner-modal button,
     .beginner-modal input,
     .beginner-modal textarea,
     .beginner-modal select,
-    .sn-auth-sheet button,
     .sn-auth-sheet input,
     .sn-auth-sheet textarea,
     .sn-auth-sheet select {
       pointer-events: auto !important;
-      touch-action: manipulation !important;
+      touch-action: auto !important;
+      -webkit-user-select: text !important;
+      user-select: text !important;
     }
+
     @supports (height: 100dvh) {
       .sn-modal,
       .beginner-modal,
@@ -74,106 +62,64 @@
         max-height: min(82dvh, 760px);
       }
     }
+
     @media (max-width: 768px) {
-      input,
-      textarea,
-      select {
+      .sn-modal input,
+      .sn-modal textarea,
+      .sn-modal select,
+      .beginner-modal input,
+      .beginner-modal textarea,
+      .beginner-modal select,
+      .sn-auth-sheet input,
+      .sn-auth-sheet textarea,
+      .sn-auth-sheet select {
         font-size: 16px !important;
       }
     }
   `;
   document.head.appendChild(style);
 
-  function modalIsOpen() {
+  function isOpen() {
     return Boolean(document.querySelector(modalSelector));
   }
 
-  function lockBackground() {
-    if (locked) return;
-    locked = true;
-    scrollY = window.scrollY || window.pageYOffset || 0;
+  function syncModalState() {
+    const open = isOpen();
 
-    previous = {
-      htmlOverflow: root.style.overflow,
-      htmlHeight: root.style.height,
-      bodyOverflow: body.style.overflow,
-      bodyHeight: body.style.height
-    };
+    if (open && !modalOpen) {
+      modalOpen = true;
+      savedScrollY = window.scrollY || window.pageYOffset || 0;
+      // Preserve the semantic lock marker used by the rest of the app/tests,
+      // but do not attach any body/html overflow, position, height, inert, or
+      // pointer-event behavior to it. The marker is state only.
+      root.classList.add("sn-background-locked");
+      body.classList.add("sn-background-locked");
+      return;
+    }
 
-    root.classList.add("sn-background-locked");
-    body.classList.add("sn-background-locked");
-
-    root.style.overflow = "hidden";
-    root.style.height = "100%";
-    body.style.overflow = "hidden";
-    body.style.height = "100%";
-
-    // Do not fix the entire body and do not mark .app-shell inert. Fixing body
-    // position can break iOS hit testing, while inert can race focus restoration
-    // when another modal closes. Pointer/touch blocking on the background shell
-    // is enough to keep it non-interactive while the top-level sheet stays live.
-  }
-
-  function unlockBackground() {
-    if (!locked) return;
-    locked = false;
-
-    root.classList.remove("sn-background-locked");
-    body.classList.remove("sn-background-locked");
-
-    root.style.overflow = previous?.htmlOverflow || "";
-    root.style.height = previous?.htmlHeight || "";
-    body.style.overflow = previous?.bodyOverflow || "";
-    body.style.height = previous?.bodyHeight || "";
-    previous = null;
-
-    restoringScroll = true;
-    window.scrollTo(0, scrollY);
-    requestAnimationFrame(() => { restoringScroll = false; });
-  }
-
-  function syncLock() {
-    if (modalIsOpen()) lockBackground();
-    else unlockBackground();
-  }
-
-  function modalForTarget(target) {
-    return target?.closest?.(scrollableModalSelector) || null;
-  }
-
-  function handleWheel(event) {
-    if (!locked) return;
-    if (modalForTarget(event.target)) return;
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  function handleKeydown(event) {
-    if (!locked) return;
-    if (["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(event.target?.tagName)) return;
-
-    const scrollKeys = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "]);
-    if (!scrollKeys.has(event.key)) return;
-
-    const modal = modalForTarget(event.target) || document.querySelector(scrollableModalSelector);
-    if (!modal) event.preventDefault();
-  }
-
-  function enforceScrollPosition() {
-    if (!locked || restoringScroll || isFormEntryTarget()) return;
-    const current = window.scrollY || window.pageYOffset || 0;
-    if (Math.abs(current - scrollY) > 1) {
-      restoringScroll = true;
-      window.scrollTo(0, scrollY);
-      requestAnimationFrame(() => { restoringScroll = false; });
+    if (!open && modalOpen) {
+      modalOpen = false;
+      root.classList.remove("sn-background-locked");
+      body.classList.remove("sn-background-locked");
+      const current = window.scrollY || window.pageYOffset || 0;
+      if (Math.abs(current - savedScrollY) > 1) {
+        requestAnimationFrame(() => window.scrollTo(0, savedScrollY));
+      }
     }
   }
 
-  document.addEventListener("wheel", handleWheel, { passive: false, capture: true });
-  window.addEventListener("scroll", enforceScrollPosition, { passive: true });
-  document.addEventListener("keydown", handleKeydown, { capture: true });
+  // Do not mutate html/body overflow, position, height, inert, pointer-events,
+  // or install document-level touchmove blockers while a sheet is open. Those
+  // patterns can break hit testing and text-field focus in iOS standalone PWAs.
+  // The fixed backdrop already prevents clicks from reaching the workout behind
+  // it, while overscroll containment keeps the sheet's native scrolling local.
+  const observer = new MutationObserver(syncModalState);
+  observer.observe(body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class"]
+  });
 
-  const observer = new MutationObserver(syncLock);
-  observer.observe(body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
-  syncLock();
+  syncModalState();
 })();
