@@ -224,8 +224,13 @@
   };
 
   if ('serviceWorker' in navigator) {
+    // A first installation can gain a controller without being an app update.
+    // Only force a reload on controller changes when this page already had a
+    // controller at boot, which means an existing installed PWA is upgrading.
+    const hadControllerAtBoot = Boolean(navigator.serviceWorker.controller);
+
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      reloadForUpdate();
+      if (hadControllerAtBoot) reloadForUpdate();
     });
 
     navigator.serviceWorker.addEventListener('message', event => {
