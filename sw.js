@@ -70,9 +70,7 @@ self.addEventListener('fetch', event => {
 
   event.respondWith((async () => {
     try {
-      const networkRequest = new Request(request, {
-        cache: request.mode === 'navigate' ? 'reload' : 'no-store'
-      });
+      const networkRequest = new Request(request, { cache: 'no-store' });
       const response = await fetch(networkRequest);
 
       if (response?.ok && response.status !== 206) {
