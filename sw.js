@@ -1,6 +1,6 @@
-// START/NOW service worker — v137 profile photo persistence release.
-// Network-first plus no-store prevents an older browser HTTP cache from winning.
-const CACHE_NAME = 'start-now-shell-v137';
+// START/NOW service worker — v141 cache and iOS PWA refresh hardening.
+const VERSION = 'v141';
+const CACHE_NAME = `start-now-shell-${VERSION}`;
 const APP_SHELL = [
   './',
   './index.html',
@@ -11,12 +11,24 @@ const APP_SHELL = [
   './assets/pwa/apple-touch-icon.png'
 ];
 
+async function cacheFreshShell() {
+  const cache = await caches.open(CACHE_NAME);
+  await Promise.all(APP_SHELL.map(async path => {
+    try {
+      const request = new Request(path, { cache: 'reload' });
+      const response = await fetch(request);
+      if (response?.ok) await cache.put(path, response.clone());
+    } catch (_) {
+      // Installation should still complete if one optional shell asset is offline.
+    }
+  }));
+}
+
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    await cacheFreshShell();
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
@@ -27,12 +39,20 @@ self.addEventListener('activate', event => {
         .filter(key => key.startsWith('start-now-shell-') && key !== CACHE_NAME)
         .map(key => caches.delete(key))
     );
+
+    // Navigation preload can return an older HTTP-cached index before our
+    // explicit no-store request runs. Disable it so every online launch checks
+    // the network for the current app shell first.
     if (self.registration.navigationPreload) {
       try {
-        await self.registration.navigationPreload.enable();
+        await self.registration.navigationPreload.disable();
       } catch (_) {}
     }
+
     await self.clients.claim();
+
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    clients.forEach(client => client.postMessage({ type: 'START_NOW_SW_ACTIVATED', version: VERSION }));
   })());
 });
 
@@ -50,14 +70,10 @@ self.addEventListener('fetch', event => {
 
   event.respondWith((async () => {
     try {
-      let response;
-
-      if (request.mode === 'navigate') {
-        const preload = await event.preloadResponse;
-        response = preload || await fetch(new Request(request, { cache: 'no-store' }));
-      } else {
-        response = await fetch(new Request(request, { cache: 'no-store' }));
-      }
+      const networkRequest = new Request(request, {
+        cache: request.mode === 'navigate' ? 'reload' : 'no-store'
+      });
+      const response = await fetch(networkRequest);
 
       if (response?.ok && response.status !== 206) {
         const cache = await caches.open(CACHE_NAME);
@@ -66,7 +82,7 @@ self.addEventListener('fetch', event => {
 
       return response;
     } catch (error) {
-      const cached = await caches.match(request);
+      const cached = await caches.match(request, { ignoreSearch: false });
       if (cached) return cached;
 
       if (request.mode === 'navigate') {
