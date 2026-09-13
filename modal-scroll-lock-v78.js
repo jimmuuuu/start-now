@@ -2,7 +2,6 @@
 (() => {
   const root = document.documentElement;
   const body = document.body;
-  const appShell = document.querySelector('.app-shell');
   if (!root || !body) return;
 
   const modalSelector = "#snProductModal, #beginnerWizard, .sn-modal-backdrop, .beginner-modal-overlay, #snAuthModal.open";
@@ -36,7 +35,8 @@
       pointer-events: none !important;
     }
     .sn-modal-backdrop,
-    .beginner-modal-overlay {
+    .beginner-modal-overlay,
+    #snAuthModal.open {
       overscroll-behavior: none !important;
       touch-action: auto !important;
       pointer-events: auto !important;
@@ -97,8 +97,7 @@
       htmlOverflow: root.style.overflow,
       htmlHeight: root.style.height,
       bodyOverflow: body.style.overflow,
-      bodyHeight: body.style.height,
-      appShellHadInert: Boolean(appShell?.hasAttribute('inert'))
+      bodyHeight: body.style.height
     };
 
     root.classList.add("sn-background-locked");
@@ -109,10 +108,10 @@
     body.style.overflow = "hidden";
     body.style.height = "100%";
 
-    // Keep the app behind the modal non-interactive without fixing the entire
-    // body. Fixing body position can create iOS hit-testing bugs where the
-    // sheet scrolls visually but inputs and buttons no longer receive taps.
-    if (appShell && !previous.appShellHadInert) appShell.setAttribute('inert', '');
+    // Do not fix the entire body and do not mark .app-shell inert. Fixing body
+    // position can break iOS hit testing, while inert can race focus restoration
+    // when another modal closes. Pointer/touch blocking on the background shell
+    // is enough to keep it non-interactive while the top-level sheet stays live.
   }
 
   function unlockBackground() {
@@ -126,7 +125,6 @@
     root.style.height = previous?.htmlHeight || "";
     body.style.overflow = previous?.bodyOverflow || "";
     body.style.height = previous?.bodyHeight || "";
-    if (appShell && !previous?.appShellHadInert) appShell.removeAttribute('inert');
     previous = null;
 
     restoringScroll = true;
