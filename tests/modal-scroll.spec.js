@@ -29,16 +29,22 @@ async function setupActiveWorkout(page) {
   await expect(page.locator('.sn-workout-screen')).toBeVisible();
 }
 
-test('active workout add-exercise modal keeps native mobile scrolling while the background stays locked', async ({ page }) => {
+test('active workout add-exercise modal keeps native mobile scrolling without mutating the document body', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await setupActiveWorkout(page);
+
+  const before = await page.evaluate(() => ({
+    htmlOverflow: document.documentElement.style.overflow,
+    htmlHeight: document.documentElement.style.height,
+    bodyOverflow: document.body.style.overflow,
+    bodyHeight: document.body.style.height
+  }));
 
   await page.locator('#snAddExerciseToWorkout').click();
 
   const backdrop = page.locator('#snProductModal');
   const modal = backdrop.locator('.sn-modal');
   await expect(modal).toBeVisible();
-  await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains('sn-background-locked'))).toBe(true);
 
   const metrics = await modal.evaluate(node => {
     const style = getComputedStyle(node);
@@ -56,9 +62,22 @@ test('active workout add-exercise modal keeps native mobile scrolling while the 
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
   expect(metrics.touchAction).toContain('pan-y');
   expect(metrics.backdropTouchAction).not.toBe('none');
-  expect(['auto', 'pan-y', 'manipulation']).toContain(metrics.backdropTouchAction);
+  expect(['auto', 'pan-y', 'manipulation', 'pan-y pinch-zoom']).toContain(metrics.backdropTouchAction);
   expect(['auto', 'scroll']).toContain(metrics.overflowY);
   expect(metrics.pointerEvents).not.toBe('none');
+
+  const during = await page.evaluate(() => ({
+    htmlOverflow: document.documentElement.style.overflow,
+    htmlHeight: document.documentElement.style.height,
+    bodyOverflow: document.body.style.overflow,
+    bodyHeight: document.body.style.height,
+    appPointerEvents: getComputedStyle(document.querySelector('.app-shell')).pointerEvents
+  }));
+  expect(during.htmlOverflow).toBe(before.htmlOverflow);
+  expect(during.htmlHeight).toBe(before.htmlHeight);
+  expect(during.bodyOverflow).toBe(before.bodyOverflow);
+  expect(during.bodyHeight).toBe(before.bodyHeight);
+  expect(during.appPointerEvents).not.toBe('none');
 
   await modal.evaluate(node => { node.scrollTop = 0; });
   await modal.hover();
@@ -67,7 +86,6 @@ test('active workout add-exercise modal keeps native mobile scrolling while the 
 
   await backdrop.locator('[data-close]').click();
   await expect(backdrop).toHaveCount(0);
-  await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains('sn-background-locked'))).toBe(false);
 });
 
 test('add-exercise search and exercise choices remain tappable on a touch device', async ({ browser }) => {
