@@ -48,19 +48,18 @@ test('active workout add-exercise modal keeps native mobile scrolling while the 
       scrollHeight: node.scrollHeight,
       touchAction: style.touchAction,
       backdropTouchAction: backdropStyle.touchAction,
-      overflowY: style.overflowY
+      overflowY: style.overflowY,
+      pointerEvents: style.pointerEvents
     };
   });
 
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
   expect(metrics.touchAction).toContain('pan-y');
   expect(metrics.backdropTouchAction).not.toBe('none');
-  expect(metrics.backdropTouchAction).toContain('pan-y');
+  expect(['auto', 'pan-y', 'manipulation']).toContain(metrics.backdropTouchAction);
   expect(['auto', 'scroll']).toContain(metrics.overflowY);
+  expect(metrics.pointerEvents).not.toBe('none');
 
-  // Exercise the browser's real scrolling path instead of only assigning
-  // scrollTop in JavaScript. The old regression test could pass even while an
-  // ancestor touch-action:none made the sheet feel frozen on iOS.
   await modal.evaluate(node => { node.scrollTop = 0; });
   await modal.hover();
   await page.mouse.wheel(0, 420);
@@ -69,4 +68,35 @@ test('active workout add-exercise modal keeps native mobile scrolling while the 
   await backdrop.locator('[data-close]').click();
   await expect(backdrop).toHaveCount(0);
   await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains('sn-background-locked'))).toBe(false);
+});
+
+test('add-exercise search and exercise choices remain tappable on a touch device', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true
+  });
+  const page = await context.newPage();
+
+  await setupActiveWorkout(page);
+  await page.locator('#snAddExerciseToWorkout').tap();
+
+  const backdrop = page.locator('#snProductModal');
+  const search = page.locator('#snActiveExerciseSearch');
+  await expect(backdrop).toBeVisible();
+  await search.tap();
+  await expect(search).toBeFocused();
+
+  await search.fill('biceps curl');
+  const choice = backdrop.locator('[data-add-active]').filter({ hasText: 'Biceps Curl' }).first();
+  await expect(choice).toBeVisible();
+
+  const beforeCount = await page.evaluate(() => window.SN36?.active?.exercises?.length || 0);
+  await choice.tap();
+
+  await expect(backdrop).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.SN36?.active?.exercises?.length || 0)).toBe(beforeCount + 1);
+  await expect.poll(() => page.evaluate(() => window.SN36?.active?.exercises?.some(ex => ex.name === 'Biceps Curl'))).toBe(true);
+
+  await context.close();
 });
