@@ -1,7 +1,8 @@
-// START/NOW v139 — lock the page behind modals without cancelling native iOS sheet scrolling.
+// START/NOW v140 — keep modal sheets scrollable, tappable, and keyboard-focusable on iOS.
 (() => {
   const root = document.documentElement;
   const body = document.body;
+  const appShell = document.querySelector('.app-shell');
   if (!root || !body) return;
 
   const modalSelector = "#snProductModal, #beginnerWizard, .sn-modal-backdrop, .beginner-modal-overlay, #snAuthModal.open";
@@ -32,11 +33,13 @@
       overflow: hidden !important;
       overscroll-behavior: none !important;
       touch-action: none !important;
+      pointer-events: none !important;
     }
     .sn-modal-backdrop,
     .beginner-modal-overlay {
       overscroll-behavior: none !important;
-      touch-action: pan-y !important;
+      touch-action: auto !important;
+      pointer-events: auto !important;
     }
     .sn-modal,
     .beginner-modal,
@@ -44,8 +47,25 @@
       overflow-y: auto !important;
       overscroll-behavior: contain !important;
       -webkit-overflow-scrolling: touch;
-      touch-action: pan-y !important;
+      touch-action: pan-y pinch-zoom !important;
+      pointer-events: auto !important;
       min-height: 0;
+      position: relative;
+    }
+    .sn-modal button,
+    .sn-modal input,
+    .sn-modal textarea,
+    .sn-modal select,
+    .beginner-modal button,
+    .beginner-modal input,
+    .beginner-modal textarea,
+    .beginner-modal select,
+    .sn-auth-sheet button,
+    .sn-auth-sheet input,
+    .sn-auth-sheet textarea,
+    .sn-auth-sheet select {
+      pointer-events: auto !important;
+      touch-action: manipulation !important;
     }
     @supports (height: 100dvh) {
       .sn-modal,
@@ -78,11 +98,7 @@
       htmlHeight: root.style.height,
       bodyOverflow: body.style.overflow,
       bodyHeight: body.style.height,
-      bodyPosition: body.style.position,
-      bodyTop: body.style.top,
-      bodyLeft: body.style.left,
-      bodyRight: body.style.right,
-      bodyWidth: body.style.width
+      appShellHadInert: Boolean(appShell?.hasAttribute('inert'))
     };
 
     root.classList.add("sn-background-locked");
@@ -92,11 +108,11 @@
     root.style.height = "100%";
     body.style.overflow = "hidden";
     body.style.height = "100%";
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.width = "100%";
+
+    // Keep the app behind the modal non-interactive without fixing the entire
+    // body. Fixing body position can create iOS hit-testing bugs where the
+    // sheet scrolls visually but inputs and buttons no longer receive taps.
+    if (appShell && !previous.appShellHadInert) appShell.setAttribute('inert', '');
   }
 
   function unlockBackground() {
@@ -110,11 +126,7 @@
     root.style.height = previous?.htmlHeight || "";
     body.style.overflow = previous?.bodyOverflow || "";
     body.style.height = previous?.bodyHeight || "";
-    body.style.position = previous?.bodyPosition || "";
-    body.style.top = previous?.bodyTop || "";
-    body.style.left = previous?.bodyLeft || "";
-    body.style.right = previous?.bodyRight || "";
-    body.style.width = previous?.bodyWidth || "";
+    if (appShell && !previous?.appShellHadInert) appShell.removeAttribute('inert');
     previous = null;
 
     restoringScroll = true;
@@ -133,8 +145,6 @@
 
   function handleWheel(event) {
     if (!locked) return;
-    // Wheel scrolling is allowed inside the sheet. Outside the sheet the fixed
-    // page remains locked, so the workout behind the modal cannot move.
     if (modalForTarget(event.target)) return;
     event.preventDefault();
     event.stopPropagation();
@@ -152,9 +162,6 @@
   }
 
   function enforceScrollPosition() {
-    // Mobile browsers move the visual viewport to keep the focused field above
-    // the software keyboard. Fighting that scroll can blur the field and close
-    // the keyboard, so leave the viewport alone while the user is typing.
     if (!locked || restoringScroll || isFormEntryTarget()) return;
     const current = window.scrollY || window.pageYOffset || 0;
     if (Math.abs(current - scrollY) > 1) {
@@ -165,10 +172,6 @@
   }
 
   document.addEventListener("wheel", handleWheel, { passive: false, capture: true });
-  // Do not install a document-level touchmove preventDefault handler. On iOS,
-  // cancelling an ancestor touch gesture can disable scrolling for the modal
-  // itself even when the sheet has overflow:auto. The fixed body is sufficient
-  // to keep the background from moving while native sheet scrolling stays live.
   window.addEventListener("scroll", enforceScrollPosition, { passive: true });
   document.addEventListener("keydown", handleKeydown, { capture: true });
 
