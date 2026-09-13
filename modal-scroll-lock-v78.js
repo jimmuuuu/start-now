@@ -1,7 +1,8 @@
 // START/NOW v141 — keep modal sheets natively scrollable and fully interactive on iOS.
 (() => {
+  const root = document.documentElement;
   const body = document.body;
-  if (!body) return;
+  if (!root || !body) return;
 
   const modalSelector = "#snProductModal, #beginnerWizard, .sn-modal-backdrop, .beginner-modal-overlay, #snAuthModal.open";
   let modalOpen = false;
@@ -88,11 +89,18 @@
     if (open && !modalOpen) {
       modalOpen = true;
       savedScrollY = window.scrollY || window.pageYOffset || 0;
+      // Preserve the semantic lock marker used by the rest of the app/tests,
+      // but do not attach any body/html overflow, position, height, inert, or
+      // pointer-event behavior to it. The marker is state only.
+      root.classList.add("sn-background-locked");
+      body.classList.add("sn-background-locked");
       return;
     }
 
     if (!open && modalOpen) {
       modalOpen = false;
+      root.classList.remove("sn-background-locked");
+      body.classList.remove("sn-background-locked");
       const current = window.scrollY || window.pageYOffset || 0;
       if (Math.abs(current - savedScrollY) > 1) {
         requestAnimationFrame(() => window.scrollTo(0, savedScrollY));
