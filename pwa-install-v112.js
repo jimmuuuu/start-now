@@ -1,10 +1,12 @@
-// START/NOW v137 — installable PWA bootstrap, updates, and install guidance.
+// START/NOW v141 — installable PWA bootstrap with aggressive fresh-update checks.
 (() => {
-  const VERSION = 'v137';
-  const SW_URL = './sw.js?v=pwa-v137';
+  const VERSION = 'v141';
+  const BUILD = 'production-v141';
+  const SW_URL = './sw.js?v=pwa-v141';
   const DISMISS_KEY = 'sn_pwa_install_dismissed_until';
   let deferredPrompt = null;
   let installBanner = null;
+  let registration = null;
   let reloadingForUpdate = false;
 
   const isStandalone = () =>
@@ -194,31 +196,67 @@
     window.setTimeout(() => showBanner('ios'), 1600);
   }
 
+  const reloadForUpdate = () => {
+    if (reloadingForUpdate) return;
+    reloadingForUpdate = true;
+    window.location.reload();
+  };
+
+  const activateWaitingWorker = reg => {
+    if (reg?.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    const installing = reg?.installing;
+    if (!installing) return;
+    installing.addEventListener('statechange', () => {
+      if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+        installing.postMessage({ type: 'SKIP_WAITING' });
+      }
+    });
+  };
+
+  const checkForUpdate = async () => {
+    if (!registration) return;
+    try {
+      await registration.update();
+      activateWaitingWorker(registration);
+    } catch (error) {
+      console.warn('Level Up Fitness update check failed', error);
+    }
+  };
+
   if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      reloadForUpdate();
+    });
+
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data?.type !== 'START_NOW_SW_ACTIVATED') return;
+      const currentBuild = document.querySelector('meta[name="startnow-build"]')?.content || '';
+      if (event.data.version === VERSION && currentBuild !== BUILD) reloadForUpdate();
+    });
+
     window.addEventListener('load', async () => {
       try {
-        const hadController = Boolean(navigator.serviceWorker.controller);
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (!hadController || reloadingForUpdate) return;
-          reloadingForUpdate = true;
-          window.location.reload();
-        }, { once: true });
-
-        const registration = await navigator.serviceWorker.register(SW_URL, {
+        registration = await navigator.serviceWorker.register(SW_URL, {
           scope: './',
           updateViaCache: 'none'
         });
-        registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
-        await registration.update();
+        activateWaitingWorker(registration);
+        await checkForUpdate();
       } catch (error) {
         console.warn('Level Up Fitness service worker registration failed', error);
       }
     }, { once: true });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') checkForUpdate();
+    });
+    window.addEventListener('pageshow', () => checkForUpdate());
   }
 
   window.START_NOW_PWA = {
     version: VERSION,
     isStandalone,
+    checkForUpdate,
     install() {
       if (deferredPrompt) return showBanner('native');
       return showIOSHelp();
