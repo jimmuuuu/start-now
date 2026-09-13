@@ -1,4 +1,4 @@
-// START/NOW v138 — keep the page locked behind modals while preserving native iOS modal scrolling.
+// START/NOW v139 — lock the page behind modals without cancelling native iOS sheet scrolling.
 (() => {
   const root = document.documentElement;
   const body = document.body;
@@ -36,10 +36,11 @@
     .sn-modal-backdrop,
     .beginner-modal-overlay {
       overscroll-behavior: none !important;
-      touch-action: none;
+      touch-action: pan-y !important;
     }
     .sn-modal,
-    .beginner-modal {
+    .beginner-modal,
+    .sn-auth-sheet {
       overflow-y: auto !important;
       overscroll-behavior: contain !important;
       -webkit-overflow-scrolling: touch;
@@ -48,7 +49,8 @@
     }
     @supports (height: 100dvh) {
       .sn-modal,
-      .beginner-modal {
+      .beginner-modal,
+      .sn-auth-sheet {
         max-height: min(82dvh, 760px);
       }
     }
@@ -131,17 +133,8 @@
 
   function handleWheel(event) {
     if (!locked) return;
-    // Let the modal own its scrolling. Blocking wheel/touch movement at the
-    // document level can make iOS treat a long sheet as completely frozen.
-    if (modalForTarget(event.target)) return;
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  function handleTouchMove(event) {
-    if (!locked) return;
-    // Native momentum scrolling inside the sheet is more reliable on iOS than
-    // manually deciding whether every touch delta is allowed to scroll.
+    // Wheel scrolling is allowed inside the sheet. Outside the sheet the fixed
+    // page remains locked, so the workout behind the modal cannot move.
     if (modalForTarget(event.target)) return;
     event.preventDefault();
     event.stopPropagation();
@@ -172,7 +165,10 @@
   }
 
   document.addEventListener("wheel", handleWheel, { passive: false, capture: true });
-  document.addEventListener("touchmove", handleTouchMove, { passive: false, capture: true });
+  // Do not install a document-level touchmove preventDefault handler. On iOS,
+  // cancelling an ancestor touch gesture can disable scrolling for the modal
+  // itself even when the sheet has overflow:auto. The fixed body is sufficient
+  // to keep the background from moving while native sheet scrolling stays live.
   window.addEventListener("scroll", enforceScrollPosition, { passive: true });
   document.addEventListener("keydown", handleKeydown, { capture: true });
 
