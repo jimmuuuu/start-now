@@ -29,7 +29,7 @@ async function setupActiveWorkout(page) {
   await expect(page.locator('.sn-workout-screen')).toBeVisible();
 }
 
-test('active workout add-exercise modal remains scrollable while the background is locked', async ({ page }) => {
+test('active workout add-exercise modal keeps native mobile scrolling while the background stays locked', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await setupActiveWorkout(page);
 
@@ -42,21 +42,29 @@ test('active workout add-exercise modal remains scrollable while the background 
 
   const metrics = await modal.evaluate(node => {
     const style = getComputedStyle(node);
-    const maxScroll = Math.max(0, node.scrollHeight - node.clientHeight);
-    node.scrollTop = Math.min(180, maxScroll);
+    const backdropStyle = getComputedStyle(node.parentElement);
     return {
       clientHeight: node.clientHeight,
       scrollHeight: node.scrollHeight,
-      scrollTop: node.scrollTop,
       touchAction: style.touchAction,
+      backdropTouchAction: backdropStyle.touchAction,
       overflowY: style.overflowY
     };
   });
 
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
-  expect(metrics.scrollTop).toBeGreaterThan(0);
   expect(metrics.touchAction).toContain('pan-y');
+  expect(metrics.backdropTouchAction).not.toBe('none');
+  expect(metrics.backdropTouchAction).toContain('pan-y');
   expect(['auto', 'scroll']).toContain(metrics.overflowY);
+
+  // Exercise the browser's real scrolling path instead of only assigning
+  // scrollTop in JavaScript. The old regression test could pass even while an
+  // ancestor touch-action:none made the sheet feel frozen on iOS.
+  await modal.evaluate(node => { node.scrollTop = 0; });
+  await modal.hover();
+  await page.mouse.wheel(0, 420);
+  await expect.poll(() => modal.evaluate(node => node.scrollTop)).toBeGreaterThan(0);
 
   await backdrop.locator('[data-close]').click();
   await expect(backdrop).toHaveCount(0);
