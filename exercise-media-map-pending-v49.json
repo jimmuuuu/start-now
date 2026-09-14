@@ -1,0 +1,132 @@
+[
+  {
+    "appExercise": "Wide-Grip Push-Up",
+    "appId": "wide-grip-push-up",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "JmMVpR3",
+    "mediaUrl": "https://static.exercisedb.dev/media/JmMVpR3.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Standing Dumbbell Shoulder Press",
+    "appId": "standing-dumbbell-shoulder-press",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "A6wtbuL",
+    "mediaUrl": "https://static.exercisedb.dev/media/A6wtbuL.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Arnold Press",
+    "appId": "arnold-press",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "Xy4jlWA",
+    "mediaUrl": "https://static.exercisedb.dev/media/Xy4jlWA.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Single-Arm Lat Pulldown",
+    "appId": "single-arm-lat-pulldown",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "U5INZY6",
+    "mediaUrl": "https://static.exercisedb.dev/media/U5INZY6.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Pendlay Row",
+    "appId": "pendlay-row",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "r0z6xzQ",
+    "mediaUrl": "https://static.exercisedb.dev/media/r0z6xzQ.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "T-Bar Row",
+    "appId": "t-bar-row",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "aaXr7ld",
+    "mediaUrl": "https://static.exercisedb.dev/media/aaXr7ld.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Smith Machine Shrug",
+    "appId": "smith-machine-shrug",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "OUQ0ZyW",
+    "mediaUrl": "https://static.exercisedb.dev/media/OUQ0ZyW.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Rope Hammer Curl",
+    "appId": "rope-hammer-curl",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "HPlPoQA",
+    "mediaUrl": "https://static.exercisedb.dev/media/HPlPoQA.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Rope Triceps Pushdown",
+    "appId": "rope-triceps-pushdown",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "dU605di",
+    "mediaUrl": "https://static.exercisedb.dev/media/dU605di.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "V-Bar Pushdown",
+    "appId": "v-bar-pushdown",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "gAwDzB3",
+    "mediaUrl": "https://static.exercisedb.dev/media/gAwDzB3.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Reverse-Grip Pushdown",
+    "appId": "reverse-grip-pushdown",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "VjYliFZ",
+    "mediaUrl": "https://static.exercisedb.dev/media/VjYliFZ.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Landmine Rotation",
+    "appId": "landmine-rotation",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "QYysSLV",
+    "mediaUrl": "https://static.exercisedb.dev/media/QYysSLV.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  },
+  {
+    "appExercise": "Incline Treadmill Walk",
+    "appId": "incline-treadmill-walk",
+    "provider": "ExerciseDB",
+    "providerExerciseId": "rjiM4L3",
+    "mediaUrl": "https://static.exercisedb.dev/media/rjiM4L3.gif",
+    "mediaType": "gif",
+    "verified": true,
+    "verificationBasis": "strict name/alias + equipment + muscle + movement + GIF load"
+  }
+]
