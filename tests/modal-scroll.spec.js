@@ -105,12 +105,70 @@ test('add-exercise search and exercise choices remain tappable on a touch device
   await search.tap();
   await expect(search).toBeFocused();
 
+  const searchFontSize = await search.evaluate(node => parseFloat(getComputedStyle(node).fontSize));
+  expect(searchFontSize).toBeGreaterThanOrEqual(16);
+
   await search.fill('biceps curl');
   const choice = backdrop.locator('[data-add-active]').filter({ hasText: 'Biceps Curl' }).first();
   await expect(choice).toBeVisible();
 
+  const hitTarget = await choice.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    return { height: rect.height, touchAction: getComputedStyle(node).touchAction };
+  });
+  expect(hitTarget.height).toBeGreaterThanOrEqual(60);
+  expect(['auto', 'manipulation', 'pan-y', 'pan-y pinch-zoom']).toContain(hitTarget.touchAction);
+
   const beforeCount = await page.evaluate(() => window.SN36?.active?.exercises?.length || 0);
   await choice.tap();
+
+  await expect(backdrop).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.SN36?.active?.exercises?.length || 0)).toBe(beforeCount + 1);
+  await expect.poll(() => page.evaluate(() => window.SN36?.active?.exercises?.some(ex => ex.name === 'Biceps Curl'))).toBe(true);
+
+  await context.close();
+});
+
+test('a light touch with small finger drift activates an exercise choice on pointerup', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true
+  });
+  const page = await context.newPage();
+
+  await setupActiveWorkout(page);
+  await page.locator('#snAddExerciseToWorkout').tap();
+
+  const backdrop = page.locator('#snProductModal');
+  const choice = backdrop.locator('[data-add-active]').filter({ hasText: 'Biceps Curl' }).first();
+  await expect(choice).toBeVisible();
+
+  const beforeCount = await page.evaluate(() => window.SN36?.active?.exercises?.length || 0);
+
+  await choice.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    const x = rect.left + Math.min(36, rect.width / 2);
+    const y = rect.top + rect.height / 2;
+    const base = {
+      bubbles: true,
+      cancelable: true,
+      pointerId: 17,
+      pointerType: 'touch',
+      isPrimary: true,
+      button: 0,
+      buttons: 1,
+      clientX: x,
+      clientY: y
+    };
+    node.dispatchEvent(new PointerEvent('pointerdown', base));
+    node.dispatchEvent(new PointerEvent('pointerup', {
+      ...base,
+      buttons: 0,
+      clientX: x + 6,
+      clientY: y + 5
+    }));
+  });
 
   await expect(backdrop).toHaveCount(0);
   await expect.poll(() => page.evaluate(() => window.SN36?.active?.exercises?.length || 0)).toBe(beforeCount + 1);
