@@ -1,5 +1,5 @@
-// START/NOW service worker — v141 cache and iOS PWA refresh hardening.
-const VERSION = 'v141';
+// START/NOW service worker — v143 cache and iOS PWA refresh hardening.
+const VERSION = 'v143';
 const CACHE_NAME = `start-now-shell-${VERSION}`;
 const APP_SHELL = [
   './',
