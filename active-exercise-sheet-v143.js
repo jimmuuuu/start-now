@@ -8,7 +8,7 @@
 
     const style = document.createElement('style');
     style.id = 'sn143MobileExerciseSheetStyles';
-    style.textContent = '
+    style.textContent = `
       #snProductModal{
         align-items:flex-end;
         padding:max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
@@ -64,7 +64,7 @@
           }
         }
       }
-    ';
+    `;
     document.head.appendChild(style);
   }
 
