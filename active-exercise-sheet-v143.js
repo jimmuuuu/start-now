@@ -21,7 +21,9 @@
         display:flex;
         flex-direction:column;
         gap:12px;
-        overflow:hidden;
+        overflow-x:hidden;
+        overflow-y:auto;
+        -webkit-overflow-scrolling:touch;
         overscroll-behavior:contain;
         touch-action:pan-y pinch-zoom;
       }
@@ -36,12 +38,9 @@
         flex:0 0 auto;
       }
       #snProductModal .sn-option-list{
-        min-height:0;
-        flex:1 1 auto;
-        overflow-x:hidden;
-        overflow-y:auto;
-        overscroll-behavior:contain;
-        -webkit-overflow-scrolling:touch;
+        min-height:auto;
+        flex:0 0 auto;
+        overflow:visible;
         padding:1px 2px max(4px, env(safe-area-inset-bottom)) 0;
       }
       #snProductModal .sn-exercise-choice[disabled]{
@@ -191,7 +190,7 @@
       return {
         open: Boolean(modal),
         adding: modal?.dataset.sn143Adding === 'true',
-        scrollable: Boolean(sheet && getComputedStyle(sheet).overflowY === 'hidden')
+        scrollable: Boolean(sheet && ['auto', 'scroll'].includes(getComputedStyle(sheet).overflowY))
       };
     }
   };
