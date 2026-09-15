@@ -1,4 +1,18 @@
 const {test,expect}=require('@playwright/test');
+const fs=require('fs');
+const path=require('path');
+
+test('PWA registration and cache use the same release version',()=>{
+  const root=path.resolve(__dirname,'..');
+  const installer=fs.readFileSync(path.join(root,'pwa-install-v112.js'),'utf8');
+  const worker=fs.readFileSync(path.join(root,'sw.js'),'utf8');
+  const [,installerVersion]=installer.match(/const VERSION = '([^']+)'/)||[];
+  const [,urlVersion]=installer.match(/sw\.js\?v=pwa-([^']+)/)||[];
+  const [,cacheVersion]=worker.match(/start-now-shell-([^']+)/)||[];
+  expect(installerVersion).toBeTruthy();
+  expect(urlVersion).toBe(installerVersion);
+  expect(cacheVersion).toBe(installerVersion);
+});
 
 test.beforeEach(async({page})=>{
   await page.addInitScript(()=>{

@@ -1,7 +1,7 @@
-// START/NOW v137 — installable PWA bootstrap, updates, and install guidance.
+// START/NOW v139 — installable PWA bootstrap, updates, and install guidance.
 (() => {
-  const VERSION = 'v137';
-  const SW_URL = './sw.js?v=pwa-v137';
+  const VERSION = 'v139';
+  const SW_URL = './sw.js?v=pwa-v139';
   const DISMISS_KEY = 'sn_pwa_install_dismissed_until';
   let deferredPrompt = null;
   let installBanner = null;
