@@ -16,6 +16,10 @@ async function open(page, {signedIn=false, fail=false, remote={}, seedProfile=tr
       auth:{getSession:async()=>({data:{session:window.testUser?{user:window.testUser}:null}}),onAuthStateChange:callback=>{window.cloudTest.authEvent=callback},signOut:async()=>{window.cloudTest.signedOut=true;return {error:null}},signInWithPassword:async()=>({error:{message:'Invalid login credentials'}}),resetPasswordForEmail:async(email)=>{cloudTest.resetEmail=email;return {error:null}},updateUser:async()=>{cloudTest.passwordUpdated=true;return {error:null}},signUp:async()=>({data:{session:null},error:null})},
       from(table){let mutation=null; const q={select(){return q},eq(){return q},order(){return q},range(){return q},maybeSingle(){return q},upsert(value){mutation=value;return q},delete(){return q},in(){return q},then(resolve){if(mutation)window.cloudTest.writes.push({table,value:mutation});resolve({error:window.cloudTest.fail?{message:'Service unavailable'}:null,data:table==='profiles'?{app_settings:{start_now_backup:{storage:window.cloudTest.remote}}}:[]})}};return q}
     }}};` }));
+  await page.route('https://raw.githubusercontent.com/yuhonas/free-exercise-db/**',route=>route.fulfill({
+    contentType:'image/png',
+    body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=','base64')
+  }));
   await page.goto('/');
   await expect.poll(()=>page.evaluate(()=>!!window.SN_AUTH)).toBe(true);
   if(openProfile) await page.getByRole('button',{name:'Profile',exact:true}).click();
@@ -153,33 +157,30 @@ test('expired account session isolates its unsynced device data from guest mode'
   expect(await page.evaluate(()=>localStorage.getItem('sn_cloud_archive_test-user'))).toContain('Private plan');
 });
 
-test('unverified substitute movements are never presented as verified demonstrations',async({page})=>{
+test('complete exercise media uses real photo pairs without mislabeling related guides as verified',async({page})=>{
   await open(page);
-  const results=await page.evaluate(()=>['burpee','dumbbell-thruster','dead-hang','ski-erg','cable-hip-abduction'].map(id=>START_NOW_EXERCISE_MEDIA.resolve({id,name:id},{quiet:true})));
-  for(const result of results) expect(result.status).not.toBe('ready');
+  const coverage=await page.evaluate(()=>exerciseLibrary.map(exercise=>{
+    const result=START_NOW_EXERCISE_MEDIA.resolve(exercise,{quiet:true});
+    return {id:exercise.id,status:result.status,type:result.entry?.type,label:result.entry?.mediaLabel || 'Verified media',media:result.entry?.media || []};
+  }));
+  expect(coverage).toHaveLength(251);
+  expect(coverage.filter(item=>item.status!=='ready' || item.type!=='image-pair' || item.media.length!==2)).toEqual([]);
+  for(const id of ['burpee','dumbbell-thruster','dead-hang','ski-erg','cable-hip-abduction']) {
+    expect(coverage.find(item=>item.id===id)?.label).toBe('Photo guide');
+  }
 });
 
-test('every library exercise has a visual and Pec Deck uses its movement guide',async({page})=>{
+test('Pec Deck uses the same real photographic demonstration quality as other exercises',async({page})=>{
   await open(page,{openProfile:false});
-  const coverage=await page.evaluate(()=>exerciseLibrary.map(exercise=>{
-    const media=START_NOW_EXERCISE_MEDIA.resolve(exercise,{quiet:true});
-    const fallback=START_NOW_RENDER_EXERCISE_VISUAL_MEDIA(exercise);
-    return {
-      id:exercise.id,
-      hasVisual:media.status==='ready' || Boolean(fallback?.markup),
-      fallbackKind:fallback?.kind || null,
-      fallbackKey:fallback?.key || null
-    };
-  }));
-  expect(coverage.length).toBeGreaterThan(0);
-  expect(coverage.filter(item=>!item.hasVisual)).toEqual([]);
-  expect(coverage.find(item=>item.id==='pec-deck-fly')).toMatchObject({fallbackKind:'diagram',fallbackKey:'pec-deck'});
+  const result=await page.evaluate(()=>START_NOW_EXERCISE_MEDIA.resolve(exerciseLibrary.find(item=>item.id==='pec-deck-fly'),{quiet:true}));
+  expect(result).toMatchObject({status:'ready',entry:{type:'image-pair',sourceId:'Butterfly'}});
 
   await page.evaluate(()=>{
     const exercise=exerciseLibrary.find(item=>item.id==='pec-deck-fly');
     startWorkout({id:'pec-deck-visual-test',name:'Visual Test',days:[],exercises:[{...exercise,sets:1,reps:10}]});
   });
-  await expect(page.locator('.sn-v42-card [data-v42-fallback="diagram"]')).toBeVisible();
-  await expect(page.locator('.sn-v42-card .sn-v40-poses')).toBeVisible();
+  await expect(page.locator('.sn-v42-card .sn-v42-demo-pair')).toBeVisible();
+  await expect(page.locator('.sn-v42-card [data-v42-media]')).toHaveCount(2);
+  await expect(page.locator('.sn-v42-card .sn-v40-poses')).toHaveCount(0);
   await expect(page.getByText('Exercise demonstration unavailable')).toHaveCount(0);
 });

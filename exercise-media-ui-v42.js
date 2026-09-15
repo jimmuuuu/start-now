@@ -59,7 +59,7 @@
         <div class="sn-v42-loading" data-v42-loading><i></i><i></i><span>Loading demonstration…</span></div>
         <div class="sn-v42-phase"><span>START</span><b>↔</b><span>FINISH</span></div>
       </div>
-      <small class="sn-v42-source">Verified media • ${esc(result.entry.sourceExerciseName || result.entry.source || '')}</small>
+      <small class="sn-v42-source">${esc(result.entry.mediaLabel || 'Verified media')} • ${esc(result.entry.sourceExerciseName || result.entry.source || '')}</small>
     </div>`;
   }
 
