@@ -1,5 +1,5 @@
 // START/NOW v42 — deterministic real exercise media UI.
-// Shows only curated media from exercise-media-manifest-v42.js. Never generates exercise art.
+// Prefers curated media and always falls back to an accurate built-in visual.
 (() => {
   const SN = window.SN36;
   const MEDIA = window.START_NOW_EXERCISE_MEDIA;
@@ -29,6 +29,18 @@
   }
 
   function unavailableMarkup(ex, reason = 'Exercise demonstration unavailable') {
+    try {
+      const fallback = window.START_NOW_RENDER_EXERCISE_VISUAL_MEDIA?.(ex);
+      if (fallback?.markup) {
+        const label = fallback.kind === 'diagram' ? 'Built-in movement guide' : 'Muscle and equipment guide';
+        return `<div class="sn-v42-fallback" data-v42-fallback="${esc(fallback.kind || 'visual')}">
+          <div class="sn-v42-fallback-visual">${fallback.markup}</div>
+          <small>${esc(label)} • ${esc(ex?.name || 'Exercise')}</small>
+        </div>`;
+      }
+    } catch (error) {
+      console.warn('[Exercise Media] Built-in visual fallback failed', { exercise: ex?.name, error });
+    }
     return `<div class="sn-v42-unavailable">
       <div class="sn-v42-no-media" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="11" y="14" width="42" height="34" rx="6"/><path d="M22 27h20M24 38l8-8 8 8"/></svg></div>
       <strong>${esc(reason)}</strong>
@@ -159,15 +171,16 @@
       .sn-v42-frame-stack{position:relative;width:100%;height:100%;min-height:190px;overflow:hidden;background:#f8fafc}.sn-v42-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0}.sn-v42-frame-start{opacity:1}.sn-v42-demo-pair.ready .sn-v42-frame-start{animation:snV42Start 3.2s ease-in-out infinite}.sn-v42-demo-pair.ready .sn-v42-frame-finish{animation:snV42Finish 3.2s ease-in-out infinite}@keyframes snV42Start{0%,42%{opacity:1}52%,90%{opacity:0}100%{opacity:1}}@keyframes snV42Finish{0%,42%{opacity:0}52%,90%{opacity:1}100%{opacity:0}}
       .sn-v42-phase{position:absolute;right:10px;bottom:10px;display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:rgba(17,24,39,.76);color:#fff;font-size:7px;font-weight:900;letter-spacing:.07em}.sn-v42-phase b{font-size:11px;color:#93c5fd}.sn-v42-source{position:absolute;left:10px;bottom:10px;max-width:65%;padding:5px 7px;border-radius:8px;background:rgba(17,24,39,.72);color:#fff;font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:4}
       .sn-v42-video,.sn-v42-image{display:block;width:100%;height:100%;max-height:330px;object-fit:contain;background:#f8fafc}
+      .sn-v42-fallback{width:100%;min-height:190px;display:flex;flex-direction:column;justify-content:center;padding:8px 12px 10px;background:#f8fafc}.sn-v42-fallback-visual{width:100%;min-width:0}.sn-v42-fallback-visual>.sn-v40-poses{width:100%}.sn-v42-fallback-visual>.sn-v40-fallback{min-height:160px}.sn-v42-fallback>small{padding-top:6px;text-align:center;color:var(--muted);font-size:9px;font-weight:750}
       .sn-v42-loading{position:absolute;inset:0;z-index:5;display:grid;place-items:center;align-content:center;gap:8px;padding:24px;background:#f8fafc;transition:opacity .18s ease}.sn-v42-loading.done{opacity:0;pointer-events:none}.sn-v42-loading i{display:block;height:12px;border-radius:999px;background:linear-gradient(90deg,#eef2f7,#dfe6ee,#eef2f7);background-size:200% 100%;animation:snV42Pulse 1.1s linear infinite}.sn-v42-loading i:nth-child(1){width:54%}.sn-v42-loading i:nth-child(2){width:38%}.sn-v42-loading span{font-size:10px;color:#94a3b8;font-weight:750}@keyframes snV42Pulse{to{background-position:-200% 0}}
       .sn-v42-primary{display:flex;gap:8px;align-items:baseline;padding:12px 16px 10px}.sn-v42-primary span{font-size:9px;font-weight:900;letter-spacing:.09em;color:var(--muted)}.sn-v42-primary strong{font-size:12px;color:var(--text)}
       .sn-v42-workout-meta{display:grid;gap:3px;padding:0 16px 10px}.sn-v42-workout-meta strong{font-size:14px;color:var(--text)}.sn-v42-workout-meta span{font-size:11px;color:var(--muted)}
       .sn-v42-unavailable{width:100%;min-height:190px;display:grid;place-items:center;align-content:center;text-align:center;gap:5px;padding:24px;color:var(--text)}.sn-v42-no-media{width:58px;height:58px;border-radius:18px;background:rgba(59,130,246,.08);color:var(--blue);display:grid;place-items:center;margin-bottom:4px}.sn-v42-no-media svg{width:32px;height:32px}.sn-v42-unavailable strong{font-size:14px}.sn-v42-unavailable span{font-size:12px;color:var(--muted)}.sn-v42-unavailable small{max-width:330px;font-size:10px;line-height:1.45;color:var(--muted)}
       .sn-v42-prev-row{display:grid;margin:10px 0}.sn-v42-prev{min-height:46px!important;font-weight:850!important}.sn-v42-prev:disabled{opacity:.38}
-      .sn-v42-card.compact{margin:10px 0 16px;box-shadow:none}.sn-v42-card.compact .sn-v42-head{padding:12px 14px 9px}.sn-v42-card.compact .sn-v42-workout-meta{display:none}.sn-v42-card.compact .sn-v42-media,.sn-v42-card.compact .sn-v42-demo-pair,.sn-v42-card.compact .sn-v42-frame-stack,.sn-v42-card.compact .sn-v42-unavailable{min-height:165px}
+      .sn-v42-card.compact{margin:10px 0 16px;box-shadow:none}.sn-v42-card.compact .sn-v42-head{padding:12px 14px 9px}.sn-v42-card.compact .sn-v42-workout-meta{display:none}.sn-v42-card.compact .sn-v42-media,.sn-v42-card.compact .sn-v42-demo-pair,.sn-v42-card.compact .sn-v42-frame-stack,.sn-v42-card.compact .sn-v42-unavailable,.sn-v42-card.compact .sn-v42-fallback{min-height:165px}
       .sn-v42-detail-stack{display:grid;gap:10px;margin:0 0 14px}.sn-v42-detail{padding:15px 16px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}.sn-v42-detail h3{margin:0 0 8px;font-size:13px}.sn-v42-detail p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}.sn-v42-detail ol,.sn-v42-detail ul{margin:0;padding-left:18px;color:var(--muted);font-size:12px;line-height:1.55}.sn-v42-detail li+li{margin-top:5px}.sn-v42-muscle-tags{display:flex;gap:6px;flex-wrap:wrap}.sn-v42-muscle-tags span{padding:6px 9px;border-radius:999px;background:rgba(59,130,246,.09);color:var(--text);font-size:11px;font-weight:750}
-      @media(max-width:560px){.sn-v42-media,.sn-v42-demo-pair,.sn-v42-frame-stack,.sn-v42-unavailable{min-height:165px}.sn-v42-head strong{font-size:15px}.sn-v42-card{border-radius:20px}.sn-v42-source{max-width:58%}}
-      .dark .sn-v42-card{box-shadow:0 12px 30px rgba(0,0,0,.2)}.dark .sn-v42-media,.dark .sn-v42-frame-stack,.dark .sn-v42-video,.dark .sn-v42-image,.dark .sn-v42-loading{background:#111827}
+      @media(max-width:560px){.sn-v42-media,.sn-v42-demo-pair,.sn-v42-frame-stack,.sn-v42-unavailable,.sn-v42-fallback{min-height:165px}.sn-v42-fallback{padding:6px 8px 8px}.sn-v42-fallback-visual>.sn-v40-fallback{grid-template-columns:95px 1fr;min-height:145px;padding:10px}.sn-v42-head strong{font-size:15px}.sn-v42-card{border-radius:20px}.sn-v42-source{max-width:58%}}
+      .dark .sn-v42-card{box-shadow:0 12px 30px rgba(0,0,0,.2)}.dark .sn-v42-media,.dark .sn-v42-frame-stack,.dark .sn-v42-video,.dark .sn-v42-image,.dark .sn-v42-loading,.dark .sn-v42-fallback{background:#111827}
       @media (prefers-reduced-motion:reduce){.sn-v42-demo-pair.ready .sn-v42-frame-start,.sn-v42-demo-pair.ready .sn-v42-frame-finish{animation:none}.sn-v42-demo-pair.ready .sn-v42-frame-start{opacity:1}.sn-v42-demo-pair.ready .sn-v42-frame-finish{opacity:0}}
     `;
     document.head.appendChild(style);

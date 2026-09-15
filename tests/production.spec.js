@@ -158,3 +158,28 @@ test('unverified substitute movements are never presented as verified demonstrat
   const results=await page.evaluate(()=>['burpee','dumbbell-thruster','dead-hang','ski-erg','cable-hip-abduction'].map(id=>START_NOW_EXERCISE_MEDIA.resolve({id,name:id},{quiet:true})));
   for(const result of results) expect(result.status).not.toBe('ready');
 });
+
+test('every library exercise has a visual and Pec Deck uses its movement guide',async({page})=>{
+  await open(page,{openProfile:false});
+  const coverage=await page.evaluate(()=>exerciseLibrary.map(exercise=>{
+    const media=START_NOW_EXERCISE_MEDIA.resolve(exercise,{quiet:true});
+    const fallback=START_NOW_RENDER_EXERCISE_VISUAL_MEDIA(exercise);
+    return {
+      id:exercise.id,
+      hasVisual:media.status==='ready' || Boolean(fallback?.markup),
+      fallbackKind:fallback?.kind || null,
+      fallbackKey:fallback?.key || null
+    };
+  }));
+  expect(coverage).toHaveLength(250);
+  expect(coverage.filter(item=>!item.hasVisual)).toEqual([]);
+  expect(coverage.find(item=>item.id==='pec-deck-fly')).toMatchObject({fallbackKind:'diagram',fallbackKey:'pec-deck'});
+
+  await page.evaluate(()=>{
+    const exercise=exerciseLibrary.find(item=>item.id==='pec-deck-fly');
+    startWorkout({id:'pec-deck-visual-test',name:'Visual Test',days:[],exercises:[{...exercise,sets:1,reps:10}]});
+  });
+  await expect(page.locator('.sn-v42-card [data-v42-fallback="diagram"]')).toBeVisible();
+  await expect(page.locator('.sn-v42-card .sn-v40-poses')).toBeVisible();
+  await expect(page.getByText('Exercise demonstration unavailable')).toHaveCount(0);
+});

@@ -150,11 +150,17 @@
     return `<div class="sn-v40-poses"><div class="sn-v40-pose"><span>START</span>${item.start()}</div><div class="sn-v40-arrow" aria-hidden="true">→</div><div class="sn-v40-pose"><span>FINISH</span>${item.finish()}</div></div>`;
   }
 
-  function card(ex, compact=false) {
+  function renderMedia(ex) {
     const r = resolve(ex);
+    const markup = r.kind === "asset" ? approvedAsset(ex,r) : r.kind === "diagram" ? diagram(ex,r) : muscleFallback(ex,r);
+    return { ...r, markup };
+  }
+
+  function card(ex, compact=false) {
+    const rendered = renderMedia(ex);
+    const r = rendered;
     const m = SN?.meta?.(ex) || {primary:ex?.muscle || "Exercise",secondary:[]};
-    const media = r.kind === "asset" ? approvedAsset(ex,r) : r.kind === "diagram" ? diagram(ex,r) : muscleFallback(ex,r);
-    return `<section class="sn-v40-card ${compact?"compact":""}" data-v40-exercise="${esc(r.id)}"><div class="sn-v40-card-head"><div><span>EXERCISE GUIDE</span><strong>${esc(ex?.name || "Exercise")}</strong></div><small>${esc(r.equipment)}</small></div><div class="sn-v40-media">${media}</div><div class="sn-v40-muscles"><span>Primary</span><strong>${esc(m.primary || ex?.muscle || "Exercise")}</strong>${(m.secondary||[]).slice(0,2).map(x=>`<em>${esc(x)}</em>`).join("")}</div></section>`;
+    return `<section class="sn-v40-card ${compact?"compact":""}" data-v40-exercise="${esc(r.id)}"><div class="sn-v40-card-head"><div><span>EXERCISE GUIDE</span><strong>${esc(ex?.name || "Exercise")}</strong></div><small>${esc(r.equipment)}</small></div><div class="sn-v40-media">${rendered.markup}</div><div class="sn-v40-muscles"><span>Primary</span><strong>${esc(m.primary || ex?.muscle || "Exercise")}</strong>${(m.secondary||[]).slice(0,2).map(x=>`<em>${esc(x)}</em>`).join("")}</div></section>`;
   }
 
   function safeInfo(ex) {
@@ -220,7 +226,11 @@
   window.START_NOW_EXERCISE_IMAGES=APPROVED_ASSETS;
   window.START_NOW_EXERCISE_VISUAL_MAP=MAP;
   window.START_NOW_RESOLVE_EXERCISE_VISUAL=resolve;
+  window.START_NOW_RENDER_EXERCISE_VISUAL_MEDIA=renderMedia;
   window.START_NOW_RENDER_EXERCISE_VISUAL=card;
   installStyles();hydrate();audit();
+  // v42 owns the workout and detail cards. Keep v40 available only as its
+  // accurate built-in fallback instead of installing a second UI observer.
+  if(window.START_NOW_EXERCISE_MEDIA)return;
   const observer=new MutationObserver(()=>queueMicrotask(()=>{patchWorkout();patchExerciseModal();}));const root=document.getElementById("app");if(root)observer.observe(root,{childList:true,subtree:true});observer.observe(document.body,{childList:true,subtree:true});patchWorkout();patchExerciseModal();
 })();
