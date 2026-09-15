@@ -180,5 +180,5 @@
   // Correct the old placeholder values (12-day streak / 6 completed workouts) as soon
   // as this version loads, then redraw the current page using real history only.
   syncRealStats();
-  render();
+  // product-bootstrap-v36.js performs the first visible render after enhancements load.
 })();

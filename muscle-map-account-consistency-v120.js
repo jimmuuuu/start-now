@@ -17,7 +17,9 @@
   function ensureHost() {
     if (!isHome()) return null;
     const root = document.getElementById("app");
-    if (!root) return null;
+    // During startup the final Home renderer has not populated #app yet.  Do not
+    // create a partial legacy card that would be visible before that renderer.
+    if (!root || !root.children.length) return null;
 
     const existing = findMuscleCard();
     if (existing) return existing;

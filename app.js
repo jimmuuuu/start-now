@@ -611,4 +611,4 @@ function showToast(msg){
   setTimeout(()=>toast.classList.remove("show"),1800);
 }
 
-render();
+// product-bootstrap-v36.js renders once every page enhancement has loaded.

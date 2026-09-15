@@ -215,5 +215,5 @@
     };
   }
 
-  if (typeof render === "function") render();
+  // product-bootstrap-v36.js performs the first visible render after enhancements load.
 })();
