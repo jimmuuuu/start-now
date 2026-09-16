@@ -1,0 +1,130 @@
+# START/NOW Exercise Media Audit — strict final pass v50
+
+No live app files are changed by this audit. These mappings remain staged on the audit branch.
+
+## Coverage
+
+- Total exercises: **250**
+- ExerciseDB approved GIFs: **97** (85 existing + 12 newly approved)
+- Free Exercise DB approved start/end demonstrations: **58**
+- MoveBase approved: **0**
+- WorkoutX approved: **0**
+- wger approved: **0**
+- Other licensed sources approved: **0**
+- Still missing: **95**
+- Accounted accurate demonstrations: **155 / 250 (62%)**
+- Verified working GIFs specifically: **97 / 250 (38.8%)**
+
+## Final strictness correction
+- T-Bar Row: START/NOW says generic T-Bar Row, while the staged provider match is a lever-machine T-bar row. Because the app does not specify that machine setup, this is not strict enough to auto-approve.
+
+## Newly approved ExerciseDB GIFs
+- ✓ Wide-Grip Push-Up → JmMVpR3
+- ✓ Standing Dumbbell Shoulder Press → A6wtbuL
+- ✓ Arnold Press → Xy4jlWA
+- ✓ Single-Arm Lat Pulldown → U5INZY6
+- ✓ Pendlay Row → r0z6xzQ
+- ✓ Smith Machine Shrug → OUQ0ZyW
+- ✓ Rope Hammer Curl → HPlPoQA
+- ✓ Rope Triceps Pushdown → dU605di
+- ✓ V-Bar Pushdown → gAwDzB3
+- ✓ Reverse-Grip Pushdown → VjYliFZ
+- ✓ Landmine Rotation → QYysSLV
+- ✓ Incline Treadmill Walk → rjiM4L3
+
+## Still missing
+- Cable Fly
+- Low-to-High Cable Fly
+- High-to-Low Cable Fly
+- Single-Arm Cable Fly
+- Lean-Away Lateral Raise
+- Landmine Press
+- Single-Arm Landmine Press
+- Z Press
+- Pike Push-Up
+- Hand-Release Pike Push-Up
+- Bent-Over Dumbbell Reverse Fly
+- Chest-Supported Rear Delt Raise
+- Cable Rear Delt Row
+- Assisted Pull-Up
+- Close-Grip Lat Pulldown
+- Neutral-Grip Lat Pulldown
+- Underhand Barbell Row
+- Chest-Supported Dumbbell Row
+- T-Bar Row
+- Chest-Supported T-Bar Row
+- Machine Low Row
+- Wide-Grip Cable Row
+- Single-Arm Cable Row
+- Meadows Row
+- Landmine Row
+- Seal Row
+- TRX Row
+- Rack Pull
+- Conventional Deadlift
+- Back Extension
+- Trap Bar Shrug
+- Suitcase Carry
+- Alternating Dumbbell Curl
+- Straight-Bar Cable Curl
+- Bayesian Cable Curl
+- Straight-Bar Pushdown
+- Overhead Cable Triceps Extension
+- Rope Overhead Extension
+- Single-Arm Dumbbell Triceps Extension
+- Skull Crusher
+- EZ-Bar Skull Crusher
+- Dumbbell Skull Crusher
+- Close-Grip Bench Press
+- Bench Dip
+- Assisted Dip
+- Dumbbell Wrist Curl
+- Dead Hang
+- Towel Hang
+- Pendulum Squat
+- Bulgarian Split Squat
+- Dumbbell Split Squat
+- Step-Up
+- Wall Sit
+- Spanish Squat
+- Cyclist Squat
+- Heel-Elevated Goblet Squat
+- Single-Leg Leg Curl
+- Single-Leg Romanian Deadlift
+- Stiff-Leg Deadlift
+- Smith Machine Hip Thrust
+- Dumbbell Hip Thrust
+- Machine Glute Drive
+- Cable Glute Kickback
+- Machine Glute Kickback
+- Donkey Kick
+- Fire Hydrant
+- Frog Pump
+- Step-Down
+- Curtsy Lunge
+- Cable Hip Abduction
+- Band Hip Abduction
+- Seated Hip Abduction
+- Standing Hip Abduction
+- Lateral Band Walk
+- Single-Leg Calf Raise
+- Tibialis Raise
+- Bird Dog
+- Hollow Hold
+- Hollow Rock
+- Plank Shoulder Tap
+- Swiss Ball Pike
+- V-Up
+- Toe Touch
+- Cable Wood Chop
+- Suitcase March
+- Dumbbell Thruster
+- Kettlebell Goblet Thruster
+- Dumbbell Clean and Press
+- Kettlebell Clean and Press
+- Kettlebell Deadlift
+- Sled Pull
+- Battle Rope Waves
+- Medicine Ball Slam
+- Stair Climber
+- Ski Erg
