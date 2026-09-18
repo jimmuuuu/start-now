@@ -151,7 +151,7 @@ function renderHome(){
   const isCustom=!today.builtIn;
   app.innerHTML = `
     <div class="topbar">
-      <div class="logo">LEVEL <span>UP</span></div>
+      <div class="logo">START <span>NOW</span></div>
       <button class="avatar" data-go="profile">MG</button>
     </div>
 
@@ -222,7 +222,7 @@ function renderHome(){
 function renderWorkouts(){
   const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
   app.innerHTML = `
-    <div class="topbar"><div class="logo">LEVEL <span>UP</span></div><button class="avatar" data-go="profile">MG</button></div>
+    <div class="topbar"><div class="logo">START <span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
     <div class="workouts-heading-row">
       <div>
         <div class="eyebrow">YOUR TRAINING</div>
@@ -451,7 +451,7 @@ function saveWorkoutFromBuilder(){
 function renderProgress(){
   const grade=Math.min(98,82+state.completedWorkouts);
   app.innerHTML=`
-    <div class="topbar"><div class="logo">LEVEL <span>UP</span></div><button class="avatar" data-go="profile">MG</button></div>
+    <div class="topbar"><div class="logo">START <span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
     <h1 class="page-title">Progress</h1>
     <section class="metric-grid">
       <div class="card metric"><small>Workout Grade</small><strong>${grade}%</strong><span class="lime">A</span></div>
@@ -477,7 +477,7 @@ function renderProgress(){
 
 function renderProfile(){
   app.innerHTML=`
-    <div class="topbar"><div class="logo">LEVEL <span>UP</span></div></div>
+    <div class="topbar"><div class="logo">START <span>NOW</span></div></div>
     <h1 class="page-title">Profile</h1>
     <section class="card profile-card">
       <div class="profile-avatar">MG</div>
