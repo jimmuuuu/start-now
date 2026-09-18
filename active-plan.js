@@ -66,7 +66,7 @@
 
     app.innerHTML = `
       <div class="topbar">
-        <div class="logo">LEVEL <span>UP</span></div>
+        <div class="logo">START <span>NOW</span></div>
         <button class="avatar" data-go="profile">MG</button>
       </div>
 

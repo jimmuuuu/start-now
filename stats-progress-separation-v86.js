@@ -237,7 +237,7 @@
     const metrics = {workoutChange, volumeChange, gradeChange, avgVolumeChange};
 
     app.innerHTML = `
-      <div class="topbar"><div class="logo">LEVEL <span>UP</span></div><button class="avatar" data-go="profile">MG</button></div>
+      <div class="topbar"><div class="logo">START <span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
       <div class="progress-title-row">
         <div><div class="eyebrow">TRENDS & CHANGE</div><h1 class="page-title compact-title">Progress</h1></div>
         <div class="progress-grade-pill"><strong>${days}</strong><span>DAY VIEW</span></div>

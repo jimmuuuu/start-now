@@ -261,7 +261,7 @@
     const recent = recentFirst.slice(0,5);
 
     app.innerHTML = `
-      <div class="topbar"><div class="logo">LEVEL <span>UP</span></div><button class="avatar" data-go="profile">MG</button></div>
+      <div class="topbar"><div class="logo">START <span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
       <div class="progress-title-row">
         <div>
           <div class="eyebrow">YOUR TRAINING</div>
