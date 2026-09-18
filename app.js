@@ -256,7 +256,7 @@ function renderWorkouts(){
           <div class="custom-workout-copy">
             <h3>Push Day</h3>
             <p>6 exercises • Chest, Shoulders, Triceps</p>
-            <span class="built-in-label">Level Up Fitness plan</span>
+            <span class="built-in-label">Start Now plan</span>
           </div>
           <button class="mini-start" data-start-default>Start</button>
         </div>
