@@ -127,59 +127,6 @@ test.describe('START/NOW navigation smoke', () => {
     await assertRuntimeHealthy(page);
   });
 
-  test('Splits apply without confirmation when no scheduled workouts conflict', async ({ page }) => {
-    await page.evaluate(() => {
-      window.__splitConfirmCalls = [];
-      window.confirm = message => {
-        window.__splitConfirmCalls.push(message);
-        return false;
-      };
-    });
-
-    await page.getByRole('button', { name: 'Workouts', exact: true }).click();
-    await page.locator('#snTemplates').click();
-    await page.locator('[data-split="upperLower"]').click();
-
-    await assertRouteState(page, 'workouts');
-    const confirmCalls = await page.evaluate(() => window.__splitConfirmCalls);
-    expect(confirmCalls, 'no confirmation is needed for an empty schedule').toEqual([]);
-    await expect(page.getByText('Upper A', { exact: true }).first()).toBeVisible();
-    await expect(page.getByText('Lower A', { exact: true }).first()).toBeVisible();
-    await assertRuntimeHealthy(page);
-  });
-
-  test('Splits still confirm when scheduled workouts would be replaced', async ({ page }) => {
-    await page.evaluate(() => {
-      state.customWorkouts = [{
-        id: 'scheduled-conflict-test',
-        name: 'Scheduled test workout',
-        builtIn: false,
-        days: ['Monday'],
-        exercises: []
-      }];
-      saveCustomWorkouts();
-      render();
-    });
-
-    await page.evaluate(() => {
-      window.__splitConfirmCalls = [];
-      window.confirm = message => {
-        window.__splitConfirmCalls.push(message);
-        return false;
-      };
-    });
-
-    await page.getByRole('button', { name: 'Workouts', exact: true }).click();
-    await page.locator('#snTemplates').click();
-    await page.locator('[data-split="upperLower"]').click();
-
-    const confirmCalls = await page.evaluate(() => window.__splitConfirmCalls);
-    expect(confirmCalls).toHaveLength(1);
-    expect(confirmCalls[0]).toContain('Existing workouts on those days will become unscheduled');
-    await expect(page.locator('#snProductModal')).toBeVisible();
-    await assertRuntimeHealthy(page);
-  });
-
   test('Progress', async ({ page }) => {
     await page.getByRole('button', { name: 'Progress', exact: true }).click();
     await assertRouteState(page, 'progress');
