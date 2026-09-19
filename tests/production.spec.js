@@ -25,15 +25,8 @@ async function open(page, {signedIn=false, fail=false, remote={}, seedProfile=tr
   if(openProfile) await page.getByRole('button',{name:'Profile',exact:true}).click();
 }
 
-test('first-run onboarding saves preferences once and stays dismissed',async({page})=>{
+test('first launch does not show onboarding',async({page})=>{
   await open(page,{seedProfile:false,openProfile:false});
-  await expect(page.getByRole('heading',{name:'Make training fit your week'})).toBeVisible();
-  await page.locator('#snPrefExperience').selectOption('Intermediate');
-  await page.locator('#snSavePrefs').click();
-  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('sn_user_profile_v36')||'null')?.experience)).toBe('Intermediate');
-  await expect(page.getByRole('heading',{name:'Choose a starting structure'})).toBeVisible();
-  await page.locator('#snProductModal [data-close]').click();
-  await page.reload();
   await expect(page.getByRole('heading',{name:'Make training fit your week'})).toHaveCount(0);
 });
 

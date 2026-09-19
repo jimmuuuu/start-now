@@ -50,5 +50,5 @@
   SN.openPreferences=()=>preferences(false);SN.openTemplates=openTemplates;
 
   render=function(){if(state.page==="planEdit")return renderEditor();return priorRender()};
-  onboardingTimer=setTimeout(()=>{onboardingTimer=0;const existing=(state.customWorkouts||[]).length||SN.sessions().length||SN.restoreActive?.();if(!SN.profile()&&!existing&&!sessionStorage.getItem("sn_onboarding_seen_v36")){sessionStorage.setItem("sn_onboarding_seen_v36","1");preferences(true)}},400);
+  // Training preferences remain available from Profile, but never interrupt first launch.
 })();
