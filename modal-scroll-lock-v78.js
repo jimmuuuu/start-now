@@ -107,9 +107,11 @@
       root.classList.remove("sn-background-locked");
       body.classList.remove("sn-background-locked");
       const current = window.scrollY || window.pageYOffset || 0;
-      if (restoreScrollOnClose && Math.abs(current - savedScrollY) > 1) {
+      const splitOwnsScroll = root.dataset.snSplitOwnsScroll === "true";
+      if (restoreScrollOnClose && !splitOwnsScroll && Math.abs(current - savedScrollY) > 1) {
         requestAnimationFrame(() => window.scrollTo(0, savedScrollY));
       }
+      delete root.dataset.snSplitOwnsScroll;
       restoreScrollOnClose = true;
     }
   }
