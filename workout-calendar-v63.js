@@ -79,7 +79,7 @@
     if (future) return workout
       ? { type:"scheduled", key, sessions, workout, isToday, future:true }
       : { type:"neutral", key, sessions, workout:null, isToday, future:true };
-    if (!workout) return { type:"rest", key, sessions, workout:null, isToday, future:false };
+    if (!workout) return { type:schedule.size ? "rest" : "neutral", key, sessions, workout:null, isToday, future:false };
     if (isToday) return { type:"scheduled", key, sessions, workout, isToday:true, future:false };
     return { type:"missed", key, sessions, workout, isToday:false, future:false };
   }
@@ -209,15 +209,15 @@
       return;
     }
     if (info.type === "rest") {
-      host.innerHTML = `<div class="sn63-detail-card rest"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>Rest Day</h3><span class="sn63-status rest">Recovery day</span></div>${icon("moon",22,2.1)}</div><p>Rest days are part of your plan and do not break your streak.</p></div>`;
+      host.innerHTML = `<div class="sn63-detail-card rest"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>Rest Day</h3><span class="sn63-status rest">Recovery</span></div></div></div>`;
       return;
     }
     if (info.type === "missed") {
-      host.innerHTML = `<div class="sn63-detail-card missed"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>${esc(info.workout?.name || "Scheduled workout")}</h3><span class="sn63-status missed">Missed</span></div>${icon("x",22,2.2)}</div><p>This workout was scheduled but no completed workout was logged for this day.</p></div>`;
+      host.innerHTML = `<div class="sn63-detail-card missed"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>${esc(info.workout?.name || "Workout")}</h3><span class="sn63-status missed">Missed</span></div>${icon("x",22,2.2)}</div></div>`;
       return;
     }
     if (info.type === "scheduled") {
-      host.innerHTML = `<div class="sn63-detail-card scheduled"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>${esc(info.workout?.name || "Scheduled workout")}</h3><span class="sn63-status scheduled">Scheduled</span></div></div><p>${info.future?"Upcoming workout on your current plan.":"You still have today to complete this workout."}</p></div>`;
+      host.innerHTML = `<div class="sn63-detail-card scheduled"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>${esc(info.workout?.name || "Workout")}</h3><span class="sn63-status scheduled">Scheduled</span></div></div></div>`;
       return;
     }
     host.innerHTML = `<div class="sn63-detail-card"><div class="sn63-detail-date">${esc(dateLabel)}</div><h3>No workout scheduled</h3></div>`;
@@ -239,7 +239,7 @@
       else if (info.type === "missed") rows.push({date,type:"missed",title:info.workout?.name||"Scheduled workout",sub:"Missed"});
     }
     if (!rows.some(r=>r.type==="completed")) {
-      return `<div class="sn63-empty"><strong>Your training history starts here</strong><span>Complete your first workout and it will appear on this calendar.</span></div>`;
+      return `<div class="sn63-empty"><strong>No workout history</strong></div>`;
     }
     return rows.slice(0,12).map(row => `<button class="sn63-activity-row" data-calendar-day="${dayKey(row.date)}"><div class="sn63-activity-icon ${row.type}">${statusIcon(row.type)}</div><div><strong>${row.date.toLocaleDateString(undefined,{month:"short",day:"numeric"})} — ${esc(row.title)}</strong><span>${esc(row.sub)}</span></div></button>`).join("");
   }
@@ -251,10 +251,11 @@
     const todayMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     const maxFuture = new Date(todayMonth.getFullYear(), todayMonth.getMonth()+1, 1);
     const canNext = visibleMonth < maxFuture;
+    const activity = renderActivity(visibleMonth);
 
     app.innerHTML = `
       <div class="sn63-calendar-page">
-        <div class="sn63-topbar"><button class="sn63-back" aria-label="Back">${icon("arrowLeft",22,2.3)}</button><div><div class="eyebrow">TRAINING HISTORY</div><h1>Workout Calendar</h1></div></div>
+        <div class="sn63-topbar"><button class="sn63-back" aria-label="Back">${icon("arrowLeft",22,2.3)}</button><div><h1>Calendar</h1></div></div>
 
         <section class="card sn63-summary">
           <div><span class="sn63-summary-icon fire">🔥</span><strong>${streaks.current}</strong><small>Current streak</small></div>
@@ -267,14 +268,14 @@
           <div class="sn63-month-head"><button class="sn63-month-btn" data-month="prev" aria-label="Previous month">${icon("chevronLeft",21,2.3)}</button><h2>${MONTH_NAMES[visibleMonth.getMonth()]} ${visibleMonth.getFullYear()}</h2><button class="sn63-month-btn" data-month="next" aria-label="Next month" ${canNext?"":"disabled"}>${icon("chevronRight",21,2.3)}</button></div>
           <div class="sn63-weekdays">${["MON","TUE","WED","THU","FRI","SAT","SUN"].map(d=>`<span>${d}</span>`).join("")}</div>
           <div class="sn63-month-grid">
-            ${cells.map(cell => cell ? `<button class="sn63-day ${cell.type} ${cell.isToday?"today":""} ${selectedKey===cell.key?"selected":""}" data-calendar-day="${cell.key}" aria-label="${cell.date.toLocaleDateString()} ${cell.type}"><span class="sn63-date">${cell.date.getDate()}</span><span class="sn63-day-mark">${statusIcon(cell.type)}</span>${cell.workout && (cell.type==="completed"||cell.type==="scheduled"||cell.type==="missed")?`<small>${esc(cell.workout.name.split(/\s+/).slice(0,2).join(" "))}</small>`:cell.type==="rest"?"<small>Rest</small>":""}</button>` : '<div class="sn63-day blank"></div>').join("")}
+            ${cells.map(cell => cell ? `<button class="sn63-day ${cell.type} ${cell.isToday?"today":""} ${selectedKey===cell.key?"selected":""}" data-calendar-day="${cell.key}" aria-label="${cell.date.toLocaleDateString()} ${cell.type}"><span class="sn63-date">${cell.date.getDate()}</span><span class="sn63-day-mark">${statusIcon(cell.type)}</span>${cell.workout && (cell.type==="completed"||cell.type==="scheduled"||cell.type==="missed")?`<small>${esc(cell.workout.name.split(/\s+/).slice(0,2).join(" "))}</small>`:""}</button>` : '<div class="sn63-day blank"></div>').join("")}
           </div>
           <div class="sn63-legend"><span><i class="completed"></i>Completed</span><span><i class="rest"></i>Rest</span><span><i class="missed"></i>Missed</span><span><i class="scheduled"></i>Scheduled</span></div>
         </section>
 
         <div class="sn63-day-detail"></div>
 
-        <section class="sn63-activity"><div class="section-title-row"><h2>${MONTH_NAMES[visibleMonth.getMonth()]} activity</h2></div><div class="sn63-activity-list">${renderActivity(visibleMonth)}</div></section>
+        ${activity.includes("sn63-empty")?"":`<section class="sn63-activity"><div class="section-title-row"><h2>Activity</h2></div><div class="sn63-activity-list">${activity}</div></section>`}
       </div>`;
 
     document.querySelector('.sn63-back')?.addEventListener('click',()=>{ state.page='home'; render(); });

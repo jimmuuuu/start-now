@@ -259,7 +259,7 @@
       level.id = "snProfileLevel";
       level.className = "sn-profile-level";
       level.type = "button";
-      level.innerHTML = `<span><strong>Training level</strong><small>${escapeHtml(current.experience)}</small></span><b>Change</b>`;
+      level.innerHTML = `<span><strong>Training level</strong><small>${escapeHtml(current.experience)}</small></span><b>›</b>`;
       const marker = card.querySelector(".toggle-row");
       if (marker) marker.insertAdjacentElement("beforebegin", level);
       else card.appendChild(level);

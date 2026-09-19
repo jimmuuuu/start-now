@@ -1,8 +1,8 @@
 // START/NOW v141 — installable PWA bootstrap with aggressive fresh-update checks.
 (() => {
-  const VERSION = 'v141';
-  const BUILD = 'production-v141';
-  const SW_URL = './sw.js?v=pwa-v141';
+  const VERSION = 'v147';
+  const BUILD = 'production-v147';
+  const SW_URL = './sw.js?v=pwa-v147';
   const DISMISS_KEY = 'sn_pwa_install_dismissed_until';
   let deferredPrompt = null;
   let installBanner = null;

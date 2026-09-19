@@ -97,16 +97,16 @@
     setText(page.querySelector('.sn66-top h1'), 'Start Workout');
 
     const modes = {
-      build: ['Create workout', 'Build a one-off session'],
-      existing: ['Saved workouts', 'Start one of your saved workouts'],
-      surprise: ['Quick pick', 'Let Level Up Fitness build one for you']
+      build: ['Create'],
+      existing: ['Saved'],
+      surprise: ['Quick pick']
     };
 
     Object.entries(modes).forEach(([mode, copy]) => {
       const button = page.querySelector(`[data-mode="${mode}"]`);
       if (!button) return;
       setText(button.querySelector('strong'), copy[0]);
-      setText(button.querySelector('strong + span'), copy[1]);
+      button.querySelector('strong + span')?.remove();
     });
 
     const activeMode = page.querySelector('[data-mode].active')?.dataset.mode;
@@ -123,7 +123,6 @@
 
   installStyles();
   const fab = ensureFab();
-  showFirstUseHint(fab);
   patchQuickWorkoutCopy();
 
   const appRoot = document.getElementById('app');

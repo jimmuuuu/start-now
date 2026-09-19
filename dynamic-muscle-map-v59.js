@@ -65,14 +65,14 @@
   function empty(c){
     c.style.display="";
     c.className=c.className.replace(/\bsn(51|52|58|59)-muscle-card\b/g,"").trim()+" sn59-muscle-card";
-    c.innerHTML=`<div class="section-head"><strong class="sn59-kicker">Muscle Focus</strong><a href="#" class="sn59-manage">Manage plan →</a></div><h3 class="sn59-title">No muscle focus today</h3><p class="sn59-subtitle">There is no workout scheduled for today.</p><div class="sn59-empty"><strong>No muscles are assigned</strong><span>Schedule a workout for today and its primary and secondary muscles will appear here.</span></div>`;
+    c.innerHTML=`<div class="section-head"><strong class="sn59-kicker">Muscle focus</strong><a href="#" class="sn59-manage">Manage</a></div><div class="sn59-empty"><strong>No workout today</strong></div>`;
     manage(c);
   }
   function bind(c){const tip=c.querySelector(".sn59-tooltip");if(!tip)return;const show=z=>{tip.innerHTML="<strong>"+esc(z.dataset.muscle)+"</strong><span>"+esc(z.dataset.level)+"</span>";tip.classList.add("show")},hide=()=>tip.classList.remove("show");c.querySelectorAll(".sn59-muscle").forEach(z=>{z.addEventListener("mouseenter",()=>show(z));z.addEventListener("mouseleave",hide);z.addEventListener("focus",()=>show(z));z.addEventListener("blur",hide);z.addEventListener("click",e=>{e.stopPropagation();show(z)})})}
   function draw(){
     styles();const e=window.START_NOW_MUSCLE_MAP,c=card();if(!e?.buildFocus||!c)return;const w=scheduled();if(!w)return empty(c);const f=e.buildFocus(w);c.style.display="";
     c.className=c.className.replace(/\bsn(51|52|58|59)-muscle-card\b/g,"").trim()+" sn59-muscle-card";
-    c.innerHTML=`<div class="section-head"><strong class="sn59-kicker">Muscle Focus</strong><a href="#" class="sn59-manage">Manage plan →</a></div><h3 class="sn59-title">${esc(title(f))}</h3><p class="sn59-subtitle">Primary muscles trained in today’s workout</p><div class="sn59-panel"><div class="sn59-stage">${svg(f)}<div class="sn59-tooltip" role="status" aria-live="polite"></div></div><div class="sn59-legend"><span class="sn59-legend-item sn59-legend-primary"><i class="sn59-legend-dot"></i>Primary</span><span class="sn59-legend-item sn59-legend-secondary"><i class="sn59-legend-dot"></i>Secondary</span><span class="sn59-legend-item"><i class="sn59-legend-dot"></i>Not targeted</span></div><div class="sn59-chips">${chips(f)}</div></div>`;
+    c.innerHTML=`<div class="section-head"><strong class="sn59-kicker">Muscle focus</strong><a href="#" class="sn59-manage">Manage</a></div><h3 class="sn59-title">${esc(title(f))}</h3><div class="sn59-panel"><div class="sn59-stage">${svg(f)}<div class="sn59-tooltip" role="status" aria-live="polite"></div></div><div class="sn59-legend"><span class="sn59-legend-item sn59-legend-primary"><i class="sn59-legend-dot"></i>Primary</span><span class="sn59-legend-item sn59-legend-secondary"><i class="sn59-legend-dot"></i>Secondary</span></div><div class="sn59-chips">${chips(f)}</div></div>`;
     manage(c);bind(c);
   }
   styles();if(typeof renderHome==="function"){const prev=renderHome;window.renderHome=function(...args){const r=prev.apply(this,args);draw();return r}}

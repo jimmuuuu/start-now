@@ -404,7 +404,7 @@
           <div class="sn-auth-error" id="snAuthError" role="alert"></div>
           <button class="sn-auth-submit" id="snAuthSubmit" type="submit">Sign in</button>
         </form>
-        <div class="sn-auth-switch"><span id="snAuthSwitchCopy">New to Level Up Fitness?</span> <button id="snAuthSwitch" type="button">Create account</button></div>
+        <div class="sn-auth-switch"><span id="snAuthSwitchCopy">New to Start Now?</span> <button id="snAuthSwitch" type="button">Create account</button></div>
         <div class="sn-auth-switch"><button id="snForgotPassword" type="button">Forgot password?</button></div>
       </div>`;
     document.body.appendChild(modal);
@@ -430,7 +430,7 @@
     document.getElementById("snAuthIntro").textContent = signup ? "Create an account to protect and sync your training data." : "Back up workouts and keep your history with your account.";
     document.getElementById("snNameField").hidden = !signup;
     document.getElementById("snAuthSubmit").textContent = signup ? "Create account" : "Sign in";
-    document.getElementById("snAuthSwitchCopy").textContent = signup ? "Already have an account?" : "New to Level Up Fitness?";
+    document.getElementById("snAuthSwitchCopy").textContent = signup ? "Already have an account?" : "New to Start Now?";
     document.getElementById("snAuthSwitch").textContent = signup ? "Sign in" : "Create account";
     const password = document.getElementById("snAuthPassword");
     password.autocomplete = signup ? "new-password" : "current-password";
@@ -494,7 +494,7 @@
         if (error) throw error;
         if (!data.session) {
           closeAuth();
-          show("Check your email to confirm your Level Up Fitness account, then sign in.");
+          show("Check your email to confirm your Start Now account, then sign in.");
         } else {
           closeAuth();
           show("Account created. Cloud backup is on.");
@@ -515,7 +515,7 @@
   }
 
   function statusCopy(status){
-    if (!currentUser) return {title:"Saved on this device",detail:"Sign in for cloud backup."};
+    if (!currentUser) return {title:"Saved on this device",detail:"Not signed in"};
     if (status === "syncing") return {title:"Syncing…",detail:currentUser.email || "Your account"};
     if (status === "error") return {title:"Device copy is safe",detail:"Cloud sync will retry automatically."};
     if (status === "pending") return {title:"Waiting for backup",detail:"Your training data is saved on this device."};
@@ -546,12 +546,12 @@
     card.className = "card sn-account-card";
     card.id = "snAccountCard";
     card.innerHTML = currentUser ? `
-      <h2>Account & cloud backup</h2><p>Your training data is backed up to your account and can be restored on another device.</p>
-      <div class="sn-account-status" id="snCloudStatus"><div><strong>Cloud backup on</strong><small>${esc(currentUser.email || "Signed in")}</small></div><i class="sn-cloud-dot synced"></i></div>
+      <h2>Cloud backup</h2>
+      <div class="sn-account-status" id="snCloudStatus"><div><strong>Backup on</strong><small>${esc(currentUser.email || "Signed in")}</small></div><i class="sn-cloud-dot synced"></i></div>
       <div class="sn-account-actions"><button class="sn-account-btn" id="snSyncNow">Sync now</button><button class="sn-account-btn danger" id="snDeleteAccount">Delete account</button></div>
     ` : `
-      <h2>Protect your training data</h2><p>Your workouts are currently saved on this device. Sign in to add cloud backup and cross-device restore.</p>
-      <div class="sn-account-status" id="snCloudStatus"><div><strong>Saved on this device</strong><small>Sign in for cloud backup.</small></div><i class="sn-cloud-dot"></i></div>
+      <h2>Cloud backup</h2>
+      <div class="sn-account-status" id="snCloudStatus"><div><strong>Saved on this device</strong><small>Not signed in</small></div><i class="sn-cloud-dot"></i></div>
       <div class="sn-account-actions"><button class="sn-account-btn primary" id="snSignIn">Sign in</button><button class="sn-account-btn" id="snCreateAccount">Create account</button></div>
     `;
     profileCard.insertAdjacentElement("afterend", card);
@@ -574,7 +574,7 @@
 
   async function deleteAccount(){
     if (!client || !currentUser) return;
-    const confirmed = window.confirm("Delete your Level Up Fitness account and all cloud workout data? This cannot be undone.");
+    const confirmed = window.confirm("Delete your Start Now account and all cloud workout data? This cannot be undone.");
     if (!confirmed) return;
     const second = window.confirm("Are you sure? Your account, workout history, saved plans, and synced notes will be permanently deleted.");
     if (!second) return;
@@ -584,7 +584,7 @@
       if (error) throw error;
       clearUserLocalData();
       try { await client.auth.signOut({scope:"local"}); } catch {}
-      show("Your Level Up Fitness account was deleted.");
+      show("Your Start Now account was deleted.");
       setTimeout(() => window.location.reload(), 500);
     } catch (error) {
       console.error("Level Up Fitness account deletion failed", error);

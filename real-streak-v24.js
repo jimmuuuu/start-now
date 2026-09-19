@@ -130,7 +130,7 @@
 
     const title = card.querySelector(".streak-row strong");
     const value = card.querySelector(".streak-row .lime");
-    if(title) title.textContent = stats.streak > 0 ? "You’re on fire!" : "Start your streak";
+    if(title) title.remove();
     if(value) value.textContent = `${stats.streak} day streak`;
 
     const days = card.querySelector(".days");

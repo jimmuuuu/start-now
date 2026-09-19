@@ -22,10 +22,10 @@
   }
 
   const actions = [
-    {id:'quickWorkout', title:'Quick Workout', subtitle:'Train now', icon:'zap', tone:'coral'},
-    {id:'exerciseLibrary', title:'Exercise Library', subtitle:'Browse exercises', icon:'bookOpen', tone:'bluebg'},
-    {id:'calendar', title:'Workout Calendar', subtitle:'History & streaks', icon:'calendarDays', tone:'limebg'},
-    {id:'myStats', title:'My Stats', subtitle:'See your numbers', icon:'chart', tone:'goldbg'}
+    {id:'quickWorkout', title:'Quick Workout', icon:'zap', tone:'coral'},
+    {id:'exerciseLibrary', title:'Exercise Library', icon:'bookOpen', tone:'bluebg'},
+    {id:'calendar', title:'Calendar', icon:'calendarDays', tone:'limebg'},
+    {id:'myStats', title:'Stats', icon:'chart', tone:'goldbg'}
   ];
 
   const routeMap = {
@@ -66,9 +66,9 @@
     }
 
     section.innerHTML = `<div class="sn70-head"><strong>Quick Actions</strong></div><div class="tiles">${actions.map(item => `
-      <button type="button" class="tile ${item.tone}" data-sn70-action="${item.id}" aria-label="${esc(item.title)} — ${esc(item.subtitle)}">
+      <button type="button" class="tile ${item.tone}" data-sn70-action="${item.id}" aria-label="${esc(item.title)}">
         <div class="sn70-icon">${icon(item.icon,28)}</div>
-        <strong>${esc(item.title)}</strong><span>${esc(item.subtitle)}</span>
+        <strong>${esc(item.title)}</strong>
       </button>`).join('')}</div>`;
 
     section.querySelectorAll('[data-sn70-action]').forEach(button => {

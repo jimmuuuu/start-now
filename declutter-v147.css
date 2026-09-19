@@ -1,0 +1,68 @@
+/* Start Now v147 — compact, action-first layouts across the app. */
+.hero-copy{margin-bottom:14px}
+.hero-copy h1{margin-bottom:0}
+.plan-card,.section-card{margin-bottom:14px}
+
+.sn70-quick-actions{margin:16px 0!important}
+.sn70-quick-actions .tiles{gap:10px}
+.sn70-quick-actions .tile{min-height:128px;padding:18px 16px!important}
+.sn70-quick-actions .tile strong{margin-top:12px!important}
+.sn70-head{margin-bottom:8px!important}
+
+.streak-card{padding:16px!important}
+.streak-card .streak-row{align-items:center}
+.streak-card .lime{font-size:18px;font-weight:800}
+
+.workouts-heading-row{margin-bottom:14px}
+.sn-edit-schedule-card{min-height:56px!important;padding:12px 14px!important}
+.schedule-card{padding-top:16px!important;padding-bottom:16px!important}
+.sn-library-launch{min-height:58px!important;padding:12px 14px!important}
+.workout-library-section .section-title-row{margin-bottom:10px}
+.custom-workout-row{padding-top:14px!important;padding-bottom:14px!important}
+
+.progress-title-row{margin-bottom:12px!important}
+.sn86-range{margin:0 0 14px!important}
+.sn86-change-grid{margin-bottom:12px!important}
+.sn86-change-card,.sn86-trend-card,.progress-section-card{padding:14px!important}
+.sn86-trend-card,.progress-section-card{margin-top:12px!important}
+.sn86-stat-card small{display:none!important}
+.sn86-stat-card strong{margin-bottom:0!important}
+.sn86-section{margin-top:12px!important;padding:15px!important}
+.sn86-section h2{margin-bottom:12px!important}
+
+.sn70-top{margin-bottom:14px!important}
+.sn70-page>.sn86-stat-grid{margin-top:0!important}
+
+.sn66-top{margin-bottom:14px!important}
+.sn66-modes{gap:8px!important;margin-bottom:12px!important}
+.sn66-mode{min-height:76px!important;padding:12px 8px!important}
+.sn66-panel{padding:16px!important}
+.sn66-panel>h2{margin-bottom:12px!important}
+
+.sn63-topbar{margin-bottom:14px!important}
+.sn63-summary{margin-bottom:12px!important}
+.sn63-activity{margin-top:14px!important}
+
+.profile-card{padding-top:18px!important}
+.profile-card>.profile-avatar{margin-bottom:10px}
+.profile-card .toggle-row{min-height:48px;padding-top:10px!important;padding-bottom:10px!important}
+.sn-profile-edit{min-height:50px!important}
+.sn-account-card{padding:15px!important}
+.sn-account-status{margin-top:10px!important}
+
+.sn-page-top>div>span,
+.sn-modal-head>div>span,
+.sn-section-title>div>span{display:none!important}
+
+.sn-modal{padding:18px!important}
+.sn-modal-head{margin-bottom:14px!important}
+.sn-modal-head h2{margin-top:0!important}
+.sn-field{margin-bottom:12px!important}
+
+.sn54-rest-hero,.sn54-section{padding:16px!important}
+.sn54-rest-hero p,.sn54-recovery-item span{display:none!important}
+
+@media(max-width:620px){
+  .sn70-quick-actions .tile{min-height:112px}
+  .sn86-change-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}

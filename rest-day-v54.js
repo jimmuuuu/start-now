@@ -148,9 +148,7 @@
       <div class="plan-grid">
         <div>
           <h2>Rest Day</h2>
-          <p class="sn54-rest-copy">Recovery is part of progress.</p>
           <div class="sn54-rest-meta">
-            <span>No workout scheduled</span>
             ${next ? `<span>Next: ${esc(next.workout.name)} • ${esc(next.day)}</span>` : `<span>Your next workout is scheduled soon</span>`}
           </div>
         </div>
@@ -174,18 +172,17 @@
 
         <section class="card sn54-rest-hero">
           ${moonSvg()}
-          <h2>Today is a recovery day</h2>
-          <p>Taking a rest day gives your body time to recover and helps you stay consistent for your next training session.</p>
+          <h2>Recovery day</h2>
           ${next ? `<div class="sn54-rest-meta" style="justify-content:center"><span>Next workout: ${esc(next.workout.name)} • ${esc(next.day)}</span></div>` : ""}
         </section>
 
         <section class="card sn54-section">
           <h3>Recovery focus</h3>
           <div class="sn54-recovery-grid">
-            <div class="sn54-recovery-item"><strong>Recover</strong><span>Give trained muscles time away from hard lifting.</span></div>
-            <div class="sn54-recovery-item"><strong>Sleep</strong><span>Aim for a regular, full night of sleep.</span></div>
-            <div class="sn54-recovery-item"><strong>Hydrate</strong><span>Drink normally through the day and with meals.</span></div>
-            <div class="sn54-recovery-item"><strong>Eat well</strong><span>Keep regular balanced meals that support recovery.</span></div>
+            <div class="sn54-recovery-item"><strong>Recover</strong></div>
+            <div class="sn54-recovery-item"><strong>Sleep</strong></div>
+            <div class="sn54-recovery-item"><strong>Hydrate</strong></div>
+            <div class="sn54-recovery-item"><strong>Eat well</strong></div>
           </div>
         </section>
 
@@ -199,10 +196,6 @@
           </div>
         </section>
 
-        <div class="sn54-coach">
-          <span>COACH CUE</span>
-          <p>Consistency includes rest. Recover well so you can return ready for your next session.</p>
-        </div>
       </section>
     `;
 

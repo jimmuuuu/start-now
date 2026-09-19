@@ -239,63 +239,40 @@
     app.innerHTML = `
       <div class="topbar"><div class="logo">START <span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
       <div class="progress-title-row">
-        <div><div class="eyebrow">TRENDS & CHANGE</div><h1 class="page-title compact-title">Progress</h1></div>
-        <div class="progress-grade-pill"><strong>${days}</strong><span>DAY VIEW</span></div>
+        <div><h1 class="page-title compact-title">Progress</h1></div>
       </div>
-      <p class="sn86-purpose">Progress answers one question: <strong>how is your training changing?</strong> Everything here is tied to a time window or comparison—not lifetime totals.</p>
 
       <div class="sn86-range" aria-label="Progress time range">
         ${ALLOWED_WINDOWS.map(option => `<button type="button" class="${option === days ? 'active' : ''}" data-sn86-window="${option}">${option}D</button>`).join('')}
       </div>
-      <p class="sn86-comparison-note">Comparing the latest ${days} days with the ${days} days immediately before them.</p>
 
       <section class="sn86-change-grid">
         <div class="card sn86-change-card"><span>Workout frequency</span><strong>${current.length}<small> sessions</small></strong>${deltaMarkup(workoutChange)}</div>
         <div class="card sn86-change-card"><span>Training volume</span><strong>${fmt(currentVolume)}<small> lb</small></strong>${deltaMarkup(volumeChange)}</div>
-        <div class="card sn86-change-card"><span>Avg workout grade</span><strong>${currentGrade === null ? '—' : `${Math.round(currentGrade)}%`}</strong>${deltaMarkup(gradeChange, 'points')}</div>
         <div class="card sn86-change-card"><span>Volume per workout</span><strong>${fmt(currentAvgVolume)}<small> lb</small></strong>${deltaMarkup(avgVolumeChange)}</div>
       </section>
 
       <section class="card progress-section-card consistency-card">
-        <div class="progress-section-head"><div><span class="section-kicker lime">CONSISTENCY</span><h2>Weekly pace</h2></div><div class="progress-ring-small" style="--progress:${adherence * 3.6}deg"><span>${adherence}%</span></div></div>
+        <div class="progress-section-head"><div><h2>Weekly pace</h2></div><div class="progress-ring-small" style="--progress:${adherence * 3.6}deg"><span>${adherence}%</span></div></div>
         <div class="activity-week">
           ${weekDays.map(day => `<div class="activity-day ${day.count ? 'active' : ''} ${day.today ? 'today' : ''}" title="${esc(day.full)}"><div class="activity-dot">${day.count ? '✓' : ''}</div><span>${esc(day.label)}</span></div>`).join('')}
         </div>
-        <p class="sn86-baseline">${esc(progressSummary(current, previous, metrics))}</p>
       </section>
 
       <section class="card sn86-trend-card">
-        <div class="sn86-trend-head"><div><span class="section-kicker blue">TRAINING LOAD</span><h2>Volume trend</h2></div><span>last ${recent.length} in window</span></div>
+        <div class="sn86-trend-head"><div><h2>Volume trend</h2></div></div>
         ${recent.length ? `<div class="sn86-mini-chart" aria-label="Training volume trend">${recent.map(row => {
           const height = Math.max(6, Math.round((n(row.volume) / maxVolume) * 100));
           return `<div class="sn86-bar-wrap" title="${fmt(row.volume)} lb"><div class="sn86-bar-track"><div class="sn86-bar-fill" style="height:${height}%"></div></div><small>${dateLabel(row.timestamp)}</small></div>`;
-        }).join('')}</div>` : '<div class="sn86-empty">No workout volume in this period yet.</div>'}
-      </section>
-
-      <section class="card sn86-trend-card">
-        <div class="sn86-trend-head"><div><span class="section-kicker coral-text">WORKOUT QUALITY</span><h2>Grade trend</h2></div><span>session by session</span></div>
-        ${recent.length ? `<div class="sn86-mini-chart" aria-label="Workout grade trend">${recent.map(row => {
-          const grade = Math.max(0, Math.min(100, n(row.grade)));
-          return `<div class="sn86-bar-wrap" title="${grade}%"><div class="sn86-bar-track"><div class="sn86-bar-fill coral" style="height:${Math.max(6, grade)}%"></div></div><small>${dateLabel(row.timestamp)}</small></div>`;
-        }).join('')}</div>` : '<div class="sn86-empty">No workout grades in this period yet.</div>'}
+        }).join('')}</div>` : '<div class="sn86-empty">No data yet</div>'}
       </section>
 
       <section class="card progress-section-card">
-        <div class="progress-section-head"><div><span class="section-kicker gold">TRAINING BALANCE</span><h2>Muscle focus</h2></div><span class="section-meta">selected period</span></div>
+        <div class="progress-section-head"><div><h2>Muscle focus</h2></div></div>
         ${muscles.length ? `<div class="muscle-progress-list">${muscles.map(([muscle, sets]) => {
           const share = Math.round((sets / muscleSetTotal) * 100);
           return `<div class="muscle-progress-row"><div class="muscle-progress-label"><span>${esc(muscle)}</span><strong>${share}% of sets</strong></div><div class="muscle-progress-track"><div class="muscle-progress-fill" style="width:${share}%"></div></div></div>`;
-        }).join('')}</div>` : '<div class="sn86-empty">Log completed sets to see how your training is distributed.</div>'}
-      </section>
-
-      <section class="card progress-section-card">
-        <div class="progress-section-head"><div><span class="section-kicker blue">PERIOD COMPARISON</span><h2>What changed</h2></div><span class="section-meta">vs previous ${days}D</span></div>
-        <div class="sn86-change-list">
-          <div class="sn86-change-row"><div><strong>Workout frequency</strong><small>${current.length} now vs ${previous.length} before</small></div>${deltaMarkup(workoutChange)}</div>
-          <div class="sn86-change-row"><div><strong>Total training volume</strong><small>${fmt(currentVolume)} lb now vs ${fmt(previousVolume)} lb before</small></div>${deltaMarkup(volumeChange)}</div>
-          <div class="sn86-change-row"><div><strong>Average workout quality</strong><small>${currentGrade === null ? '—' : `${Math.round(currentGrade)}%`} now vs ${previousGrade === null ? '—' : `${Math.round(previousGrade)}%`} before</small></div>${deltaMarkup(gradeChange, 'points')}</div>
-        </div>
-        <p class="progress-helper">A higher training volume is not automatically better. This screen shows change so you can judge it alongside workout quality and consistency.</p>
+        }).join('')}</div>` : '<div class="sn86-empty">No data yet</div>'}
       </section>
     `;
 
@@ -337,23 +314,19 @@
 
     app.innerHTML = `
       <section class="sn70-page">
-        <div class="sn70-top"><button type="button" class="sn70-back" id="sn86StatsBack" aria-label="Back">←</button><div><div class="eyebrow">LIFETIME RECORD</div><h1>My Stats</h1></div></div>
-        <p class="sn86-purpose">My Stats is your <strong>all-time record book</strong>: totals, averages, bests, and records. It does not try to tell you whether you are improving.</p>
-        <div class="sn86-lifetime-banner"><strong>All-time logged data</strong><span>No 7-day or 30-day window. No comparison with a previous period. These numbers accumulate for as long as you use Level Up Fitness.</span></div>
+        <div class="sn70-top"><button type="button" class="sn70-back" id="sn86StatsBack" aria-label="Back">←</button><div><h1>Stats</h1></div></div>
 
         <div class="sn86-stat-grid">
           <div class="card sn86-stat-card"><span>Total workouts</span><strong>${rows.length}</strong><small>all logged sessions</small></div>
           <div class="card sn86-stat-card"><span>Total training time</span><strong>${fmtMinutes(totalMinutes)}</strong><small>lifetime time logged</small></div>
           <div class="card sn86-stat-card"><span>Total completed sets</span><strong>${fmt(totalSets)}</strong><small>lifetime sets</small></div>
           <div class="card sn86-stat-card"><span>Lifetime volume</span><strong>${fmt(totalVolume)}</strong><small>lb logged</small></div>
-          <div class="card sn86-stat-card"><span>Average grade</span><strong>${avgGrade === null ? '—' : `${Math.round(avgGrade)}%`}</strong><small>across all workouts</small></div>
-          <div class="card sn86-stat-card"><span>Best workout grade</span><strong>${bestGrade === null ? '—' : `${Math.round(bestGrade)}%`}</strong><small>all-time best session</small></div>
           <div class="card sn86-stat-card"><span>Longest streak</span><strong>${n(streaks.longest)}</strong><small>all-time scheduled streak</small></div>
           <div class="card sn86-stat-card"><span>Exercises tracked</span><strong>${uniqueExercises}</strong><small>unique logged exercises</small></div>
         </div>
 
         <section class="card sn86-section">
-          <h2>Per-workout averages</h2>
+          <h2>Averages</h2>
           <div class="sn86-average-grid">
             <div class="sn86-average"><strong>${Math.round(avgMinutes)}m</strong><span>time / workout</span></div>
             <div class="sn86-average"><strong>${Math.round(avgSets)}</strong><span>sets / workout</span></div>
@@ -362,20 +335,13 @@
         </section>
 
         <section class="card sn86-section">
-          <h2>All-time strongest logged lifts</h2>
+          <h2>Strongest lifts</h2>
           ${lifts.length ? lifts.slice(0, 5).map(lift => `<div class="sn86-record-row"><div><strong>${esc(lift.name)}</strong><small>${esc(lift.muscle)} • best logged ${dateLabel(lift.timestamp)}</small></div><b>${fmt(lift.weight)} lb</b></div>`).join('') : '<div class="sn86-empty">Complete weighted sets to build your all-time lift records.</div>'}
         </section>
 
         <section class="card sn86-section">
-          <h2>Workout grade distribution</h2>
-          <div class="sn86-grade-dist">
-            ${Object.entries(distribution).map(([letter, count]) => `<div class="sn86-grade-box"><strong>${letter}</strong><span>${count} workout${count === 1 ? '' : 's'}</span></div>`).join('')}
-          </div>
-        </section>
-
-        <section class="card sn86-section">
-          <h2>Most trained muscle groups — all time</h2>
-          ${muscles.length ? muscles.map(([muscle, activity]) => `<div class="sn86-record-row"><div><strong>${esc(muscle)}</strong><small>primary and secondary work from completed sets</small></div><b>${fmt(activity)} pts</b></div>`).join('') : '<div class="sn86-empty">Complete workouts to build your lifetime muscle-group totals.</div>'}
+          <h2>Most trained muscles</h2>
+          ${muscles.length ? muscles.map(([muscle, activity]) => `<div class="sn86-record-row"><div><strong>${esc(muscle)}</strong></div><b>${fmt(activity)} pts</b></div>`).join('') : '<div class="sn86-empty">No data yet</div>'}
         </section>
       </section>
     `;

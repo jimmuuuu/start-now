@@ -62,12 +62,11 @@
     button.type = "button";
     button.id = "snEditSchedule";
     button.className = "sn-edit-schedule-card";
-    button.innerHTML = `<span class="sn-edit-schedule-icon">✎</span><span class="sn-edit-schedule-copy"><strong>Edit my schedule</strong><span>Click and drag any workout card to a different day.</span></span><span class="sn-edit-schedule-arrow">›</span>`;
+    button.innerHTML = `<span class="sn-edit-schedule-icon">✎</span><span class="sn-edit-schedule-copy"><strong>Edit schedule</strong></span><span class="sn-edit-schedule-arrow">›</span>`;
     button.addEventListener("click", openEditor);
     const banner = document.querySelector(".active-plan-banner");
     if(banner) banner.insertAdjacentElement("afterend", button); else schedule.insertAdjacentElement("beforebegin", button);
-    const sub = schedule.querySelector(".schedule-sub");
-    if(sub) sub.textContent = "Click and drag a workout card to move it, or tap Change.";
+    schedule.querySelector(".schedule-sub")?.remove();
   }
 
   function buildDraft(){
@@ -223,12 +222,11 @@
     modal.innerHTML = `
       <div class="sn-schedule-top"><button type="button" class="sn-schedule-back" id="snBackSchedule">←</button><div class="sn-schedule-kicker">${day.toUpperCase()}</div><button type="button" class="sn-schedule-close" id="snCloseSchedule">×</button></div>
       <h1 id="snScheduleTitle">Choose ${day}.</h1>
-      <p class="sn-schedule-sub">Pick a workout or make this a rest day.</p>
       <div class="sn-schedule-picker">
         <button type="button" class="sn-picker-row ${!currentId ? "selected" : ""}" data-workout-id=""><span class="sn-day-box">☾</span><span class="sn-picker-copy"><strong>Rest day</strong><span>No workout scheduled</span></span><span class="sn-picker-check">${!currentId ? "✓" : ""}</span></button>
         ${editableWorkouts.map(w => `<button type="button" class="sn-picker-row ${currentId === w.id ? "selected" : ""}" data-workout-id="${escapeHtml(w.id)}"><span class="sn-day-box">🏋</span><span class="sn-picker-copy"><strong>${escapeHtml(w.name)}</strong><span>${w.exercises?.length || 0} exercises • ${escapeHtml(workoutMuscles(w))}</span></span><span class="sn-picker-check">${currentId === w.id ? "✓" : ""}</span></button>`).join("")}
       </div>
-      <div class="sn-schedule-note">If you choose a workout already assigned elsewhere, Level Up Fitness swaps the two days automatically.</div>`;
+      `;
     document.getElementById("snBackSchedule").onclick = () => { pickingDay = null; renderEditor(); };
     document.getElementById("snCloseSchedule").onclick = closeEditor;
     document.querySelectorAll("[data-workout-id]").forEach(btn => btn.onclick = () => chooseForDay(day,btn.dataset.workoutId || null));

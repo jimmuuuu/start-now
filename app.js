@@ -225,7 +225,6 @@ function renderWorkouts(){
     <div class="topbar"><div class="logo">START <span>NOW</span></div><button class="avatar" data-go="profile">MG</button></div>
     <div class="workouts-heading-row">
       <div>
-        <div class="eyebrow">YOUR TRAINING</div>
         <h1 class="page-title compact-title">Workouts</h1>
       </div>
       <button class="create-workout-btn" id="createWorkout">＋ Create</button>
@@ -233,7 +232,7 @@ function renderWorkouts(){
 
     <section class="card schedule-card">
       <div class="section-head schedule-head">
-        <div><strong>Weekly schedule</strong><div class="schedule-sub">Tap Create to build your own routine.</div></div>
+        <div><strong>Weekly schedule</strong></div>
       </div>
       <div class="weekly-schedule">
         ${days.map(day=>{
@@ -249,7 +248,7 @@ function renderWorkouts(){
     </section>
 
     <section class="workout-library-section">
-      <div class="section-title-row"><h2>My workouts</h2><span>${state.customWorkouts.length+1} total</span></div>
+      <div class="section-title-row"><h2>My workouts</h2></div>
       <div class="list">
         <div class="card custom-workout-row">
           <div class="workout-icon coral-icon">🏋</div>
@@ -325,13 +324,12 @@ function renderBuilder(){
       </div>
 
       <h1 class="builder-title">Build your workout.</h1>
-      <p class="builder-intro">Choose exactly what you want to train, then put it on your weekly schedule.</p>
 
       <label class="builder-label" for="workoutName">Workout name</label>
       <input class="builder-name-input" id="workoutName" maxlength="32" placeholder="Example: Back + Biceps" value="${escapeHtml(state.builder.name)}" />
 
       <div class="builder-section-heading">
-        <div><h2>Training days</h2><p>Optional — you can use a workout without scheduling it.</p></div>
+        <div><h2>Training days <small>(optional)</small></h2></div>
       </div>
       <div class="builder-days">
         ${days.map(day=>`<button class="builder-day ${state.builder.days.includes(day)?"selected":""}" data-builder-day="${day}"><strong>${shortDay(day).slice(0,1)}</strong><span>${shortDay(day)}</span></button>`).join("")}
@@ -482,14 +480,12 @@ function renderProfile(){
     <section class="card profile-card">
       <div class="profile-avatar">MG</div>
       <h2 style="margin:0">Marcus</h2>
-      <p style="color:var(--muted)">Beginner • Building consistency</p>
       <div class="toggle-row">
-        <div style="text-align:left"><strong>Dark mode</strong><div style="color:var(--muted);font-size:12px">Optional theme</div></div>
+        <div style="text-align:left"><strong>Dark mode</strong></div>
         <button class="switch ${state.dark?"on":""}" id="darkToggle"><span></span></button>
       </div>
       <div class="toggle-row"><span>Saved workouts</span><strong>${state.customWorkouts.length}</strong></div>
       <div class="toggle-row"><span>Workout streak</span><strong>${state.streak} days</strong></div>
-      <div class="toggle-row"><span>Overall grade</span><strong class="lime">A • 88%</strong></div>
       <div class="toggle-row"><span>Completed workouts</span><strong>${state.completedWorkouts}</strong></div>
     </section>`;
   bindCommon();

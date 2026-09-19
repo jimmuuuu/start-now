@@ -102,7 +102,6 @@
       if(row) row.remove();
     });
 
-    const count = document.querySelector(".workout-library-section .section-title-row span");
-    if(count) count.textContent = `${state.customWorkouts.length} total`;
+    document.querySelector(".workout-library-section .section-title-row span")?.remove();
   };
 })();
