@@ -1,7 +1,8 @@
 import fs from 'node:fs/promises';
 
 const APP_FILES = ['app.js', 'exercise-library-extra.js'];
-const API_URL = 'https://oss.exercisedb.dev/api/v1/exercises?limit=2000&offset=0';
+const ACTIVE_MEDIA_JS = 'complete-exercise-media-v105.js';
+const API_URL = 'https://oss.exercisedb.dev/api/v1/exercises?limit=25';
 const OUTPUT_JS = 'exercise-media-map-v43.js';
 const OUTPUT_REPORT = 'EXERCISE_MEDIA_COVERAGE_V43.md';
 
@@ -87,6 +88,18 @@ const normalize = value => String(value || '')
   .map(token => ({raises:'raise',curls:'curl',rows:'row',extensions:'extension',presses:'press',flyes:'fly',flys:'fly',lunges:'lunge',squats:'squat'}[token] || token))
   .join(' ');
 
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+async function fetchProviderPage(url) {
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const res = await fetch(url, { headers:{Accept:'application/json'} });
+    if (res.status !== 429) return res;
+    const retryAfter = Number(res.headers.get('retry-after'));
+    await wait(Number.isFinite(retryAfter) ? retryAfter * 1000 : 1000 * (attempt + 1));
+  }
+  throw new Error('ExerciseDB rate limit did not clear after retries.');
+}
+
 const inferEquipment = name => {
   const n = normalize(name);
   const checks = [
@@ -136,17 +149,44 @@ async function getAllExercises() {
   return deduped;
 }
 
+async function activeMediaCoverage(exercises) {
+  const source = await fs.readFile(ACTIVE_MEDIA_JS, 'utf8');
+  const match = source.match(/const COMPLETE_MEDIA_MAP\s*=\s*(\{[\s\S]*?\n\s*\})\s*;/);
+  if (!match) throw new Error(`Could not read COMPLETE_MEDIA_MAP from ${ACTIVE_MEDIA_JS}.`);
+  const map = JSON.parse(match[1]);
+  const missing = exercises.filter(ex => !String(map[ex.id] || '').trim());
+  return { map, missing };
+}
+
 async function getProvider() {
-  const res = await fetch(API_URL, { headers:{Accept:'application/json'} });
-  if (!res.ok) throw new Error(`ExerciseDB request failed: ${res.status}`);
-  const json = await res.json();
-  const rows = Array.isArray(json) ? json : Array.isArray(json?.data) ? json.data : Array.isArray(json?.results) ? json.results : [];
+  const rows = [];
+  let cursor = '';
+  for (let page = 0; page < 100; page++) {
+    const url = new URL(API_URL);
+    if (cursor) url.searchParams.set('after', cursor);
+    const res = await fetchProviderPage(url);
+    if (!res.ok) throw new Error(`ExerciseDB request failed: ${res.status}`);
+    const json = await res.json();
+    const pageRows = Array.isArray(json) ? json : Array.isArray(json?.data) ? json.data : Array.isArray(json?.results) ? json.results : [];
+    rows.push(...pageRows);
+    if (!json?.meta?.hasNextPage) break;
+    const next = String(json.meta.nextCursor || '');
+    if (!next || next === cursor) throw new Error('ExerciseDB pagination stopped before the final page.');
+    cursor = next;
+    await wait(300);
+  }
   if (rows.length < 1000) throw new Error(`ExerciseDB returned only ${rows.length} rows; refusing to generate a partial map.`);
-  return rows.filter(row => row?.exerciseId && row?.name && row?.gifUrl);
+  return [...new Map(rows.map(row => [row.exerciseId, row])).values()]
+    .filter(row => row?.exerciseId && row?.name && row?.gifUrl)
+    .map(row => ({
+      ...row,
+      equipments:Array.isArray(row.equipments) ? row.equipments : row.equipments ? [row.equipments] : row.equipment ? [row.equipment] : [],
+      targetMuscles:Array.isArray(row.targetMuscles) ? row.targetMuscles : row.targetMuscles ? [row.targetMuscles] : []
+    }));
 }
 
 function providerEquipment(row) {
-  const arr = Array.isArray(row.equipments) ? row.equipments : row.equipment ? [row.equipment] : [];
+  const arr = Array.isArray(row.equipments) ? row.equipments : row.equipments ? [row.equipments] : row.equipment ? [row.equipment] : [];
   return arr.map(normalize);
 }
 
@@ -205,6 +245,14 @@ function markdown(exercises, matched, missing, broken) {
 
 async function main() {
   const exercises = await getAllExercises();
+  const active = await activeMediaCoverage(exercises);
+  if (!active.missing.length) {
+    console.log(`[media] active app map covers ${exercises.length}/${exercises.length} exercises.`);
+    console.log('PASS — 100% exercise media coverage in the active app media map.');
+    return;
+  }
+
+  console.warn(`[media] active app map is missing ${active.missing.length} exercises; checking ExerciseDB for approved additions.`);
   const provider = await getProvider();
   console.log(`[media] app exercises=${exercises.length}; provider exercises=${provider.length}`);
 
