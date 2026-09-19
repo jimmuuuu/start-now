@@ -125,10 +125,6 @@
       setVisual(iconSlot, exerciseById(row.dataset.libraryEx));
     });
 
-    document.querySelectorAll(".streak-card .fire").forEach(node => {
-      if (!node.querySelector(".sn101-icon")) node.innerHTML = icon("flame", 29);
-    });
-
     document.querySelectorAll(".sn-streak-celebration").forEach(node => {
       if (!node.querySelector(".sn101-inline-icon")) replaceLeadingEmoji(node, icon("flame", 17));
     });
