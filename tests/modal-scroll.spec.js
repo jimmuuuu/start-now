@@ -88,6 +88,55 @@ test('active workout add-exercise modal keeps native mobile scrolling without mu
   await expect(backdrop).toHaveCount(0);
 });
 
+test('workout splits use a compact centered dialog and lock background scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.goto('/?e2e=splits-dialog', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+    const spacer = document.createElement('div');
+    spacer.id = 'snSplitScrollTestSpacer';
+    spacer.style.height = '1200px';
+    document.body.appendChild(spacer);
+    window.scrollTo(0, 240);
+  });
+
+  const beforeY = await page.evaluate(() => window.scrollY);
+  await page.getByRole('button', { name: 'Workouts', exact: true }).click();
+  await page.locator('#snTemplates').click();
+
+  const backdrop = page.locator('#snProductModal.sn-splits-modal');
+  const dialog = backdrop.locator('.sn-splits-dialog');
+  await expect(dialog).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Workout splits', exact: true })).toBeVisible();
+  await expect(backdrop.locator('[data-split]')).toHaveCount(5);
+
+  const metrics = await dialog.evaluate(node => ({
+    height: node.getBoundingClientRect().height,
+    viewportHeight: window.innerHeight,
+    overflowY: getComputedStyle(node).overflowY,
+    backdropAlign: getComputedStyle(node.parentElement).alignItems,
+    columns: getComputedStyle(node.querySelector('.sn-splits-list')).gridTemplateColumns,
+    bodyPosition: getComputedStyle(document.body).position,
+    bodyOverflow: getComputedStyle(document.body).overflow
+  }));
+
+  expect(metrics.height).toBeLessThan(metrics.viewportHeight * 0.75);
+  expect(metrics.overflowY).toBe('hidden');
+  expect(metrics.backdropAlign).toBe('center');
+  expect(metrics.columns.split(' ').length).toBe(2);
+  expect(metrics.bodyPosition).toBe('fixed');
+  expect(metrics.bodyOverflow).toBe('hidden');
+
+  await page.mouse.wheel(0, 500);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+
+  await backdrop.locator('[data-close]').click();
+  await expect(backdrop).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(beforeY);
+  expect(await page.evaluate(() => document.body.style.position)).toBe('');
+});
+
 test('add-exercise search and exercise choices remain tappable on a touch device', async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },

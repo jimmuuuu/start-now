@@ -3,7 +3,7 @@
   const SN=window.SN36;if(!SN)return;
   const priorRender=render, priorWorkouts=renderWorkouts;
   const esc=v=>escapeHtml(String(v??""));
-  let draft=null,onboardingTimer=0;
+  let draft=null,onboardingTimer=0,splitScrollLock=null;
   const pick=(names,muscle)=>{for(const name of names){const exact=exerciseLibrary.find(e=>e.name.toLowerCase()===name.toLowerCase());if(exact)return exact}return exerciseLibrary.find(e=>e.muscle===muscle)||exerciseLibrary[0]};
   const spec=(names,muscle,sets=3,min=8,max=10)=>{const ex=pick(names,muscle);return {...ex,sets,reps:max,repMin:min,repMax:max,weight:SN.num(ex.weight)}};
 
@@ -60,11 +60,36 @@
     ]}
   };
 
-  function closeModal(){clearTimeout(onboardingTimer);onboardingTimer=0;document.getElementById("snProductModal")?.remove()}
+  function unlockSplitBackground(){
+    if(!splitScrollLock)return;
+    const root=document.documentElement,body=document.body,lock=splitScrollLock;
+    root.style.overflow=lock.rootOverflow;
+    body.style.overflow=lock.bodyOverflow;
+    body.style.position=lock.bodyPosition;
+    body.style.top=lock.bodyTop;
+    body.style.width=lock.bodyWidth;
+    root.classList.remove("sn-splits-open");
+    body.classList.remove("sn-splits-open");
+    splitScrollLock=null;
+    window.scrollTo(0,lock.scrollY);
+  }
+  function lockSplitBackground(){
+    if(splitScrollLock)return;
+    const root=document.documentElement,body=document.body,scrollY=window.scrollY||window.pageYOffset||0;
+    splitScrollLock={scrollY,rootOverflow:root.style.overflow,bodyOverflow:body.style.overflow,bodyPosition:body.style.position,bodyTop:body.style.top,bodyWidth:body.style.width};
+    root.classList.add("sn-splits-open");
+    body.classList.add("sn-splits-open");
+    root.style.overflow="hidden";
+    body.style.overflow="hidden";
+    body.style.position="fixed";
+    body.style.top=`-${scrollY}px`;
+    body.style.width="100%";
+  }
+  function closeModal(){clearTimeout(onboardingTimer);onboardingTimer=0;document.getElementById("snProductModal")?.remove();unlockSplitBackground()}
   function openTemplates(){closeModal();const m=document.createElement("div");m.id="snProductModal";m.className="sn-modal-backdrop";m.innerHTML=`<div class="sn-modal"><div class="sn-modal-head"><div><span>ROUTINE TEMPLATES</span><h2>Choose a starting structure</h2></div><button data-close>×</button></div><p class="sn-modal-help">Use a template or build your own. Every template stays editable after you add it.</p><div class="sn-template-list">${Object.entries(templates).map(([id,t])=>`<button data-template="${id}"><span><strong>${esc(t.name)}</strong><small>${t.days.length} days • ${t.workouts.map(w=>w[0]).join(" • ")}</small></span><b>Use →</b></button>`).join("")}</div></div>`;document.body.appendChild(m);m.querySelector("[data-close]").onclick=closeModal;m.addEventListener("click",e=>{if(e.target===m)closeModal()});m.querySelectorAll("[data-template]").forEach(b=>b.onclick=()=>applyTemplate(b.dataset.template))}
   function applyTemplate(id){const t=templates[id];if(!t)return;if(!confirm(`Use the ${t.name} template? Existing workouts on those days will become unscheduled, not deleted.`))return;const occupied=new Set(t.days),stamp=Date.now(),profile=SN.profile(),avoid=String(profile?.avoid||"").toLowerCase();state.customWorkouts=state.customWorkouts.map(w=>({...w,days:(w.days||[]).filter(d=>!occupied.has(d))}));t.workouts.forEach((w,i)=>{const exercises=w[1].map(s=>spec(...s)).filter(ex=>!avoid||!avoid.split(",").some(a=>a.trim()&&ex.name.toLowerCase().includes(a.trim())));state.customWorkouts.push({id:`template-${id}-${stamp}-${i}`,name:w[0],builtIn:false,templateGenerated:true,createdAt:stamp,days:[t.days[i]],exercises})});saveCustomWorkouts();closeModal();showToast(`${t.name} added`);state.page="workouts";render()}
 
-  function openSplits(){closeModal();const m=document.createElement("div");m.id="snProductModal";m.className="sn-modal-backdrop";m.innerHTML=`<div class="sn-modal"><div class="sn-modal-head"><div><h2>Workout splits</h2></div><button data-close>×</button></div><div class="sn-template-list">${Object.entries(splits).map(([id,t])=>`<button data-split="${id}"><span><strong>${esc(t.name)}</strong><small>${t.days.length} days</small></span><b>Use</b></button>`).join("")}</div></div>`;document.body.appendChild(m);m.querySelector("[data-close]").onclick=closeModal;m.addEventListener("click",e=>{if(e.target===m)closeModal()});m.querySelectorAll("[data-split]").forEach(b=>b.onclick=()=>applySplit(b.dataset.split))}
+  function openSplits(){closeModal();const m=document.createElement("div");m.id="snProductModal";m.className="sn-modal-backdrop sn-splits-modal";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("aria-labelledby","snSplitsTitle");m.innerHTML=`<div class="sn-modal sn-splits-dialog"><div class="sn-modal-head"><div><h2 id="snSplitsTitle">Workout splits</h2></div><button data-close aria-label="Close workout splits">×</button></div><div class="sn-template-list sn-splits-list">${Object.entries(splits).map(([id,t])=>`<button data-split="${id}"><span><strong>${esc(t.name)}</strong><small>${t.days.length} days</small></span><b>Use</b></button>`).join("")}</div></div>`;lockSplitBackground();document.body.appendChild(m);m.querySelector("[data-close]").onclick=closeModal;m.addEventListener("click",e=>{if(e.target===m)closeModal()});m.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});m.querySelectorAll("[data-split]").forEach(b=>b.onclick=()=>applySplit(b.dataset.split));m.querySelector("[data-close]")?.focus()}
   function applySplit(id){const t=splits[id];if(!t)return;if(!confirm(`Use the ${t.name} split? Existing workouts on those days will become unscheduled, not deleted.`))return;const occupied=new Set(t.days),stamp=Date.now(),profile=SN.profile(),avoid=String(profile?.avoid||"").toLowerCase();state.customWorkouts=state.customWorkouts.map(w=>({...w,days:(w.days||[]).filter(d=>!occupied.has(d))}));t.workouts.forEach((w,i)=>{const exercises=w[1].map(s=>spec(...s)).filter(ex=>!avoid||!avoid.split(",").some(a=>a.trim()&&ex.name.toLowerCase().includes(a.trim())));state.customWorkouts.push({id:`split-${id}-${stamp}-${i}`,name:w[0],builtIn:false,splitGenerated:true,createdAt:stamp,days:[t.days[i]],exercises})});saveCustomWorkouts();closeModal();showToast(`${t.name} split added`);state.page="workouts";render()}
 
   renderWorkouts=function(){priorWorkouts();const heading=document.querySelector(".workouts-heading-row");if(heading&&!document.getElementById("snTemplates")){const b=document.createElement("button");b.id="snTemplates";b.className="sn-templates-btn";b.textContent="Templates";heading.appendChild(b);b.onclick=openTemplates}const section=document.querySelector(".workout-library-section");if(section&&!document.getElementById("snLibraryLaunch")){const b=document.createElement("button");b.id="snLibraryLaunch";b.className="sn-library-launch";b.innerHTML=`<span>⌕</span><div><strong>Exercise library</strong></div><b>›</b>`;section.insertAdjacentElement("beforebegin",b);b.onclick=()=>{state.page="exerciseLibrary";render()}}

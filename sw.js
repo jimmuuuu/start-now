@@ -1,5 +1,5 @@
-// Start Now service worker — v147 declutter release.
-const VERSION = 'v147';
+// Start Now service worker — v148 compact split-dialog release.
+const VERSION = 'v148';
 const CACHE_NAME = `start-now-shell-${VERSION}`;
 const APP_SHELL = [
   './',

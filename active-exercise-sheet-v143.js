@@ -9,11 +9,11 @@
     const style = document.createElement('style');
     style.id = 'sn143MobileExerciseSheetStyles';
     style.textContent = `
-      #snProductModal{
+      #snProductModal.sn143-exercise-sheet{
         align-items:flex-end;
         padding:max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
       }
-      #snProductModal .sn-modal{
+      #snProductModal.sn143-exercise-sheet .sn-modal{
         width:min(620px, 100%);
         height:min(84vh, 760px);
         max-height:calc(100vh - 16px);
@@ -28,36 +28,36 @@
         touch-action:pan-y pinch-zoom;
       }
       @supports (height: 1dvh){
-        #snProductModal .sn-modal{
+        #snProductModal.sn143-exercise-sheet .sn-modal{
           height:min(84dvh, 760px);
           max-height:calc(100dvh - 16px);
         }
       }
-      #snProductModal .sn-modal-head,
-      #snProductModal .sn-modal-search{
+      #snProductModal.sn143-exercise-sheet .sn-modal-head,
+      #snProductModal.sn143-exercise-sheet .sn-modal-search{
         flex:0 0 auto;
       }
-      #snProductModal .sn-option-list{
+      #snProductModal.sn143-exercise-sheet .sn-option-list{
         min-height:auto;
         flex:0 0 auto;
         overflow:visible;
         padding:1px 2px max(4px, env(safe-area-inset-bottom)) 0;
       }
-      #snProductModal .sn-exercise-choice[disabled]{
+      #snProductModal.sn143-exercise-sheet .sn-exercise-choice[disabled]{
         opacity:.72;
         cursor:wait;
       }
-      #snProductModal.sn143-resolving .sn-modal{
+      #snProductModal.sn143-exercise-sheet.sn143-resolving .sn-modal{
         pointer-events:none;
       }
       @media (max-width:620px){
-        #snProductModal .sn-modal{
+        #snProductModal.sn143-exercise-sheet .sn-modal{
           height:min(90vh, 760px);
           max-height:calc(100vh - 12px);
           padding:16px;
         }
         @supports (height: 1dvh){
-          #snProductModal .sn-modal{
+          #snProductModal.sn143-exercise-sheet .sn-modal{
             height:min(90dvh, 760px);
             max-height:calc(100dvh - 12px);
           }
@@ -73,6 +73,8 @@
 
   function decorateSheet(modal) {
     if (!modal || modal.dataset.sn143Ready === 'true') return;
+    if (!modal.querySelector('.sn-exercise-choice[data-add-active]')) return;
+    modal.classList.add('sn143-exercise-sheet');
     modal.dataset.sn143Ready = 'true';
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
