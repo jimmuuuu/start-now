@@ -128,10 +128,12 @@ test.describe('START/NOW navigation smoke', () => {
   });
 
   test('Splits apply without confirmation when no scheduled workouts conflict', async ({ page }) => {
-    const dialogs = [];
-    page.on('dialog', async dialog => {
-      dialogs.push(dialog.message());
-      await dialog.dismiss();
+    await page.evaluate(() => {
+      window.__splitConfirmCalls = [];
+      window.confirm = message => {
+        window.__splitConfirmCalls.push(message);
+        return false;
+      };
     });
 
     await page.getByRole('button', { name: 'Workouts', exact: true }).click();
@@ -139,7 +141,8 @@ test.describe('START/NOW navigation smoke', () => {
     await page.locator('[data-split="upperLower"]').click();
 
     await assertRouteState(page, 'workouts');
-    expect(dialogs, 'no confirmation is needed for an empty schedule').toEqual([]);
+    const confirmCalls = await page.evaluate(() => window.__splitConfirmCalls);
+    expect(confirmCalls, 'no confirmation is needed for an empty schedule').toEqual([]);
     await expect(page.getByText('Upper A', { exact: true }).first()).toBeVisible();
     await expect(page.getByText('Lower A', { exact: true }).first()).toBeVisible();
     await assertRuntimeHealthy(page);
@@ -158,17 +161,21 @@ test.describe('START/NOW navigation smoke', () => {
       render();
     });
 
-    let dialogMessage = null;
-    page.once('dialog', async dialog => {
-      dialogMessage = dialog.message();
-      await dialog.dismiss();
+    await page.evaluate(() => {
+      window.__splitConfirmCalls = [];
+      window.confirm = message => {
+        window.__splitConfirmCalls.push(message);
+        return false;
+      };
     });
 
     await page.getByRole('button', { name: 'Workouts', exact: true }).click();
     await page.locator('#snTemplates').click();
     await page.locator('[data-split="upperLower"]').click();
 
-    expect(dialogMessage).toContain('Existing workouts on those days will become unscheduled');
+    const confirmCalls = await page.evaluate(() => window.__splitConfirmCalls);
+    expect(confirmCalls).toHaveLength(1);
+    expect(confirmCalls[0]).toContain('Existing workouts on those days will become unscheduled');
     await expect(page.locator('#snProductModal')).toBeVisible();
     await assertRuntimeHealthy(page);
   });
