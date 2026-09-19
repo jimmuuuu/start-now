@@ -149,8 +149,8 @@ test('home plan and muscle focus always use the same scheduled workout', async (
   await reset(page);
 
   await expect(page.getByRole('heading', { name: 'No workout scheduled' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'No muscle focus today' })).toBeVisible();
-  await expect(page.getByText('There is no workout scheduled for today.')).toBeVisible();
+  await expect(page.getByText('No workout today', { exact: true })).toBeVisible();
+  await expect(page.getByText('There is no workout scheduled for today.')).toHaveCount(0);
   await expect(page.getByText('Primary muscles trained in today’s workout')).toHaveCount(0);
 
   await page.evaluate(() => {
@@ -166,11 +166,11 @@ test('home plan and muscle focus always use the same scheduled workout', async (
   });
 
   await expect(page.getByRole('heading', { name: 'Today Source Test' })).toBeVisible();
-  await expect(page.getByText('Primary muscles trained in today’s workout')).toBeVisible();
+  await expect(page.getByText('Primary muscles trained in today’s workout')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: /Legs|Quads/ })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'No muscle focus today' })).toHaveCount(0);
+  await expect(page.getByText('No workout today', { exact: true })).toHaveCount(0);
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { name: 'Today Source Test' })).toBeVisible();
-  await expect(page.getByText('Primary muscles trained in today’s workout')).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Legs|Quads/ })).toBeVisible();
 });

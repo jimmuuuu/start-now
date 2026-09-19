@@ -151,8 +151,8 @@ test.describe('START/NOW navigation smoke', () => {
     await page.locator('#quickStart').click();
     await assertRouteState(page, 'quickWorkout');
     await expect(page.getByRole('heading', { name: 'Start Workout' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Create workout/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Saved workouts/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Create', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Saved', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: /Quick pick/i })).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
@@ -164,7 +164,7 @@ test.describe('START/NOW navigation smoke', () => {
   test('Exercise Library', async ({ page }) => {
     await page.locator('[data-sn70-action="exerciseLibrary"]').click();
     await assertRouteState(page, 'exerciseLibrary');
-    await expect(page.getByRole('heading', { name: /Find an exercise/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Exercises', exact: true })).toBeVisible();
     await expect(page.locator('input[placeholder*="Search exercise"]')).toBeVisible();
     await expect(page.locator('.sn-library-list')).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
@@ -177,7 +177,7 @@ test.describe('START/NOW navigation smoke', () => {
   test('Workout Calendar', async ({ page }) => {
     await page.locator('[data-sn70-action="calendar"]').click();
     await assertRouteState(page, 'calendar');
-    await expect(page.getByRole('heading', { name: /Workout Calendar/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Calendar', exact: true })).toBeVisible();
     await expect(page.locator('.sn63-month-grid')).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
@@ -189,8 +189,8 @@ test.describe('START/NOW navigation smoke', () => {
   test('My Stats', async ({ page }) => {
     await page.locator('[data-sn70-action="myStats"]').click();
     await assertRouteState(page, 'myStats');
-    await expect(page.getByRole('heading', { name: /My Stats/i })).toBeVisible();
-    await expect(page.locator('.sn86-lifetime-banner')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Stats', exact: true })).toBeVisible();
+    await expect(page.locator('.sn86-lifetime-banner')).toHaveCount(0);
     await expect(page.locator('.sn86-stat-grid')).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);

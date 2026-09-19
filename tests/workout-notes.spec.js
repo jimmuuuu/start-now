@@ -26,7 +26,8 @@ test('exercise notes save with a session and return next time', async ({ page })
     await page.locator('#snNextExercise').click();
   }
 
-  await expect(page.getByText('WORKOUT COMPLETE', { exact: true })).toBeVisible();
+  await expect(page.locator('.sn-summary')).toBeVisible();
+  await expect(page.locator('#snSummaryHome')).toBeVisible();
   const completedNote = await page.evaluate(() => {
     const sessions = JSON.parse(localStorage.getItem('sn_progress_sessions'));
     return sessions.at(-1).exercises[0].note;

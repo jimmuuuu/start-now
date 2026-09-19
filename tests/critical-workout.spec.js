@@ -74,8 +74,9 @@ test('critical workout flow saves a real completed session', async ({ page }) =>
   await page.locator('#snFinishEarly').click();
 
   await expect.poll(() => page.evaluate(() => state.page)).toBe('summary');
-  await expect(page.getByText('WORKOUT COMPLETE', { exact: true })).toBeVisible();
-  await expect(page.locator('.sn-grade-lockup')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Critical Test Workout', exact: true })).toBeVisible();
+  await expect(page.locator('#snSummaryHome')).toBeVisible();
+  await expect(page.locator('.sn-grade-lockup')).toHaveCount(0);
 
   const saved = await page.evaluate(() => {
     const sessions = JSON.parse(localStorage.getItem('sn_progress_sessions') || '[]');
