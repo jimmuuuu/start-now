@@ -7,6 +7,7 @@
   const modalSelector = "#snProductModal, #beginnerWizard, .sn-modal-backdrop, .beginner-modal-overlay, #snAuthModal.open";
   let modalOpen = false;
   let savedScrollY = 0;
+  let restoreScrollOnClose = true;
 
   const style = document.createElement("style");
   style.id = "snModalScrollLockStyles";
@@ -92,6 +93,7 @@
       savedScrollY = explicitScrollY === undefined
         ? (window.scrollY || window.pageYOffset || 0)
         : (Number(explicitScrollY) || 0);
+      restoreScrollOnClose = !document.querySelector("#snProductModal.sn-splits-modal");
       // Preserve the semantic lock marker used by the rest of the app/tests,
       // but do not attach any body/html overflow, position, height, inert, or
       // pointer-event behavior to it. The marker is state only.
@@ -105,9 +107,10 @@
       root.classList.remove("sn-background-locked");
       body.classList.remove("sn-background-locked");
       const current = window.scrollY || window.pageYOffset || 0;
-      if (Math.abs(current - savedScrollY) > 1) {
+      if (restoreScrollOnClose && Math.abs(current - savedScrollY) > 1) {
         requestAnimationFrame(() => window.scrollTo(0, savedScrollY));
       }
+      restoreScrollOnClose = true;
     }
   }
 
