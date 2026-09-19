@@ -65,9 +65,6 @@
     const root=document.documentElement,body=document.body,lock=splitScrollLock;
     root.style.overflow=lock.rootOverflow;
     body.style.overflow=lock.bodyOverflow;
-    body.style.position=lock.bodyPosition;
-    body.style.top=lock.bodyTop;
-    body.style.width=lock.bodyWidth;
     delete root.dataset.snModalScrollY;
     root.classList.remove("sn-splits-open");
     body.classList.remove("sn-splits-open");
@@ -77,15 +74,12 @@
   function lockSplitBackground(){
     if(splitScrollLock)return;
     const root=document.documentElement,body=document.body,scrollY=window.scrollY||window.pageYOffset||0;
-    splitScrollLock={scrollY,rootOverflow:root.style.overflow,bodyOverflow:body.style.overflow,bodyPosition:body.style.position,bodyTop:body.style.top,bodyWidth:body.style.width};
+    splitScrollLock={scrollY,rootOverflow:root.style.overflow,bodyOverflow:body.style.overflow};
     root.dataset.snModalScrollY=String(scrollY);
     root.classList.add("sn-splits-open");
     body.classList.add("sn-splits-open");
     root.style.overflow="hidden";
     body.style.overflow="hidden";
-    body.style.position="fixed";
-    body.style.top=`-${scrollY}px`;
-    body.style.width="100%";
   }
   function closeModal(){clearTimeout(onboardingTimer);onboardingTimer=0;document.getElementById("snProductModal")?.remove();unlockSplitBackground()}
   function openTemplates(){closeModal();const m=document.createElement("div");m.id="snProductModal";m.className="sn-modal-backdrop";m.innerHTML=`<div class="sn-modal"><div class="sn-modal-head"><div><span>ROUTINE TEMPLATES</span><h2>Choose a starting structure</h2></div><button data-close>×</button></div><p class="sn-modal-help">Use a template or build your own. Every template stays editable after you add it.</p><div class="sn-template-list">${Object.entries(templates).map(([id,t])=>`<button data-template="${id}"><span><strong>${esc(t.name)}</strong><small>${t.days.length} days • ${t.workouts.map(w=>w[0]).join(" • ")}</small></span><b>Use →</b></button>`).join("")}</div></div>`;document.body.appendChild(m);m.querySelector("[data-close]").onclick=closeModal;m.addEventListener("click",e=>{if(e.target===m)closeModal()});m.querySelectorAll("[data-template]").forEach(b=>b.onclick=()=>applyTemplate(b.dataset.template))}

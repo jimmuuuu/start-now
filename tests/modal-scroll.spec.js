@@ -126,11 +126,11 @@ test('workout splits use a compact centered dialog and lock background scrolling
   expect(metrics.overflowY).toBe('hidden');
   expect(metrics.backdropAlign).toBe('center');
   expect(metrics.columns.split(' ').length).toBe(2);
-  expect(metrics.bodyPosition).toBe('fixed');
+  expect(metrics.bodyPosition).not.toBe('fixed');
   expect(metrics.bodyOverflow).toBe('hidden');
 
   await page.mouse.wheel(0, 500);
-  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(beforeY);
 
   await backdrop.locator('[data-close]').click();
   await expect(backdrop).toHaveCount(0);
