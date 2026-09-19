@@ -316,7 +316,7 @@
     document.querySelector('.sn63-back')?.addEventListener('click',()=>{ state.page='home'; render(); });
     document.querySelector('[data-month="prev"]')?.addEventListener('click',()=>{ visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1); selectedKey=null; renderCalendar(); });
     document.querySelector('[data-month="next"]')?.addEventListener('click',()=>{ if(!canNext)return; visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1); selectedKey=null; renderCalendar(); });
-    document.querySelectorAll('[data-calendar-day]').forEach(btn=>btn.addEventListener('click',()=>{ selectedKey=btn.dataset.calendarDay; document.querySelectorAll('.sn63-day').forEach(d=>d.classList.toggle('selected',d.dataset.calendarDay===selectedKey)); renderDetail(selectedKey); }));
+    document.querySelectorAll('[data-calendar-day]').forEach(btn=>btn.addEventListener('click',()=>{ selectedKey=btn.dataset.calendarDay; document.querySelectorAll('.sn63-day').forEach(d=>d.classList.toggle('selected',d.dataset.calendarDay===selectedKey)); renderDetail(selectedKey); if(btn.classList.contains('scheduled'))requestAnimationFrame(()=>document.querySelector('.sn63-day-detail')?.scrollIntoView({behavior:'smooth',block:'start'})); }));
     if (selectedKey) renderDetail(selectedKey);
   }
 

@@ -1,5 +1,5 @@
-// Start Now service worker — v151 calendar exercise preview release.
-const VERSION = 'v151';
+// Start Now service worker — v152 calendar exercise preview release.
+const VERSION = 'v152';
 const CACHE_NAME = `start-now-shell-${VERSION}`;
 const APP_SHELL = [
   './',
