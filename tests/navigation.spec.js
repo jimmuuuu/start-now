@@ -180,10 +180,20 @@ test.describe('START/NOW navigation smoke', () => {
         id: 'calendar-preview-test',
         name: 'Calendar Preview',
         builtIn: false,
-        days: [['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()]],
+        days: ['Monday'],
         exercises: [{ id:'chest-press', name:'Chest Press', muscle:'Chest', sets:3, repMin:8, repMax:10, reps:10 }]
       }];
       saveCustomWorkouts();
+      localStorage.setItem('sn_progress_sessions', JSON.stringify([{
+        id: 'calendar-unscheduled-session',
+        timestamp: Date.now(),
+        workoutId: 'unscheduled-training',
+        workoutName: 'Unscheduled Training',
+        status: 'completed',
+        completedSets: 3,
+        plannedSets: 3,
+        exercises: [{ id:'chest-press', name:'Chest Press', muscle:'Chest', repMin:8, repMax:10, completedSets:3, plannedSets:3 }]
+      }]));
       render();
     });
     await page.locator('[data-sn70-action="calendar"]').click();
@@ -191,7 +201,7 @@ test.describe('START/NOW navigation smoke', () => {
     await expect(page.getByRole('heading', { name: 'Calendar', exact: true })).toBeVisible();
     await expect(page.locator('.sn63-month-grid')).toBeVisible();
     await expect(page.locator('.sn63-activity')).toHaveCount(0);
-    await page.locator('.sn63-day.scheduled.today').click();
+    await page.locator('.sn63-day.completed.today').click();
     await expect(page.locator('.sn63-workout-exercises')).toBeVisible();
     await expect(page.getByText('Chest Press', { exact:true })).toBeVisible();
     await expect(page.locator('.sn63-exercise-image')).toHaveCount(2);

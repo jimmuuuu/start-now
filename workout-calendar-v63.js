@@ -241,7 +241,8 @@
       const letter = gradeLetter(s.grade);
       if (letter) metrics.push(`Grade ${letter}`);
       if (Number(s.volume) > 0) metrics.push(`${Math.round(Number(s.volume)).toLocaleString()} lb volume`);
-      host.innerHTML = `<div class="sn63-detail-card completed"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>${esc(s.workoutName || info.workout?.name || "Workout")}</h3><span class="sn63-status good">Completed</span></div>${icon("check",22,2.6)}</div>${metrics.length?`<div class="sn63-detail-metrics">${metrics.map(v=>`<span>${esc(v)}</span>`).join("")}</div>`:""}</div>`;
+      host.innerHTML = `<div class="sn63-detail-card completed"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>${esc(s.workoutName || info.workout?.name || "Workout")}</h3><span class="sn63-status good">Completed</span></div>${icon("check",22,2.6)}</div>${metrics.length?`<div class="sn63-detail-metrics">${metrics.map(v=>`<span>${esc(v)}</span>`).join("")}</div>`:""}${renderWorkoutExercises(s)}</div>`;
+      bindExerciseMediaFallbacks(host);
       return;
     }
     if (info.type === "rest") {
@@ -316,7 +317,7 @@
     document.querySelector('.sn63-back')?.addEventListener('click',()=>{ state.page='home'; render(); });
     document.querySelector('[data-month="prev"]')?.addEventListener('click',()=>{ visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1); selectedKey=null; renderCalendar(); });
     document.querySelector('[data-month="next"]')?.addEventListener('click',()=>{ if(!canNext)return; visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1); selectedKey=null; renderCalendar(); });
-    document.querySelectorAll('[data-calendar-day]').forEach(btn=>btn.addEventListener('click',()=>{ selectedKey=btn.dataset.calendarDay; document.querySelectorAll('.sn63-day').forEach(d=>d.classList.toggle('selected',d.dataset.calendarDay===selectedKey)); renderDetail(selectedKey); if(btn.classList.contains('scheduled'))requestAnimationFrame(()=>document.querySelector('.sn63-day-detail')?.scrollIntoView({behavior:'smooth',block:'start'})); }));
+    document.querySelectorAll('[data-calendar-day]').forEach(btn=>btn.addEventListener('click',()=>{ selectedKey=btn.dataset.calendarDay; document.querySelectorAll('.sn63-day').forEach(d=>d.classList.toggle('selected',d.dataset.calendarDay===selectedKey)); renderDetail(selectedKey); if(btn.classList.contains('scheduled')||btn.classList.contains('completed'))requestAnimationFrame(()=>document.querySelector('.sn63-day-detail')?.scrollIntoView({behavior:'smooth',block:'start'})); }));
     if (selectedKey) renderDetail(selectedKey);
   }
 
