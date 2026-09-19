@@ -72,7 +72,11 @@
     root.classList.remove("sn-splits-open");
     body.classList.remove("sn-splits-open");
     splitScrollLock=null;
-    requestAnimationFrame(()=>window.scrollTo(0,lock.scrollY));
+    const restoreScroll=()=>{
+      window.scrollTo(0,lock.scrollY);
+      root.scrollTop=lock.scrollY;
+    };
+    requestAnimationFrame(()=>requestAnimationFrame(restoreScroll));
   }
   function lockSplitBackground(){
     if(splitScrollLock)return;
