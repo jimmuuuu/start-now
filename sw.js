@@ -1,5 +1,5 @@
-// Start Now service worker — v148 compact split-dialog release.
-const VERSION = 'v148';
+// Start Now service worker — v149 conditional split confirmation release.
+const VERSION = 'v149';
 const CACHE_NAME = `start-now-shell-${VERSION}`;
 const APP_SHELL = [
   './',

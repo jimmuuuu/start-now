@@ -127,6 +127,52 @@ test.describe('START/NOW navigation smoke', () => {
     await assertRuntimeHealthy(page);
   });
 
+  test('Splits apply without confirmation when no scheduled workouts conflict', async ({ page }) => {
+    const dialogs = [];
+    page.on('dialog', async dialog => {
+      dialogs.push(dialog.message());
+      await dialog.dismiss();
+    });
+
+    await page.getByRole('button', { name: 'Workouts', exact: true }).click();
+    await page.locator('#snTemplates').click();
+    await page.locator('[data-split="upperLower"]').click();
+
+    await assertRouteState(page, 'workouts');
+    expect(dialogs, 'no confirmation is needed for an empty schedule').toEqual([]);
+    await expect(page.getByText('Upper A', { exact: true })).toBeVisible();
+    await expect(page.getByText('Lower A', { exact: true })).toBeVisible();
+    await assertRuntimeHealthy(page);
+  });
+
+  test('Splits still confirm when scheduled workouts would be replaced', async ({ page }) => {
+    await page.evaluate(() => {
+      state.customWorkouts = [{
+        id: 'scheduled-conflict-test',
+        name: 'Scheduled test workout',
+        builtIn: false,
+        days: ['Monday'],
+        exercises: []
+      }];
+      saveCustomWorkouts();
+      render();
+    });
+
+    let dialogMessage = null;
+    page.once('dialog', async dialog => {
+      dialogMessage = dialog.message();
+      await dialog.dismiss();
+    });
+
+    await page.getByRole('button', { name: 'Workouts', exact: true }).click();
+    await page.locator('#snTemplates').click();
+    await page.locator('[data-split="upperLower"]').click();
+
+    expect(dialogMessage).toContain('Existing workouts on those days will become unscheduled');
+    await expect(page.locator('#snProductModal')).toBeVisible();
+    await assertRuntimeHealthy(page);
+  });
+
   test('Progress', async ({ page }) => {
     await page.getByRole('button', { name: 'Progress', exact: true }).click();
     await assertRouteState(page, 'progress');
