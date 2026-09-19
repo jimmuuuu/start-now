@@ -209,6 +209,13 @@ test.describe('START/NOW navigation smoke', () => {
     await expect(page.locator('.sn63-workout-exercises')).toBeVisible();
     await expect(page.getByText('Chest Press', { exact:true })).toBeVisible();
     await expect(page.locator('.sn63-exercise-image')).toHaveCount(2);
+    const thumbnail = await page.locator('.sn63-exercise-visual').boundingBox();
+    const demoImage = await page.locator('.sn63-exercise-image').first().boundingBox();
+    expect(thumbnail?.width).toBeGreaterThanOrEqual(76);
+    expect(thumbnail?.width).toBeLessThanOrEqual(86);
+    expect(thumbnail?.height).toBeGreaterThanOrEqual(62);
+    expect(thumbnail?.height).toBeLessThanOrEqual(68);
+    expect(demoImage).toMatchObject({ width: thumbnail?.width, height: thumbnail?.height });
     await page.locator('[data-exercise-toggle]').click();
     await expect(page.locator('.sn63-set-details')).toBeVisible();
     await expect(page.getByText('50 lb × 10 reps', { exact:true })).toBeVisible();

@@ -1,5 +1,5 @@
-// Start Now service worker — v154 completed set detail release.
-const VERSION = 'v154';
+// Start Now service worker — v155 exercise thumbnail layout fix.
+const VERSION = 'v155';
 const CACHE_NAME = `start-now-shell-${VERSION}`;
 const APP_SHELL = [
   './',
