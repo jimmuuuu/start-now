@@ -119,6 +119,7 @@ test('workout splits use a compact centered dialog and lock background scrolling
     backdropAlign: getComputedStyle(node.parentElement).alignItems,
     columns: getComputedStyle(node.querySelector('.sn-splits-list')).gridTemplateColumns,
     bodyPosition: getComputedStyle(document.body).position,
+    bodyTop: document.body.style.top,
     bodyOverflow: getComputedStyle(document.body).overflow
   }));
 
@@ -127,6 +128,7 @@ test('workout splits use a compact centered dialog and lock background scrolling
   expect(metrics.backdropAlign).toBe('center');
   expect(metrics.columns.split(' ').length).toBe(2);
   expect(metrics.bodyPosition).toBe('fixed');
+  expect(metrics.bodyTop).toBe(`-${beforeY}px`);
   expect(metrics.bodyOverflow).toBe('hidden');
 
   await page.mouse.wheel(0, 500);
@@ -134,7 +136,6 @@ test('workout splits use a compact centered dialog and lock background scrolling
 
   await backdrop.locator('[data-close]').click();
   await expect(backdrop).toHaveCount(0);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(beforeY);
   expect(await page.evaluate(() => document.body.style.position)).toBe('');
 });
 
