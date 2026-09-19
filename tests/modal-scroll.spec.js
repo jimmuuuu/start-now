@@ -101,8 +101,9 @@ test('workout splits use a compact centered dialog and lock background scrolling
     window.scrollTo(0, 240);
   });
 
-  const beforeY = await page.evaluate(() => window.scrollY);
   await page.getByRole('button', { name: 'Workouts', exact: true }).click();
+  await page.evaluate(() => window.scrollTo(0, 240));
+  const beforeY = await page.evaluate(() => window.scrollY);
   await page.locator('#snTemplates').click();
 
   const backdrop = page.locator('#snProductModal.sn-splits-modal');
