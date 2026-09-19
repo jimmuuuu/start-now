@@ -44,7 +44,7 @@
       .sn-library-search .sn60-icon{width:18px;height:18px}
 
       .streak-card .fire{display:grid;place-items:center}
-      .streak-card .streak-fire{display:block;font-size:34px;line-height:1;transform:translateY(-1px)}
+      .streak-card .streak-fire{display:block;font-size:30px;line-height:1;transform:translateY(-1px)}
 
       .achievement-mini{position:relative}
       .achievement-mini .milestone-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;transition:transform .18s ease,background .18s ease,color .18s ease}

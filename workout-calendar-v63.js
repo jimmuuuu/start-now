@@ -288,12 +288,6 @@
     const card = document.querySelector('.streak-card');
     if (!card || card.dataset.calendarReady === '1') return;
     card.dataset.calendarReady = '1';
-    card.classList.add('sn63-streak-entry');
-    card.setAttribute('role','button'); card.setAttribute('tabindex','0'); card.setAttribute('aria-label','Open workout calendar and streak history');
-    const chevron = document.createElement('span'); chevron.className='sn63-streak-chevron'; chevron.innerHTML=icon('chevronRight',18,2.3); card.appendChild(chevron);
-    const open=()=>{ visibleMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1); selectedKey=null; state.page='calendar'; render(); };
-    card.addEventListener('click',open);
-    card.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();open();} });
   }
 
   function installStyles() {
