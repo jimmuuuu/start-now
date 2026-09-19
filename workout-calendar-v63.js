@@ -251,7 +251,6 @@
     const todayMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     const maxFuture = new Date(todayMonth.getFullYear(), todayMonth.getMonth()+1, 1);
     const canNext = visibleMonth < maxFuture;
-    const activity = renderActivity(visibleMonth);
 
     app.innerHTML = `
       <div class="sn63-calendar-page">
@@ -275,7 +274,6 @@
 
         <div class="sn63-day-detail"></div>
 
-        ${activity.includes("sn63-empty")?"":`<section class="sn63-activity"><div class="section-title-row"><h2>Activity</h2></div><div class="sn63-activity-list">${activity}</div></section>`}
       </div>`;
 
     document.querySelector('.sn63-back')?.addEventListener('click',()=>{ state.page='home'; render(); });

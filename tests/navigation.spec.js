@@ -179,6 +179,7 @@ test.describe('START/NOW navigation smoke', () => {
     await assertRouteState(page, 'calendar');
     await expect(page.getByRole('heading', { name: 'Calendar', exact: true })).toBeVisible();
     await expect(page.locator('.sn63-month-grid')).toBeVisible();
+    await expect(page.locator('.sn63-activity')).toHaveCount(0);
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 

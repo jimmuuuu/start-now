@@ -1,5 +1,5 @@
-// Start Now service worker — v149 conditional split confirmation release.
-const VERSION = 'v149';
+// Start Now service worker — v150 calendar activity cleanup release.
+const VERSION = 'v150';
 const CACHE_NAME = `start-now-shell-${VERSION}`;
 const APP_SHELL = [
   './',
