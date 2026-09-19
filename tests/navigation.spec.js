@@ -140,8 +140,8 @@ test.describe('START/NOW navigation smoke', () => {
 
     await assertRouteState(page, 'workouts');
     expect(dialogs, 'no confirmation is needed for an empty schedule').toEqual([]);
-    await expect(page.getByText('Upper A', { exact: true })).toBeVisible();
-    await expect(page.getByText('Lower A', { exact: true })).toBeVisible();
+    await expect(page.getByText('Upper A', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('Lower A', { exact: true }).first()).toBeVisible();
     await assertRuntimeHealthy(page);
   });
 
