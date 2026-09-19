@@ -1,10 +1,10 @@
 # START/NOW Navigation Smoke Status
 
 - Status: **PASS**
-- Tested commit: `4bcc9d8282e7b45d705b9ddc8f111cb915219ded`
-- Workflow run: `35465488823`
+- Tested commit: `242510cbc97f299f7a65275af03f27ecc6a4fe1b`
+- Workflow run: `35472922626`
 - Syntax check: **success**
 - Exercise notes: **success**
 - PWA readiness: **success**
 - Playwright: **success**
-- Recorded: `2026-09-19T19:49:44Z`
+- Recorded: `2026-09-19T22:18:55Z`
