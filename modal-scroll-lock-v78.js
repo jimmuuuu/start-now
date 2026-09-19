@@ -88,7 +88,10 @@
 
     if (open && !modalOpen) {
       modalOpen = true;
-      savedScrollY = window.scrollY || window.pageYOffset || 0;
+      const explicitScrollY = root.dataset.snModalScrollY;
+      savedScrollY = explicitScrollY === undefined
+        ? (window.scrollY || window.pageYOffset || 0)
+        : (Number(explicitScrollY) || 0);
       // Preserve the semantic lock marker used by the rest of the app/tests,
       // but do not attach any body/html overflow, position, height, inert, or
       // pointer-event behavior to it. The marker is state only.

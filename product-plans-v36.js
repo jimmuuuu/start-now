@@ -68,6 +68,7 @@
     body.style.position=lock.bodyPosition;
     body.style.top=lock.bodyTop;
     body.style.width=lock.bodyWidth;
+    delete root.dataset.snModalScrollY;
     root.classList.remove("sn-splits-open");
     body.classList.remove("sn-splits-open");
     splitScrollLock=null;
@@ -77,6 +78,7 @@
     if(splitScrollLock)return;
     const root=document.documentElement,body=document.body,scrollY=window.scrollY||window.pageYOffset||0;
     splitScrollLock={scrollY,rootOverflow:root.style.overflow,bodyOverflow:body.style.overflow,bodyPosition:body.style.position,bodyTop:body.style.top,bodyWidth:body.style.width};
+    root.dataset.snModalScrollY=String(scrollY);
     root.classList.add("sn-splits-open");
     body.classList.add("sn-splits-open");
     root.style.overflow="hidden";
