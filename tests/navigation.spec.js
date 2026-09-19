@@ -175,11 +175,26 @@ test.describe('START/NOW navigation smoke', () => {
   });
 
   test('Workout Calendar', async ({ page }) => {
+    await page.evaluate(() => {
+      state.customWorkouts = [{
+        id: 'calendar-preview-test',
+        name: 'Calendar Preview',
+        builtIn: false,
+        days: [['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()]],
+        exercises: [{ id:'chest-press', name:'Chest Press', muscle:'Chest', sets:3, repMin:8, repMax:10, reps:10 }]
+      }];
+      saveCustomWorkouts();
+      render();
+    });
     await page.locator('[data-sn70-action="calendar"]').click();
     await assertRouteState(page, 'calendar');
     await expect(page.getByRole('heading', { name: 'Calendar', exact: true })).toBeVisible();
     await expect(page.locator('.sn63-month-grid')).toBeVisible();
     await expect(page.locator('.sn63-activity')).toHaveCount(0);
+    await page.locator('.sn63-day.scheduled.today').click();
+    await expect(page.locator('.sn63-workout-exercises')).toBeVisible();
+    await expect(page.getByText('Chest Press', { exact:true })).toBeVisible();
+    await expect(page.locator('.sn63-exercise-image')).toHaveCount(2);
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 
