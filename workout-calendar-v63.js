@@ -202,7 +202,22 @@
     return `${sets} sets • ${min === max ? max : `${min}–${max}`} reps`;
   }
 
-  function renderWorkoutExercises(workout) {
+  function setResult(set) {
+    if (!set?.done) return "Not completed";
+    const weight = Number(set.weight) || 0;
+    const reps = Number(set.reps) || 0;
+    return `${weight ? `${weight} lb × ` : "Bodyweight × "}${reps} reps`;
+  }
+
+  function renderSetDetails(exercise) {
+    const sets = Array.isArray(exercise?.sets) ? exercise.sets : [];
+    const rows = sets.length
+      ? sets.map((set, index) => `<div class="sn63-set-row"><span>Set ${index + 1}</span><strong>${esc(setResult(set))}</strong></div>`).join("")
+      : `<div class="sn63-set-row"><span>Summary</span><strong>${esc(`${Number(exercise?.completedSets) || 0} completed sets`)}</strong></div>`;
+    return `<div class="sn63-set-details" hidden aria-hidden="true">${rows}</div>`;
+  }
+
+  function renderWorkoutExercises(workout, completed = false) {
     const exercises = Array.isArray(workout?.exercises) ? workout.exercises : [];
     if (!exercises.length) return '<div class="sn63-exercise-empty">No exercises added yet</div>';
     return `<section class="sn63-workout-exercises"><h4>Exercises</h4><div class="sn63-exercise-list">${exercises.map(exercise => {
@@ -210,8 +225,22 @@
       const visual = media
         ? `<span class="sn63-exercise-media"><img class="sn63-exercise-image" src="${esc(media.start)}" alt="${esc(exercise.name || "Exercise")} demonstration" loading="lazy" decoding="async"><img class="sn63-exercise-image finish" src="${esc(media.finish)}" alt="" loading="lazy" decoding="async"></span>`
         : `<span class="sn63-exercise-fallback">${icon("dumbbell",24,2.1)}</span>`;
-      return `<article class="sn63-exercise-row"><div class="sn63-exercise-visual">${visual}</div><div class="sn63-exercise-copy"><strong>${esc(exercise.name || "Exercise")}</strong><span>${esc(exerciseMeta(exercise))}</span></div></article>`;
+      const content = `<span class="sn63-exercise-visual">${visual}</span><span class="sn63-exercise-copy"><strong>${esc(exercise.name || "Exercise")}</strong><span>${esc(exerciseMeta(exercise))}</span></span>`;
+      return completed
+        ? `<article class="sn63-exercise-row completed"><button type="button" class="sn63-exercise-toggle" data-exercise-toggle aria-expanded="false">${content}<span class="sn63-exercise-chevron">${icon("chevronRight",18,2.3)}</span></button>${renderSetDetails(exercise)}</article>`
+        : `<article class="sn63-exercise-row">${content}</article>`;
     }).join("")}</div></section>`;
+  }
+
+  function bindExerciseSetToggles(host) {
+    host.querySelectorAll("[data-exercise-toggle]").forEach(button => button.addEventListener("click", () => {
+      const details = button.closest(".sn63-exercise-row")?.querySelector(".sn63-set-details");
+      if (!details) return;
+      const expanded = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", String(!expanded));
+      details.hidden = expanded;
+      details.setAttribute("aria-hidden", String(expanded));
+    }));
   }
 
   function bindExerciseMediaFallbacks(host) {
@@ -241,8 +270,9 @@
       const letter = gradeLetter(s.grade);
       if (letter) metrics.push(`Grade ${letter}`);
       if (Number(s.volume) > 0) metrics.push(`${Math.round(Number(s.volume)).toLocaleString()} lb volume`);
-      host.innerHTML = `<div class="sn63-detail-card completed"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>${esc(s.workoutName || info.workout?.name || "Workout")}</h3><span class="sn63-status good">Completed</span></div>${icon("check",22,2.6)}</div>${metrics.length?`<div class="sn63-detail-metrics">${metrics.map(v=>`<span>${esc(v)}</span>`).join("")}</div>`:""}${renderWorkoutExercises(s)}</div>`;
+      host.innerHTML = `<div class="sn63-detail-card completed"><div class="sn63-detail-date">${esc(dateLabel)}</div><div class="sn63-detail-head"><div><h3>${esc(s.workoutName || info.workout?.name || "Workout")}</h3><span class="sn63-status good">Completed</span></div>${icon("check",22,2.6)}</div>${metrics.length?`<div class="sn63-detail-metrics">${metrics.map(v=>`<span>${esc(v)}</span>`).join("")}</div>`:""}${renderWorkoutExercises(s, true)}</div>`;
       bindExerciseMediaFallbacks(host);
+      bindExerciseSetToggles(host);
       return;
     }
     if (info.type === "rest") {
@@ -337,7 +367,7 @@
       .sn63-streak-chevron{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#8A9098;display:grid;place-items:center}
       .sn63-calendar-page{padding-bottom:18px}.sn63-topbar{display:flex;align-items:center;gap:12px;margin-bottom:18px}.sn63-topbar h1{font-size:30px;letter-spacing:-1px;margin:4px 0 0}.sn63-back,.sn63-month-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);display:grid;place-items:center}.sn63-back{width:42px;height:42px;border-radius:14px}.sn63-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:14px 10px;margin-bottom:14px}.sn63-summary>div{display:grid;justify-items:center;text-align:center;gap:3px;min-width:0}.sn63-summary-icon,.sn63-summary-svg{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:#F5F7F8}.sn63-summary-icon.fire{font-size:20px;background:#F1F9DD}.sn63-summary strong{font-size:19px;line-height:1}.sn63-summary small{font-size:9px;color:var(--muted);line-height:1.15;font-weight:700}.sn63-calendar-card{padding:14px}.sn63-month-head{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;gap:8px;margin-bottom:14px}.sn63-month-head h2{text-align:center;font-size:18px;margin:0}.sn63-month-btn{width:38px;height:38px;border-radius:12px}.sn63-month-btn:disabled{opacity:.28;cursor:default}.sn63-weekdays,.sn63-month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.sn63-weekdays{margin-bottom:6px}.sn63-weekdays span{text-align:center;font-size:9px;font-weight:800;color:#9AA0A7}.sn63-day{min-width:0;height:58px;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--text);padding:5px 2px;display:grid;grid-template-rows:auto 14px auto;justify-items:center;align-content:start;gap:1px;position:relative}.sn63-day.blank{pointer-events:none}.sn63-date{font-size:12px;font-weight:800}.sn63-day-mark{height:14px;display:grid;place-items:center}.sn63-day small{font-size:7px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}.sn63-day.completed{background:#F5FAE8;border-color:#DCECB6}.sn63-day.completed .sn63-day-mark{color:#78A91E}.sn63-day.rest{background:#F3F7FD;color:#486B9A}.sn63-day.rest .sn63-day-mark{color:#6A96D3}.sn63-day.missed{background:#FFF8F8;border-color:#F4DADA}.sn63-day.missed .sn63-day-mark{color:#D66A6D}.sn63-day.scheduled{background:#F6F9FF;border-color:#D8E6FF}.sn63-day.scheduled .sn63-day-mark{width:6px;height:6px;border-radius:99px;background:#76A7F7;margin-top:4px}.sn63-day.scheduled .sn63-day-mark svg{display:none}.sn63-day.today::after{content:"";position:absolute;inset:-2px;border:2px solid var(--blue);border-radius:14px;pointer-events:none}.sn63-day.selected{box-shadow:0 0 0 2px rgba(23,23,23,.12)}.sn63-legend{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:9px;color:var(--muted);font-weight:700}.sn63-legend span{display:inline-flex;align-items:center;gap:4px}.sn63-legend i{width:8px;height:8px;border-radius:50%;display:inline-block}.sn63-legend i.completed{background:#9BCB3B}.sn63-legend i.rest{background:#8DB4E8}.sn63-legend i.missed{background:#E58A8D}.sn63-legend i.scheduled{background:#76A7F7}.sn63-day-detail{margin-top:12px}.sn63-detail-card{border:1px solid var(--line);border-radius:20px;background:var(--surface);padding:16px;box-shadow:var(--shadow)}.sn63-detail-date{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:8px}.sn63-detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}.sn63-detail-head h3,.sn63-detail-card h3{font-size:20px;margin:0 0 5px}.sn63-status{font-size:11px;font-weight:800}.sn63-status.good{color:#719F20}.sn63-status.rest{color:#5F8AC5}.sn63-status.missed{color:#C66064}.sn63-status.scheduled{color:var(--blue)}.sn63-detail-card p{font-size:12px;color:var(--muted);line-height:1.5;margin:11px 0 0}.sn63-detail-metrics{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.sn63-detail-metrics span{font-size:10px;font-weight:700;background:#F5F6F7;border-radius:999px;padding:7px 9px}.sn63-activity{margin-top:20px}.sn63-activity .section-title-row{margin-bottom:10px}.sn63-activity-list{display:grid;gap:8px}.sn63-activity-row{width:100%;border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:11px 12px;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;text-align:left;color:var(--text)}.sn63-activity-icon{width:32px;height:32px;border-radius:10px;display:grid;place-items:center}.sn63-activity-icon.completed{background:#F1F8DD;color:#719F20}.sn63-activity-icon.rest{background:#EEF5FF;color:#5F8AC5}.sn63-activity-icon.missed{background:#FFF0F0;color:#C66064}.sn63-activity-row strong,.sn63-activity-row span{display:block}.sn63-activity-row strong{font-size:12px}.sn63-activity-row span{font-size:10px;color:var(--muted);margin-top:3px}.sn63-empty{padding:24px 14px;text-align:center;border:1px dashed var(--line);border-radius:18px}.sn63-empty strong,.sn63-empty span{display:block}.sn63-empty strong{font-size:14px}.sn63-empty span{font-size:11px;color:var(--muted);margin-top:5px}.dark .sn63-summary-icon,.dark .sn63-summary-svg,.dark .sn63-detail-metrics span{background:#24272A}.dark .sn63-day.completed{background:#1C2415;border-color:#34471F}.dark .sn63-day.rest{background:#172130}.dark .sn63-day.missed{background:#2A191A;border-color:#4D292B}.dark .sn63-day.scheduled{background:#172235;border-color:#2A4166}@media(max-width:390px){.sn63-summary{gap:3px;padding:12px 6px}.sn63-summary small{font-size:8px}.sn63-weekdays,.sn63-month-grid{gap:3px}.sn63-day{height:54px;border-radius:10px}.sn63-day small{font-size:6.5px}}
       .sn63-day.rest{background:#24272A;color:#A8ADB5}.sn63-day.rest .sn63-day-mark{color:#A8ADB5}.sn63-day.scheduled{background:#FFF4E8;border-color:#FFD9B5}.sn63-day.scheduled .sn63-day-mark{background:#F28C45}.sn63-legend i.rest{background:#8A8F98}.sn63-legend i.scheduled{background:#F28C45}.sn63-status.rest{color:#8A8F98}.sn63-status.scheduled{color:#D87832}.dark .sn63-day.rest{background:#24272A}.dark .sn63-day.scheduled{background:#3A281D;border-color:#6A4529}
-      .sn63-workout-exercises{margin-top:16px;padding-top:15px;border-top:1px solid var(--line)}.sn63-workout-exercises h4{font-size:13px;margin:0 0 10px}.sn63-exercise-list{display:grid;gap:9px}.sn63-exercise-row{display:grid;grid-template-columns:86px minmax(0,1fr);align-items:center;gap:12px;padding:9px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}.sn63-exercise-visual{width:86px;height:68px;border-radius:12px;overflow:hidden;background:#F4F6F8;display:grid;place-items:center;color:var(--blue)}.sn63-exercise-media{position:relative;display:block;width:100%;height:100%}.sn63-exercise-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center}.sn63-exercise-image.finish{position:absolute;inset:0;opacity:0;animation:sn63-frame-swap 1.8s steps(1,end) infinite}.sn63-exercise-fallback{display:grid;place-items:center}.sn63-exercise-copy{min-width:0}.sn63-exercise-copy strong,.sn63-exercise-copy span{display:block}.sn63-exercise-copy strong{font-size:13px;line-height:1.25}.sn63-exercise-copy span{font-size:10px;color:var(--muted);font-weight:700;margin-top:5px}.sn63-exercise-empty{margin-top:14px;padding:14px;border-radius:14px;background:#F5F6F7;color:var(--muted);font-size:11px;text-align:center}.dark .sn63-exercise-visual,.dark .sn63-exercise-empty{background:#24272A}@keyframes sn63-frame-swap{0%,44%{opacity:0}50%,94%{opacity:1}100%{opacity:0}}@media(prefers-reduced-motion:reduce){.sn63-exercise-image.finish{animation:none;opacity:0}}@media(max-width:390px){.sn63-exercise-row{grid-template-columns:76px minmax(0,1fr)}.sn63-exercise-visual{width:76px;height:62px}}
+      .sn63-exercise-row.completed{display:block}.sn63-exercise-toggle{width:100%;border:0;background:transparent;color:inherit;padding:0;display:grid;grid-template-columns:86px minmax(0,1fr) 20px;align-items:center;gap:12px;text-align:left}.sn63-exercise-toggle:hover{background:transparent}.sn63-exercise-chevron{display:grid;place-items:center;color:var(--muted);transition:transform .16s ease}.sn63-exercise-toggle[aria-expanded="true"] .sn63-exercise-chevron{transform:rotate(90deg)}.sn63-set-details{display:grid;gap:6px;margin:9px 0 0 98px;padding-top:9px;border-top:1px solid var(--line)}.sn63-set-row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:11px}.sn63-set-row span{color:var(--muted)}.sn63-set-row strong{font-size:11px}.sn63-exercise-row.completed:has(.sn63-exercise-toggle[aria-expanded="true"]){padding-bottom:11px}@media(max-width:390px){.sn63-exercise-toggle{grid-template-columns:76px minmax(0,1fr) 18px;gap:10px}.sn63-set-details{margin-left:86px}}
     `; document.head.appendChild(style);
   }
 

@@ -192,7 +192,11 @@ test.describe('START/NOW navigation smoke', () => {
         status: 'completed',
         completedSets: 3,
         plannedSets: 3,
-        exercises: [{ id:'chest-press', name:'Chest Press', muscle:'Chest', repMin:8, repMax:10, completedSets:3, plannedSets:3 }]
+        exercises: [{ id:'chest-press', name:'Chest Press', muscle:'Chest', repMin:8, repMax:10, completedSets:2, plannedSets:3, sets:[
+          { weight:50, reps:10, done:true },
+          { weight:55, reps:8, done:true },
+          { weight:55, reps:6, done:false }
+        ] }]
       }]));
       render();
     });
@@ -205,6 +209,10 @@ test.describe('START/NOW navigation smoke', () => {
     await expect(page.locator('.sn63-workout-exercises')).toBeVisible();
     await expect(page.getByText('Chest Press', { exact:true })).toBeVisible();
     await expect(page.locator('.sn63-exercise-image')).toHaveCount(2);
+    await page.locator('[data-exercise-toggle]').click();
+    await expect(page.locator('.sn63-set-details')).toBeVisible();
+    await expect(page.getByText('50 lb × 10 reps', { exact:true })).toBeVisible();
+    await expect(page.getByText('Not completed', { exact:true })).toBeVisible();
     await expect(page.locator('.plan-card')).toHaveCount(0);
     await assertRuntimeHealthy(page);
 
