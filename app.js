@@ -128,8 +128,9 @@ function workoutMuscles(workout){
 }
 
 function navActive(){
+  const section = ({exerciseLibrary:'workouts',builder:'workouts',exerciseHistory:'progress',myStats:'progress',calendar:'home',restDay:'home',summary:'progress'})[state.page] || state.page;
   document.querySelectorAll(".nav-item").forEach(btn=>{
-    const active=btn.dataset.page===state.page;
+    const active=btn.dataset.page===section;
     btn.classList.toggle("active", active);
     if(active)btn.setAttribute("aria-current","page");else btn.removeAttribute("aria-current");
   });

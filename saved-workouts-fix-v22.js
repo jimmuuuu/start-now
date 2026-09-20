@@ -103,5 +103,9 @@
     });
 
     document.querySelector(".workout-library-section .section-title-row span")?.remove();
+    const list = document.querySelector(".workout-library-section .list");
+    if (list && !list.children.length) {
+      list.innerHTML = '<div class="sn-empty"><strong>No saved workouts yet</strong><span>Use Create to build a workout or Splits to set up your week.</span></div>';
+    }
   };
 })();

@@ -24,7 +24,7 @@
   }
 
   async function signOut(){
-    if (!window.confirm("Sign out of Level Up Fitness?")) return;
+    if (!window.confirm("Sign out of START/NOW?")) return;
 
     try {
       // Use a real auth client automatically when one is connected to the app.

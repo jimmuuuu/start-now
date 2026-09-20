@@ -12,7 +12,7 @@
     console.error('[Level Up Fitness] Page render failed', { page: requestedPage, error });
     root.innerHTML = `
       <section class="card sn77-error-boundary" role="alert">
-        <div class="eyebrow">Level Up Fitness</div>
+        <div class="eyebrow">START/NOW</div>
         <h1>Something went wrong</h1>
         <p>This screen could not load. Your saved workouts and history were not cleared.</p>
         <button type="button" class="primary" id="sn77ReturnHome">Return Home</button>
@@ -31,6 +31,7 @@
     const requestedPage = state.page;
     try {
       const result = previousRender.apply(this,args);
+      navActive();
       if (!root.children.length || !(root.textContent || '').trim()) {
         throw new Error(`Render completed without visible content for page: ${requestedPage}`);
       }

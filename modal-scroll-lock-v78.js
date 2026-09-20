@@ -84,7 +84,60 @@
     return Boolean(document.querySelector(modalSelector));
   }
 
+  // Bind presentation/accessibility once per sheet. Keep native iOS scrolling
+  // and existing close handlers; never fix the body or intercept in-sheet touch.
+  const prepared = new WeakSet();
+  let backgroundFocus = document.activeElement;
+  document.addEventListener('focusin', event => {
+    if (!event.target.closest(modalSelector)) backgroundFocus = event.target;
+  });
+  function prepareSheets() {
+    document.querySelectorAll(modalSelector).forEach(backdrop => {
+      if (prepared.has(backdrop)) return;
+      prepared.add(backdrop);
+      const sheet = backdrop.querySelector('.sn-modal,.beginner-modal,.sn-auth-sheet');
+      if (!sheet) return;
+      const opener = backgroundFocus;
+      const close = sheet.querySelector('[data-close],.sn-auth-close,.beginner-close');
+      if (close && !close.hasAttribute('aria-label')) close.setAttribute('aria-label','Close');
+      sheet.setAttribute('role','dialog');
+      sheet.setAttribute('aria-modal','true');
+      sheet.tabIndex = -1;
+      const heading = sheet.querySelector('h2,h1');
+      if (heading && !sheet.hasAttribute('aria-labelledby')) {
+        if (!heading.id) heading.id = 'snSheetHeading';
+        sheet.setAttribute('aria-labelledby',heading.id);
+      }
+      const outsideSheet = event => {
+        if (!sheet.contains(event.target) && event.cancelable) event.preventDefault();
+      };
+      backdrop.addEventListener('wheel',outsideSheet,{passive:false});
+      backdrop.addEventListener('touchmove',outsideSheet,{passive:false});
+      // Authentication already owns its focus trap and restoration.
+      if (backdrop.id === 'snAuthModal') return;
+      queueMicrotask(() => {
+        if (sheet.isConnected && !sheet.contains(document.activeElement)) sheet.focus({preventScroll:true});
+      });
+      backdrop.addEventListener('keydown',event => {
+        if (event.key === 'Escape' && close) {
+          event.preventDefault();event.stopPropagation();close.click();
+          if (opener?.isConnected) opener.focus({preventScroll:true});
+        }
+        if (event.key !== 'Tab') return;
+        const targets = [...sheet.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex="0"]')].filter(node => node.getClientRects().length && !node.closest('[hidden]'));
+        const first=targets[0], last=targets.at(-1), active=document.activeElement;
+        if (!first) {event.preventDefault();sheet.focus();return;}
+        if (event.shiftKey && (active===first || active===sheet)) {event.preventDefault();last.focus();}
+        else if (!event.shiftKey && (active===last || active===sheet)) {event.preventDefault();first.focus();}
+      });
+      if (close) close.addEventListener('click',() => queueMicrotask(() => {
+        if (!backdrop.isConnected && opener?.isConnected) opener.focus({preventScroll:true});
+      }));
+    });
+  }
+
   function syncModalState() {
+    prepareSheets();
     const open = isOpen();
 
     if (open && !modalOpen) {

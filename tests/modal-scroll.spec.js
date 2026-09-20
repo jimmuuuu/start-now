@@ -122,7 +122,8 @@ test('workout splits use a compact centered dialog and lock background scrolling
   }));
 
   expect(metrics.height).toBeLessThan(metrics.viewportHeight * 0.75);
-  expect(metrics.overflowY).toBe('hidden');
+  // The dialog must remain scrollable at large text sizes or short viewports.
+  expect(metrics.overflowY).toBe('auto');
   expect(metrics.backdropAlign).toBe('center');
   expect(metrics.columns.split(' ').length).toBe(2);
   expect(metrics.bodyPosition).toBe('fixed');
