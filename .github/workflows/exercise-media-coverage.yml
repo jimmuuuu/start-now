@@ -1,20 +1,9 @@
+# v50 focused external source comparison + strict final review + coverage gate
 name: Exercise media coverage
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'app.js'
-      - 'exercise-library-extra.js'
-      - 'scripts/build-exercise-media-map.mjs'
-      - '.github/workflows/exercise-media-coverage.yml'
   pull_request:
     branches: [main]
-    paths:
-      - 'app.js'
-      - 'exercise-library-extra.js'
-      - 'scripts/build-exercise-media-map.mjs'
-      - '.github/workflows/exercise-media-coverage.yml'
   workflow_dispatch:
 
 permissions:
@@ -35,17 +24,23 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Build and verify complete exercise GIF map
-        run: node scripts/build-exercise-media-map.mjs
+      - name: Compare additional legitimate media sources
+        run: node scripts/analyze-additional-media-v49.mjs
 
-      - name: Commit generated deterministic media map
+      - name: Apply final strict-equivalence review
+        run: node scripts/finalize-strict-media-audit-v50.mjs
+
+      - name: Commit external-source audit
         run: |
-          if git diff --quiet -- exercise-media-map-v43.js EXERCISE_MEDIA_COVERAGE_V43.md; then
-            echo 'Generated media map already current.'
-            exit 0
-          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add exercise-media-map-v43.js EXERCISE_MEDIA_COVERAGE_V43.md
-          git commit -m 'Generate verified exercise GIF map [skip ci]'
-          git push origin HEAD
+          git add EXERCISE_MEDIA_ADDITIONAL_AUDIT_V49.json EXERCISE_MEDIA_ADDITIONAL_AUDIT_V49.md exercise-media-map-pending-v49.json EXERCISE_MEDIA_FINAL_AUDIT_V50.json EXERCISE_MEDIA_FINAL_AUDIT_V50.md exercise-media-map-pending-v50.json
+          if git diff --cached --quiet; then
+            echo 'Additional audit already current.'
+          else
+            git commit -m 'Generate strict final exercise media audit [skip ci]'
+            git push origin HEAD
+          fi
+
+      - name: Require 100 percent working GIF coverage
+        run: node scripts/assert-100-exercise-gif-coverage.mjs
