@@ -4,14 +4,14 @@ on:
   push:
     branches: [main]
     paths:
-      - 'app.js'
+      - 'exercise-data.js'
       - 'exercise-library-extra.js'
       - 'scripts/build-exercise-media-map.mjs'
       - '.github/workflows/exercise-media-coverage.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'app.js'
+      - 'exercise-data.js'
       - 'exercise-library-extra.js'
       - 'scripts/build-exercise-media-map.mjs'
       - '.github/workflows/exercise-media-coverage.yml'

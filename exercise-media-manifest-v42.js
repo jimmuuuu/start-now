@@ -270,8 +270,5 @@
   };
 
   // Enumerate the entire app library once. This does not load any media files.
-  queueMicrotask(() => {
-    const result = audit();
-    console.info(`[Exercise Media v42] ${result.verified}/${result.total} exercises have deterministic verified media; ${result.missing} use the safe fallback; ${result.broken} known broken this session.`);
-  });
+  queueMicrotask(() => window.START_NOW_EXERCISE_MEDIA.audit());
 })();

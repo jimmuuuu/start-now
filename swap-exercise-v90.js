@@ -3,8 +3,6 @@
   const SN = window.SN36;
   if (!SN) return;
 
-  const clone = value => JSON.parse(JSON.stringify(value));
-  const escape = value => String(value ?? "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch]));
   const text = value => String(value ?? "").trim();
   const lower = value => text(value).toLowerCase();
   const currentExercise = () => SN.active?.exercises?.[SN.active.index || 0] || null;
@@ -168,82 +166,8 @@
       .map(item => item.candidate);
   }
 
-  function saveActive() { if (SN.active) SN.write(SN.keys.active, SN.active); }
-
-  function applySwap(replacement, modal) {
-    const old = currentExercise();
-    if (!old || !replacement || !SN.active || !isCorrelatedSwap(old, replacement)) return;
-    const hadCompletedSets = (old.sets || []).some(set => set.done);
-    if (hadCompletedSets) SN.active.usedExerciseIds = [...new Set([...(SN.active.usedExerciseIds || []), SN.exerciseId(old)])];
-    const range = SN.repRange(replacement);
-    const normalized = SN.normalizeExercise?.(replacement, { workoutId: SN.active.workoutId }) || clone(replacement);
-    SN.active.exercises[SN.active.index || 0] = {
-      ...normalized, repMin: range.min, repMax: range.max,
-      originalPlannedSets: old.originalPlannedSets || old.sets?.length || 1,
-      swappedFrom: old.name, skipped: false, note: "",
-      sets: (old.sets || []).map(set => ({...set, done: false}))
-    };
-    saveActive();
-    modal.remove();
-    render();
-  }
-
-  function openImprovedSwap() {
-    const exercise = currentExercise();
-    if (!exercise || !SN.active) return;
-    document.getElementById("snProductModal")?.remove();
-    const profile = movementProfile(exercise);
-    const candidates = eligibleExercises(exercise);
-    const modal = document.createElement("div");
-    modal.className = "sn-modal-backdrop";
-    modal.id = "snProductModal";
-    modal.innerHTML = `
-      <div class="sn-modal">
-        <div class="sn-modal-head"><div><span>SWAP EXERCISE</span><h2>Replace ${escape(exercise.name)}</h2></div><button data-close aria-label="Close swap exercise">×</button></div>
-        <p class="sn-modal-help">Only unused ${escape(profile.muscle)} exercises that perform the same ${escape(profile.label)} role in this workout are shown.</p>
-        <input id="snSwapSearch" class="sn-modal-search" type="search" inputmode="search" autocomplete="off" placeholder="Search matching replacements" aria-label="Search replacement exercises" style="width:100%;box-sizing:border-box;margin:0 0 12px" />
-        <div class="sn-option-list" id="snSwapOptions"></div>
-      </div>`;
-    document.body.appendChild(modal);
-    const list = modal.querySelector("#snSwapOptions");
-    const search = modal.querySelector("#snSwapSearch");
-
-    function renderOptions(query = "") {
-      const term = lower(query);
-      const filtered = !term ? candidates : candidates.filter(candidate => `${candidate.name || ""} ${primaryMuscle(candidate)} ${SN.meta(candidate).equipment || ""}`.toLowerCase().includes(term));
-      if (!filtered.length) {
-        list.innerHTML = `<div class="sn-modal-help" style="padding:14px 4px">No unused exercises with the same muscle and movement role match your search.</div>`;
-        return;
-      }
-      list.innerHTML = filtered.map(candidate => {
-        const candidateProfile = movementProfile(candidate);
-        return `<button class="sn-exercise-choice" data-swap="${escape(SN.exerciseId(candidate))}"><span><strong>${escape(candidate.name)}</strong><small>${escape(candidateProfile.muscle)} • ${escape(candidateProfile.label)} • ${escape(SN.meta(candidate).equipment)}</small></span><b>Swap →</b></button>`;
-      }).join("");
-      list.querySelectorAll("[data-swap]").forEach(button => {
-        button.addEventListener("click", () => {
-          const replacement = candidates.find(candidate => SN.exerciseId(candidate) === button.dataset.swap);
-          applySwap(replacement, modal);
-        });
-      });
-    }
-
-    renderOptions();
-    search.addEventListener("input", event => renderOptions(event.currentTarget.value));
-    modal.querySelector("[data-close]").addEventListener("click", () => modal.remove());
-    modal.addEventListener("click", event => { if (event.target === modal) modal.remove(); });
-    setTimeout(() => search.focus({preventScroll:true}), 0);
-  }
 
   const engine = { primaryMuscle, movementProfile, isCorrelatedSwap, scoreCandidate, eligibleExercises };
   window.START_NOW_SWAP_ENGINE = engine;
   SN.alternatives = (exercise, limit = 6) => eligibleExercises(exercise).slice(0, limit);
-
-  document.addEventListener("click", event => {
-    const button = event.target.closest?.("#snSwapExercise");
-    if (!button || !SN.active) return;
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    openImprovedSwap();
-  }, true);
 })();

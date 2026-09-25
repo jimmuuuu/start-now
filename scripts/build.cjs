@@ -14,17 +14,22 @@ for (const file of scripts) {
   execFileSync(process.execPath,['--check',path.join(root,file)]);
 }
 if (process.argv.includes('--check')) { console.log(`${scripts.length} active scripts passed syntax checks`); process.exit(0); }
+// dist is disposable build output, never a source or user-data directory.
+if (path.dirname(out) !== root || path.basename(out) !== 'dist') throw new Error('Unsafe build output path');
+fs.rmSync(out,{recursive:true,force:true});
 fs.mkdirSync(out,{recursive:true});
-const files = fs.readdirSync(root).filter(f=>/\.(js|css|html|webmanifest)$/.test(f));
+const files = [...new Set(['index.html','privacy.html','support.html','app.css','sw.js','manifest.webmanifest',...scripts.filter(f=>!f.includes('/'))])];
 for (const f of files) fs.copyFileSync(path.join(root,f),path.join(out,f));
 for (const dir of ['assets','third-party']) fs.cpSync(path.join(root,dir),path.join(out,dir),{recursive:true});
 // Give every active script/style a content-derived URL, including edits to older modules.
-const versioned = index.replace(/((?:src|href)=")([^"?]+)(?:\?[^" ]*)?"/g,(all,prefix,file)=>{
+const fingerprintHtml = html => html.replace(/((?:src|href)=")([^"?]+)(?:\?[^" ]*)?"/g,(all,prefix,file)=>{
   const source = path.join(root,file);
   if (!fs.existsSync(source) || !fs.statSync(source).isFile()) return all;
   const hash = crypto.createHash('sha256').update(fs.readFileSync(source)).digest('hex').slice(0,12);
   return `${prefix}${file}?v=${hash}"`;
 });
+const versioned = fingerprintHtml(index);
+for (const file of ['privacy.html','support.html']) fs.writeFileSync(path.join(out,file),fingerprintHtml(fs.readFileSync(path.join(root,file),'utf8')));
 fs.writeFileSync(path.join(out,'index.html'),versioned);
 const manifest = JSON.parse(fs.readFileSync(path.join(root,'manifest.webmanifest'),'utf8'));
 const shell = [...new Set(['./','./index.html','./privacy.html','./support.html','./assets/fonts/inter-latin-wght-normal.woff2',...manifest.icons.map(icon=>icon.src),...[...versioned.matchAll(/(?:src|href)="([^"#]+)"/g)].map(m=>'./'+m[1])])];

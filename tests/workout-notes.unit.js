@@ -42,9 +42,6 @@ SN.saveSessions([
 ]);
 assert.equal(SN.previousExerciseNote(exercise).note.length, 500);
 
-const workoutSource = fs.readFileSync('product-workout-v36.js', 'utf8');
-assert.match(workoutSource, /id="snExerciseNote"/);
-assert.match(workoutSource, /note:SN\.normalizeExerciseNote\(ex\.note\)\.trim\(\)/);
-assert.match(workoutSource, /document\.getElementById\("snExerciseNote"\).*saveActive\(\)/s);
+// Browser-level save/reload/completion coverage lives in rebuild.spec.js.
 
 console.log('Exercise note persistence checks passed.');

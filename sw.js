@@ -1,14 +1,37 @@
-// Start Now service worker — v155 exercise thumbnail layout fix.
-const VERSION = 'v155';
+// START/NOW: network-first updates with a complete offline application shell.
+const VERSION = 'v200';
 const CACHE_NAME = `start-now-shell-${VERSION}`;
 const APP_SHELL = [
-  './',
-  './index.html',
-  './manifest.webmanifest',
-  './assets/pwa/icon-192.png',
-  './assets/pwa/icon-512.png',
-  './assets/pwa/icon-maskable-512.png',
-  './assets/pwa/apple-touch-icon.png'
+  "./",
+  "./index.html",
+  "./app.css",
+  "./privacy.html",
+  "./support.html",
+  "./manifest.webmanifest",
+  "./assets/fonts/inter-latin-wght-normal.woff2",
+  "./assets/pwa/icon-192.png",
+  "./assets/pwa/icon-512.png",
+  "./assets/pwa/icon-maskable-512.png",
+  "./assets/pwa/apple-touch-icon.png",
+  "./third-party/supabase.js",
+  "./production-monitor-v88.js",
+  "./app.js",
+  "./exercise-data.js",
+  "./exercise-library-extra.js",
+  "./product-core-v36.js",
+  "./data-store-v117.js",
+  "./routine-data.js",
+  "./swap-exercise-v90.js",
+  "./exercise-media-manifest-v42.js",
+  "./complete-exercise-media-v105.js",
+  "./ui.js",
+  "./workout.js",
+  "./pages.js",
+  "./routines.js",
+  "./profile.js",
+  "./cloud-account-v89.js",
+  "./pwa-install-v112.js",
+  "./bootstrap.js"
 ];
 
 async function cacheFreshShell() {

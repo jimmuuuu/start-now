@@ -14,7 +14,6 @@
   let syncTimer = null;
   let lastFingerprint = "";
   let authMode = "signin";
-  let identityRefreshQueued = false;
   let cloudStatus = "pending";
   let authTrigger = null;
   const OWNER_KEY = "sn_cloud_owner";
@@ -110,7 +109,9 @@
     const remoteProfile = safeJSON(remoteStorage?.[PROFILE_KEY], {}) || {};
     if (!Object.keys(remoteProfile).length && !Object.keys(localProfile).length) return;
 
-    const merged = hadLocalData
+    const preferLocal = Number(localProfile.profileUpdatedAt || 0) >= Number(remoteProfile.profileUpdatedAt || 0)
+      && (hadLocalData || Number(localProfile.profileUpdatedAt || 0) > 0);
+    const merged = preferLocal
       ? { ...remoteProfile, ...localProfile }
       : { ...localProfile, ...remoteProfile };
     const localPhotoStamp = Number(localProfile.photoUpdatedAt) || 0;
@@ -245,7 +246,7 @@
     const now = new Date().toISOString();
     const localProfile = window.SN36?.profile?.() || safeJSON(localStorage.getItem("sn_user_profile_v36"), {}) || {};
     const displayName = String(
-      user.user_metadata?.display_name || localProfile.displayName || localProfile.name || user.email?.split("@")[0] || "Athlete"
+      localProfile.displayName || localProfile.name || user.user_metadata?.display_name || user.email?.split("@")[0] || "Athlete"
     ).slice(0,80);
     const workouts = safeJSON(storage.sn_custom_workouts, []);
 
@@ -337,59 +338,7 @@
     keys.forEach(key => localStorage.removeItem(key));
   }
 
-  function displayName(){
-    const profile = window.SN36?.profile?.() || safeJSON(localStorage.getItem("sn_user_profile_v36"), {}) || {};
-    return String(
-      currentUser?.user_metadata?.display_name || profile.displayName || profile.name || currentUser?.email?.split("@")[0] || ""
-    ).trim();
-  }
-
-  function initials(){
-    const name = displayName();
-    if (!name) return "ME";
-    return name.split(/\s+/).filter(Boolean).slice(0,2).map(part => part[0]).join("").toUpperCase().slice(0,2) || "ME";
-  }
-
-  function applyIdentity(){
-    const name = displayName();
-    const nextInitials = initials();
-    document.querySelectorAll(".avatar, .profile-avatar").forEach(node => {
-      if (node.textContent !== nextInitials) node.textContent = nextInitials;
-    });
-    const profileHeading = document.querySelector(".profile-card h2");
-    const nextHeading = name || "Your profile";
-    if (profileHeading && profileHeading.textContent !== nextHeading) profileHeading.textContent = nextHeading;
-  }
-
-  function scheduleIdentityRefresh(){
-    if (identityRefreshQueued) return;
-    identityRefreshQueued = true;
-    requestAnimationFrame(() => {
-      identityRefreshQueued = false;
-      applyIdentity();
-      if (typeof state !== "undefined" && state.page === "profile") appendAccountCard();
-    });
-  }
-
-  function ensureStyles(){
-    if (document.getElementById("snCloudAccountStyles")) return;
-    const style = document.createElement("style");
-    style.id = "snCloudAccountStyles";
-    style.textContent = `
-      .sn-account-card{margin-top:14px;padding:18px}.sn-account-card h2{font-size:var(--text-lg);margin:0 0 5px}.sn-account-card p{margin:0;color:var(--muted);font-size:var(--text-sm);line-height:1.5}
-      .sn-account-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:12px 13px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
-      .sn-account-status strong,.sn-account-status small{display:block}.sn-account-status strong{font-size:var(--text-sm)}.sn-account-status small{margin-top:3px;color:var(--muted);font-size:var(--text-xs)}.sn-cloud-dot{width:9px;height:9px;border-radius:50%;background:#94A3B8;flex:0 0 auto}.sn-cloud-dot.synced{background:#7FAF19}.sn-cloud-dot.syncing{background:#D89A0E}.sn-cloud-dot.error{background:#FF5A5F}
-      .sn-account-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.sn-account-btn{min-height:44px;border-radius:13px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:var(--text-sm);font-weight:800;cursor:pointer}.sn-account-btn.primary{background:#FF5A5F;border-color:#FF5A5F;color:white}.sn-account-btn.danger{color:#FF5A5F;border-color:rgba(255,90,95,.3);background:rgba(255,90,95,.06)}
-      .sn-legal-links{display:flex;justify-content:center;gap:18px;padding:17px 0 2px}.sn-legal-links a{color:var(--muted);font-size:var(--text-xs);font-weight:700;text-decoration:none}.sn-legal-links a:hover{color:var(--text)}
-      .sn-auth-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,12,18,.64);backdrop-filter:blur(5px)}.sn-auth-modal.open{display:flex}.sn-auth-sheet{max-height:calc(100dvh - 40px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;width:min(100%,430px);border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:0 24px 80px rgba(0,0,0,.28);padding:22px}.sn-auth-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.sn-auth-head h2{margin:0;font-size:24px}.sn-auth-head p{margin:5px 0 0;color:var(--muted);font-size:var(--text-sm);line-height:1.45}.sn-auth-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:var(--text-xl);cursor:pointer}.sn-auth-form{display:grid;gap:11px;margin-top:18px}.sn-auth-field{display:grid;gap:6px}.sn-auth-field span{font-size:var(--text-xs);font-weight:800;color:var(--muted)}.sn-auth-field input{width:100%;box-sizing:border-box;min-height:48px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--text);font:inherit;padding:0 13px}.sn-auth-submit{min-height:50px;border:0;border-radius:14px;background:#FF5A5F;color:white;font:inherit;font-weight:900;cursor:pointer}.sn-auth-error{min-height:16px;color:#FF5A5F;font-size:var(--text-xs)}.sn-auth-switch{text-align:center;margin-top:13px;color:var(--muted);font-size:var(--text-xs)}.sn-auth-switch button{border:0;background:none;color:#3478F6;font:inherit;font-weight:800;cursor:pointer}
-      .dark .sn-auth-sheet{background:#17191B}.dark .sn-account-btn.danger{background:rgba(255,90,95,.08)}
-      @media(max-width:390px){.sn-account-actions{grid-template-columns:1fr}.sn-auth-sheet{padding:18px}}
-    `;
-    document.head.appendChild(style);
-  }
-
   function ensureAuthModal(){
-    ensureStyles();
     if (document.getElementById("snAuthModal")) return;
     const modal = document.createElement("div");
     modal.className = "sn-auth-modal";
@@ -449,10 +398,12 @@
     document.getElementById("snAuthError").textContent = "";
   }
 
-  function openAuth(mode="signin"){
-    authTrigger = document.activeElement;
+  function openAuth(mode="signin", trigger){
+    authTrigger = trigger || document.activeElement;
     ensureAuthModal();
     setAuthMode(mode);
+    window.UI?.closeSheet();
+    window.UI?.lock();
     document.getElementById("snAuthModal").classList.add("open");
     document.getElementById(mode === "recovery" ? "snAuthPassword" : "snAuthEmail")?.focus({preventScroll:true});
   }
@@ -460,6 +411,7 @@
   function closeAuth(){
     document.getElementById("snAuthModal")?.classList.remove("open");
     document.getElementById("snAuthPassword").value = "";
+    window.UI?.unlock();
     authTrigger?.focus?.();
   }
 
@@ -477,7 +429,7 @@
     const submittedMode = authMode;
     errorEl.textContent = "";
     button.disabled = true;
-    button.textContent = authMode === "signup" ? "Creating…" : "Signing in…";
+    button.textContent = authMode === "signup" ? "Creating…" : authMode === "reset" ? "Sending…" : authMode === "recovery" ? "Saving…" : "Signing in…";
     try {
       if (submittedMode === "reset") {
         const {error} = await client.auth.resetPasswordForEmail(email, {redirectTo:location.origin + location.pathname});
@@ -507,7 +459,7 @@
       }
     } catch (error) {
       console.error("Level Up Fitness authentication failed", error);
-      errorEl.textContent = error?.message || "Couldn’t complete that request.";
+      errorEl.textContent = /fetch|network/i.test(error?.message || "") ? "Can’t reach the account service. Check your connection and try again." : error?.message || "Couldn’t complete that request.";
     } finally {
       button.disabled = false;
       button.textContent = authMode === "reset" ? "Send reset link" : authMode === "recovery" ? "Save password" : authMode === "signup" ? "Create account" : "Sign in";
@@ -536,48 +488,29 @@
   }
 
   function appendAccountCard(){
-    ensureStyles();
-    const root = document.getElementById("app");
-    if (!root || root.querySelector("#snAccountCard")) { applyIdentity(); return; }
-    const profileCard = root.querySelector(".profile-card");
-    if (!profileCard) { applyIdentity(); return; }
-
-    const card = document.createElement("section");
-    card.className = "card sn-account-card";
-    card.id = "snAccountCard";
-    card.innerHTML = currentUser ? `
-      <h2>Cloud backup</h2>
-      <div class="sn-account-status" id="snCloudStatus"><div><strong>Backup on</strong><small>${esc(currentUser.email || "Signed in")}</small></div><i class="sn-cloud-dot synced"></i></div>
-      <div class="sn-account-actions"><button class="sn-account-btn" id="snSyncNow">Sync now</button><button class="sn-account-btn danger" id="snDeleteAccount">Delete account</button></div>
-    ` : `
-      <h2>Cloud backup</h2>
-      <div class="sn-account-status" id="snCloudStatus"><div><strong>Saved on this device</strong><small>Not signed in</small></div><i class="sn-cloud-dot"></i></div>
-      <div class="sn-account-actions"><button class="sn-account-btn primary" id="snSignIn">Sign in</button><button class="sn-account-btn" id="snCreateAccount">Create account</button></div>
-    `;
-    profileCard.insertAdjacentElement("afterend", card);
-
-    const legal = document.createElement("div");
-    legal.className = "sn-legal-links";
-    legal.innerHTML = `<a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="support.html" target="_blank" rel="noopener">Support</a>`;
-    card.insertAdjacentElement("afterend", legal);
-
-    card.querySelector("#snSignIn")?.addEventListener("click", () => openAuth("signin"));
-    card.querySelector("#snCreateAccount")?.addEventListener("click", () => openAuth("signup"));
-    card.querySelector("#snSyncNow")?.addEventListener("click", async () => { const ok=await syncNow(); if(ok) show("Cloud backup is up to date."); });
-    card.querySelector("#snDeleteAccount")?.addEventListener("click", deleteAccount);
-
-    const signoutWrap = root.querySelector(".sn-profile-signout-wrap");
-    if (signoutWrap) signoutWrap.hidden = !currentUser;
+    const host = document.getElementById("accountSection");
+    if (!host) return;
+    host.innerHTML = '<h2>Account</h2><div class="sn-account-status" id="snCloudStatus"><div><strong></strong><small></small></div><i class="sn-cloud-dot"></i></div><div class="sn-account-actions">' +
+      (currentUser
+        ? '<button class="btn soft small" id="snSyncNow">Sync now</button><button class="btn small" data-act="signOut">Sign out</button>'
+        : '<button class="btn primary small" id="snSignIn">Sign in</button><button class="btn small" id="snCreateAccount">Create account</button>') +
+      '</div>' + (currentUser ? '<button class="text-btn danger" id="snDeleteAccount">Delete account</button>' : '');
+    host.querySelector("#snSignIn")?.addEventListener("click", event => openAuth("signin", event.currentTarget));
+    host.querySelector("#snCreateAccount")?.addEventListener("click", event => openAuth("signup", event.currentTarget));
+    host.querySelector("#snSyncNow")?.addEventListener("click", async event => {
+      event.currentTarget.disabled=true;
+      const ok=await syncNow();
+      if(ok) show("Cloud backup is up to date.");
+      const button=document.getElementById("snSyncNow");if(button)button.disabled=false;
+    });
+    host.querySelector("#snDeleteAccount")?.addEventListener("click", deleteAccount);
     updateAccountUI(cloudStatus);
-    applyIdentity();
   }
 
   async function deleteAccount(){
     if (!client || !currentUser) return;
-    const confirmed = window.confirm("Delete your Start Now account and all cloud workout data? This cannot be undone.");
+    const confirmed = await UI.confirm("Delete account?", "Your account and all cloud workout data will be permanently deleted. This cannot be undone.", "Delete account", true);
     if (!confirmed) return;
-    const second = window.confirm("Are you sure? Your account, workout history, saved plans, and synced notes will be permanently deleted.");
-    if (!second) return;
     try {
       await syncNow({silent:true});
       const {error} = await client.functions.invoke("delete-account", {body:{confirm:true}});
@@ -618,7 +551,6 @@
       await syncNow({silent:true,reloadOnRestore});
     }
     appendAccountCard();
-    applyIdentity();
   }
 
   async function init(){
@@ -633,7 +565,7 @@
       auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:localStorage}
     });
     window.SN_SUPABASE = client;
-    window.SN_AUTH = { signOut, openSignIn:() => openAuth("signin"), openSignUp:() => openAuth("signup"), syncNow };
+    window.SN_AUTH = { signOut, openSignIn:() => openAuth("signin"), openSignUp:() => openAuth("signup"), syncNow, renderAccount:appendAccountCard };
 
     client.auth.onAuthStateChange((event, session) => {
       setTimeout(async () => {
@@ -648,7 +580,7 @@
         }
         if (!currentUser) lastFingerprint = "";
         if (typeof state !== "undefined" && state.page === "profile" && typeof render === "function") render();
-        else { appendAccountCard(); applyIdentity(); }
+        else { appendAccountCard(); }
       }, 0);
     });
 
@@ -659,19 +591,6 @@
     document.addEventListener("visibilitychange", () => {
       if (document.hidden && currentUser && fingerprint() !== lastFingerprint) syncNow({silent:true});
     });
-  }
-
-  ensureStyles();
-  const appRoot = document.getElementById("app");
-  if (appRoot) new MutationObserver(scheduleIdentityRefresh).observe(appRoot,{childList:true,subtree:true});
-
-  if (typeof window.renderProfile === "function") {
-    const priorProfile = window.renderProfile;
-    window.renderProfile = function(...args){
-      const result = priorProfile.apply(this,args);
-      queueMicrotask(appendAccountCard);
-      return result;
-    };
   }
 
   window.START_NOW_CLOUD = {version:"v89",syncNow:() => syncNow(),openSignIn:() => openAuth("signin"),openSignUp:() => openAuth("signup")};

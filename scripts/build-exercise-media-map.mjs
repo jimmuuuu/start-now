@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
+import vm from 'node:vm';
 
-const APP_FILES = ['app.js', 'exercise-library-extra.js'];
+const APP_FILES = ['exercise-data.js', 'exercise-library-extra.js'];
 const ACTIVE_MEDIA_JS = 'complete-exercise-media-v105.js';
 const API_URL = 'https://oss.exercisedb.dev/api/v1/exercises?limit=25';
 const OUTPUT_JS = 'exercise-media-map-v43.js';
@@ -139,11 +140,11 @@ function extractExercises(source) {
 }
 
 async function getAllExercises() {
-  const all = [];
+  const context = vm.createContext({});
   for (const file of APP_FILES) {
-    const text = await fs.readFile(file, 'utf8');
-    all.push(...extractExercises(text));
+    vm.runInContext(await fs.readFile(file, 'utf8'), context, {filename:file});
   }
+  const all = vm.runInContext('exerciseLibrary', context);
   const deduped = [...new Map(all.map(ex => [ex.id, ex])).values()];
   if (deduped.length < 200) throw new Error(`Exercise extraction found only ${deduped.length}. Expected the full app library.`);
   return deduped;
