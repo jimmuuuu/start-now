@@ -522,12 +522,20 @@
     state.exerciseHistoryId = event.state?.exerciseHistoryId;
     go(targetPage, { pop: true, force: true });
   });
-  window.visualViewport?.addEventListener("resize", () =>
+  function syncViewport() {
+    if (!window.visualViewport) return;
     document.documentElement.style.setProperty(
       "--visible-height",
       visualViewport.height + "px",
-    ),
-  );
+    );
+    document.documentElement.style.setProperty(
+      "--visible-top",
+      visualViewport.offsetTop + "px",
+    );
+  }
+  window.visualViewport?.addEventListener("resize", syncViewport);
+  window.visualViewport?.addEventListener("scroll", syncViewport);
+  syncViewport();
   window.UI = {
     esc,
     icon,

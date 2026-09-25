@@ -769,7 +769,8 @@ body.has-active #app {
 .sheet-backdrop,
 .sn-auth-modal {
   position: fixed;
-  inset: 0;
+  inset: var(--visible-top, 0px) 0 auto;
+  height: var(--visible-height, 100dvh);
   z-index: 100;
   display: flex;
   align-items: flex-end;

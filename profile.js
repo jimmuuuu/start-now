@@ -65,7 +65,10 @@
         ) +
           menu(
             "Weekly schedule",
-            SN.scheduleDays().size + " training days",
+            SN.scheduleDays().size +
+              (SN.scheduleDays().size === 1
+                ? " training day"
+                : " training days"),
             "calendar",
             "schedule",
           ) +

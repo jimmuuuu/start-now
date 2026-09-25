@@ -3,7 +3,7 @@ const AxeBuilder = require("@axe-core/playwright").default;
 test("primary screens and workout dialogs meet automated WCAG AA checks", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("./");
   const check = async () => {
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21aa"])

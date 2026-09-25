@@ -130,7 +130,7 @@ test("browser back cancellation keeps the routine draft and matching URL", async
   await expect(page).toHaveURL(/#\/home$/);
 });
 async function boot(page) {
-  await page.goto("/");
+  await page.goto("./");
   await expect(
     page.getByRole("heading", { name: "Workout", exact: true }),
   ).toBeVisible();

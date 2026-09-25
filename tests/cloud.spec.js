@@ -23,7 +23,7 @@ async function open(
       ].join("\n"),
     }),
   );
-  await page.goto("/");
+  await page.goto("./");
   await expect.poll(() => page.evaluate(() => !!window.SN_AUTH)).toBe(true);
   await page
     .getByRole("navigation")

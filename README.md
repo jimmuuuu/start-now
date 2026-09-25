@@ -25,6 +25,8 @@ npm run preview
 
 The browser suite targets dist and runs 32 scenarios per engine, including WCAG AA automated checks. Use --project=chromium or --project=webkit to select an engine if a local executable is unavailable. CI runs all three on Linux. The offline test shuts down its own isolated origin rather than relying on WebKit's broken offline emulation.
 
+Set PLAYWRIGHT_BASE_URL to an HTTPS app URL ending in / to run the same regression suite against a deployed version in isolated browser contexts. The offline test still uses its own isolated origin.
+
 ## Structure
 
 - ui.js owns navigation, icons, reusable rows, pickers, dialogs, focus, and scroll locking.
